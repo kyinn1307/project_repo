@@ -5,10 +5,12 @@ import { SetaLetterLogo } from "@/assets/SetaLetterLogo";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useNavigate } from "react-router-dom";
 import { MypageIcon } from "@/assets/Icons/MypageIcon";
+import { useSidebarStore } from "@/stores/useSidebarStore";
 
 export const Header = () => {
   const isLoggedIn = true;
   const navigate = useNavigate();
+  const { toggle } = useSidebarStore();
 
   const handleBtnClick = (route: string) => {
     navigate(`/app/${route}`);
@@ -16,7 +18,10 @@ export const Header = () => {
   return (
     <header className="fixed top-0 left-0 w-full h-9 bg-[#000000] border-b border-[#777777] z-50 px-[1.5vw] flex items-center justify-between">
       <div className="flex items-center gap-[1.12vw] min-w-max">
-        <SidebarTrigger className="text-white hover:text-white hover:bg-transparent cursor-pointer" />
+        <SidebarTrigger
+          className="text-white hover:text-white hover:bg-transparent cursor-pointer"
+          onClick={toggle}
+        />
         <SetaLetterLogo />
       </div>
 

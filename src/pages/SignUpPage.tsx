@@ -137,12 +137,10 @@ export default function SignUpPage() {
                     privacyPolicy: checkedItems.policy,
                     optionalPrivacyConsent: checkedItems.marketing,
                   });
+                  console.log("약관동의 성공");
                   setStep("email");
                 } catch (error) {
-                  setStep("email");
-
                   console.error("약관 동의 실패:", error);
-                  // 필요하면 사용자에게 에러 메시지를 띄우세요.
                 }
               }}
             >
