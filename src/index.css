@@ -122,3 +122,26 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* index.css or global.css */
+.ql-container {
+  background-color: #1a1a1a;
+  border: none;
+  color: white;
+  font-size: 14px;
+}
+
+.ql-toolbar {
+  background-color: #1a1a1a;
+  border: none;
+  border-bottom: 1px solid #444;
+  color: #ccc;
+}
+
+.ql-toolbar button {
+  color: #ccc;
+}
+
+.ql-toolbar button.ql-active {
+  color: white;
+}
