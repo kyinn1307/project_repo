@@ -9,7 +9,7 @@ export default function MainLayout() {
       <div className="flex flex-col min-h-screen">
         <Header />
         <div className="flex flex-1">
-          <div className="w-40 border-r border-[#777777]">
+          <div className="w-40 border-[#777777]">
             <AppSidebar />
           </div>
 
