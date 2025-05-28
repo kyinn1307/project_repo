@@ -1,4 +1,8 @@
-export const SetaLetterLogo = () => {
+type SetaLetterLogoProps = {
+  onClick: () => void;
+};
+
+export const SetaLetterLogo = ({ onClick }: SetaLetterLogoProps) => {
   return (
     <svg
       width="102"
@@ -6,6 +10,8 @@ export const SetaLetterLogo = () => {
       viewBox="0 0 102 19"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      onClick={onClick}
+      className="cursor-pointer"
     >
       <path
         d="M60.7646 15.7945C60.7646 15.5039 60.5301 15.2662 60.2362 15.2662H50.5607V10.927H59.2654V8.08053H59.2621C59.2621 7.78663 59.0243 7.55218 58.737 7.55218H50.564V3.48054H60.2561L60.2329 0H46.248V18.2216C46.248 18.5122 46.4825 18.75 46.7764 18.75H60.7646V15.7978C60.7646 15.7978 60.7646 15.7978 60.7646 15.7945Z"

@@ -22,7 +22,7 @@ export const Header = () => {
           className="text-white hover:text-white hover:bg-transparent cursor-pointer"
           onClick={toggle}
         />
-        <SetaLetterLogo />
+        <SetaLetterLogo onClick={() => handleBtnClick("")} />
       </div>
 
       <div className="mx-[0.5vw] flex-1 flex justify-center min-w-0">
