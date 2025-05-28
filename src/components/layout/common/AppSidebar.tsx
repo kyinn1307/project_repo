@@ -50,7 +50,7 @@ const items = [
   },
   {
     title: "업로드",
-    url: "/app/upload",
+    url: "/upload",
     icon: CirclePlus,
   },
 ];
