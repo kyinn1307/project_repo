@@ -1,6 +1,6 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { MusicList } from "./MusicList";
-import { PostList } from "./PostList";
+import { FeedList } from "./FeedLIst";
 import { HistoryContent } from "./HistoryContent";
 import { SubscribeBusinessContent } from "./SubscribeBusinessContent";
 import { UnsubscribeBusinessContent } from "./UnsubscribeBusinessContent";
@@ -11,7 +11,8 @@ export function ProfileMenu() {
 
   const tabList = [
     { value: "music", label: "음원" },
-    { value: "post", label: "게시물" },
+    { value: "feed", label: "피드" },
+    { value: "project", label: "프로젝트" },
     { value: "history", label: "활동이력" },
     { value: "business", label: "비즈니스" },
   ];
@@ -39,8 +40,8 @@ export function ProfileMenu() {
       <TabsContent value="music">
         <MusicList />
       </TabsContent>
-      <TabsContent value="post">
-        <PostList />
+      <TabsContent value="feed">
+        <FeedList />
       </TabsContent>
       <TabsContent value="history">
         <HistoryContent />
