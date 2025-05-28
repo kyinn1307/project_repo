@@ -1,9 +1,9 @@
 import { FeedSearchBar } from "./FeedSearchBar";
 import { FeedTagSelector } from "./FeedTagSelector";
-import { ImageSelector } from "./ImageSelector";
 import { RichTextEditor } from "./TextEditor";
 import { Button } from "../button";
 import { MusicUploadSection } from "../upload/MusicUploadSection";
+import { ImageUploadSection } from "../upload/ImageUploadSection";
 
 export const FeedDetailContent = () => {
   return (
@@ -12,7 +12,7 @@ export const FeedDetailContent = () => {
         <FeedSearchBar />
       </div>
       <div className="flex flex-row h-[150px] gap-[7.5px]">
-        <ImageSelector />
+        <ImageUploadSection />
         <MusicUploadSection />
       </div>
       <div>

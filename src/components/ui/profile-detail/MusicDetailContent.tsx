@@ -1,10 +1,10 @@
 import { TitleInput } from "./TitleInput";
 import { GenreSelector } from "@/components/ui/profile-detail/GenreSelector";
-import { ImageSelector } from "@/components/ui/profile-detail/ImageSelector";
 import { MusicTagSelector } from "@/components/ui/profile-detail/MusicTagSelector";
 import { RichTextEditor } from "@/components/ui/profile-detail/TextEditor";
 import { Button } from "@/components/ui/button";
 import { MusicUploadSection } from "../upload/MusicUploadSection";
+import { ImageUploadSection } from "../upload/ImageUploadSection";
 
 export const MusicDetailContent = () => {
   return (
@@ -17,7 +17,7 @@ export const MusicDetailContent = () => {
       </div>
 
       <div className="flex flex-row h-[150px] gap-[7.5px]">
-        <ImageSelector />
+        <ImageUploadSection />
         <MusicUploadSection />
       </div>
       <div>
