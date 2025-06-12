@@ -4,8 +4,8 @@ export const sendEmailCode = (email: string) => {
   return axiosInstance.post("/email/send", { email });
 };
 
-export const validateEmailCode = (email: string, code: string) => {
-  return axiosInstance.post("/email/validate", { email, code });
+export const validateAuthCode = (email: string, authCode: string) => {
+  return axiosInstance.post("/email/validate", { email, authCode });
 };
 
 export const resendEmailCode = (email: string) => {

@@ -52,8 +52,10 @@ export const LoginForm = ({
           </div>
         )}
         <Button
-          className="mt-3 w-[350px] h-10 bg-[#0050ef] text-white text-sm cursor-pointer"
+          className="mt-3 w-[350px] h-10 bg-[#0050ef] text-white text-sm cursor-pointer 
+             disabled:bg-[#555555] disabled:text-[#777777] disabled:opacity-100 disabled:cursor-not-allowed"
           onClick={onNext}
+          disabled={email.trim() === ""}
         >
           다음
         </Button>
