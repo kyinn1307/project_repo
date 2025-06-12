@@ -5,12 +5,12 @@ import {
 } from "@/components/ui/popover";
 import { MoreHorizontal, Link, Edit, X } from "lucide-react";
 
-export function HistoryMoreMenu() {
+export function MusicMoreMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button>
-          <MoreHorizontal size={15} />
+          <MoreHorizontal size={15} className="text-[#999999]" />
         </button>
       </PopoverTrigger>
 

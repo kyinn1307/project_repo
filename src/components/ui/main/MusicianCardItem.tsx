@@ -4,30 +4,45 @@ import { BasicMusic } from "@/assets/Images/BasicMusic";
 export const MusicianCardItem = () => {
   return (
     <div
-      className="relative w-[210px] h-[250px] rounded-[10px] overflow-hidden bg-[#222222]"
+      className="relative w-[217.5px] h-[255px] rounded-[15px] overflow-hidden border"
       style={{
-        background:
-          "background: linear-gradient(1.12deg, #222222 43.77%, rgba(136, 136, 136, 0) 97.49%)",
+        border: "0.75px solid #333333",
       }}
     >
-      <div className="relative w-full h-[60%]">
-        <img src={hmson} alt="프로필" className="w-full h-full object-cover" />
-        <div className="absolute inset-0" />
-      </div>
+      {/* 배경 이미지 */}
+      <img
+        src={hmson}
+        alt="프로필"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
 
-      <div className="absolute bottom-0 w-full p-3">
-        <div className="text-white font-semibold text-base">Artist01</div>
-        <div className="text-[#cccccc] text-xs mt-1">장르_ #Rap #base</div>
-        <div className="text-[#cccccc] text-xs">분야_ #Rap #base</div>
+      {/* 블렌드 그라디언트 오버레이 */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "linear-gradient(180deg, #FFFFFF 0%, #000000 79.89%)",
+          mixBlendMode: "multiply",
+        }}
+      />
 
-        <div className="flex items-center gap-2 mt-3">
+      {/* 콘텐츠 영역 */}
+      <div className="absolute bottom-0 w-full px-[15px] py-[13.25px] text-white z-10">
+        <div className="font-semibold text-base">Artist01</div>
+        <div className="text-[#cccccc] text-xs mt-[3.75px]">
+          장르_ #Rap #base
+        </div>
+        <div className="text-[#cccccc] text-xs mt-[3.75px]">
+          분야_ #Rap #base
+        </div>
+
+        <div className="flex items-center gap-[4.5px] mt-[15px]">
           <div className="flex flex-col">
-            <div className="text-white text-xs">대표곡</div>
+            <div className="text-[10.5px]">대표곡</div>
             <div className="flex flex-row gap-[6px] items-center">
-              <div className="w-[45px] h-[45px] rounded-[4px] flex items-center justify-center">
+              <div className="w-[45px] h-[45px] rounded-[4px] flex items-center justify-center bg-[#333333]">
                 <BasicMusic />
               </div>
-              <div className="text-white text-[10px]">Untitled01</div>
+              <div className="text-[9px]">Untitled01</div>
             </div>
           </div>
         </div>

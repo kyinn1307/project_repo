@@ -5,6 +5,7 @@ import { HistoryContent } from "./HistoryContent";
 import { SubscribeBusinessContent } from "./SubscribeBusinessContent";
 import { UnsubscribeBusinessContent } from "./UnsubscribeBusinessContent";
 import { useUserStore } from "@/stores/useUserStore";
+import { ProjectList } from "./ProejctList";
 
 export function ProfileMenu() {
   const { isSubscribed } = useUserStore();
@@ -42,6 +43,9 @@ export function ProfileMenu() {
       </TabsContent>
       <TabsContent value="feed">
         <FeedList />
+      </TabsContent>
+      <TabsContent value="project">
+        <ProjectList />
       </TabsContent>
       <TabsContent value="history">
         <HistoryContent />

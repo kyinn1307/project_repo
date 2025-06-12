@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export const AdBanner = () => {
   return (
-    <div className="relative w-[100%] h-[200px] bg-white rounded-[10px] px-8 py-6 flex flex-col justify-between shadow-md">
+    <div className="relative w-[100%] h-[200px] bg-white rounded-[10px] px-8 py-6 flex flex-col justify-between shadow-md mt-[38px]">
       <div>
         <h3 className="text-blue-600 font-bold text-sm">뮤직 비즈니스</h3>
         <p className="text-black font-semibold text-lg mt-1">

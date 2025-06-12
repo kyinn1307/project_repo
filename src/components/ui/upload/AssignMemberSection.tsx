@@ -1,22 +1,22 @@
 import { Search, X } from "lucide-react";
 import { useState } from "react";
-import JunseoAvatar from "@/assets/Images/junseo_lee.png";
+import JunseoAvatar from "@/assets/Images/hmson.png";
 
 const dummyMembers = [
   {
     id: 1,
     name: "선택된 유저",
-    avatar: JunseoAvatar, // ← 여기에 바로 사용
+    avatar: JunseoAvatar,
   },
   {
     id: 2,
     name: "선택된 유저",
-    avatar: JunseoAvatar, // ← 여기에 바로 사용
+    avatar: JunseoAvatar,
   },
   {
     id: 3,
     name: "선택된 유저",
-    avatar: JunseoAvatar, // ← 여기에 바로 사용
+    avatar: JunseoAvatar,
   },
 ];
 
