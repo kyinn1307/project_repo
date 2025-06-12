@@ -25,27 +25,27 @@ import { MessageIcon } from "@/assets/Icons/MessageIcon";
 const items = [
   {
     title: "살펴보기",
-    url: "app",
+    url: "/",
     icon: Home,
   },
   {
     title: "뮤지션",
-    url: "app/musician",
+    url: "/musician",
     icon: Users,
   },
   {
     title: "음원",
-    url: "app/music",
+    url: "/music",
     icon: Music,
   },
   {
     title: "피드",
-    url: "app/feed",
+    url: "/feed",
     icon: LayoutGrid,
   },
   {
     title: "프로젝트",
-    url: "app/project",
+    url: "/project",
     icon: Inbox,
   },
   {
@@ -92,7 +92,10 @@ export function AppSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <a href="#" className="flex items-center gap-3 px-4 py-2">
+              <a
+                href="/my-profile"
+                className="flex items-center gap-3 px-4 py-2"
+              >
                 <User size={20} />
                 <span className="text-sm">내프로필</span>
               </a>

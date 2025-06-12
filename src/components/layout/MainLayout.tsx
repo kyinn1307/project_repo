@@ -14,7 +14,7 @@ export default function MainLayout() {
           </div>
 
           <main className="w-[calc(100vw-160px)] overflow-y-auto bg-[#000000]">
-            <div className="mt-16 flex-1">
+            <div className="mt-9 flex-1">
               <Outlet />
             </div>
           </main>

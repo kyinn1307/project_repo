@@ -13,7 +13,7 @@ export const Header = () => {
   const { toggle } = useSidebarStore();
 
   const handleBtnClick = (route: string) => {
-    navigate(`/app/${route}`);
+    navigate(`/${route}`);
   };
   return (
     <header className="fixed top-0 left-0 w-full h-9 bg-[#000000] border-b border-[#777777] z-50 px-[1.5vw] flex items-center justify-between">
@@ -50,7 +50,7 @@ export const Header = () => {
             </div>
             <div
               className="hidden sm:block"
-              onClick={() => handleBtnClick("profile")}
+              onClick={() => handleBtnClick("my-profile")}
             >
               <MypageIcon />
             </div>
