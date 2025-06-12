@@ -11,6 +11,10 @@ import { PasswordBtn } from "@/assets/PasswordBtn";
 import FieldGenreSelector from "@/components/ui/signup/FieldGenreSelector";
 import { postTerms } from "@/apis/signup";
 import { sendEmailCode } from "@/apis/email";
+import { validateAuthCode } from "@/apis/email";
+import { resendEmailCode } from "@/apis/email";
+import axios from "axios";
+
 export default function SignUpPage() {
   const [step, setStep] = useState<
     | "terms"
@@ -47,7 +51,7 @@ export default function SignUpPage() {
   const doPasswordsMatch = password === confirmPassword;
   const isPasswordStepValid = isPasswordValid && doPasswordsMatch;
   const [emailTouched, setEmailTouched] = useState(false);
-  const [verificationCode, setVerificationCode] = useState("");
+  const [authCode, setAuthCode] = useState("");
 
   const isEmailValid = /^\S+@\S+\.\S+$/.test(email);
 
@@ -224,26 +228,61 @@ export default function SignUpPage() {
                 <br />
                 발송된 인증번호를 입력해주세요.
               </div>
-              <VerificationCodeInput onComplete={setVerificationCode} />
+              <VerificationCodeInput onComplete={setAuthCode} />
               <div className="flex justify-center items-center text-white text-xs mt-[12.25px]">
                 30초
               </div>
               <Button
                 className={cn(
                   "mt-3 w-[350px] h-10 text-sm cursor-pointer mt-[4.89px]",
-                  verificationCode.length < 6
+                  authCode.length < 6
                     ? "bg-[#555555] text-[#777777]"
                     : "bg-[#0050ef] text-white"
                 )}
-                disabled={verificationCode.length < 6}
-                onClick={() => setStep("password")}
+                disabled={authCode.length < 6}
+                onClick={async () => {
+                  try {
+                    await validateAuthCode(email, authCode);
+                    setStep("password");
+                  } catch (error) {
+                    console.log("❌ 인증 실패 요청 값:", { email, authCode });
+
+                    if (axios.isAxiosError(error)) {
+                      console.error(
+                        "❌ 인증 실패:",
+                        error.response?.data || error.message
+                      );
+                      alert(
+                        typeof error.response?.data?.message === "string"
+                          ? error.response.data.message
+                          : "인증에 실패했습니다."
+                      );
+                    } else {
+                      console.error("❌ 예기치 못한 에러:", error);
+                      alert("알 수 없는 오류가 발생했습니다.");
+                    }
+                  }
+                }}
               >
                 다음
               </Button>
 
               <div className="flex justify-center items-center text-white text-xs mt-[3px]">
                 인증번호를 못받으셨나요?
-                <span className="underline cursor-pointer ml-1">
+                <span
+                  className="underline cursor-pointer ml-1"
+                  onClick={async () => {
+                    try {
+                      await resendEmailCode(email);
+                      alert("인증번호가 다시 발송되었습니다.");
+                    } catch (error) {
+                      console.error("인증번호 재전송 실패:", error);
+                      alert(
+                        "인증번호 재전송에 실패했습니다. 잠시 후 다시 시도해주세요."
+                      );
+                    }
+                  }}
+                >
                   인증번호 다시 받기
                 </span>
               </div>

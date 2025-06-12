@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   const isEmailValid = /^\S+@\S+\.\S+$/.test(email);
   const showEmailError = emailTouched && email !== "" && !isEmailValid;
-  const showPasswordError = true;
+  const showPasswordError = false;
   const login = async ({
     email,
     password,
