@@ -4,7 +4,7 @@ import { BasicMusic } from "@/assets/Images/BasicMusic";
 export const MusicianCardItem = () => {
   return (
     <div
-      className="relative w-[217.5px] h-[255px] rounded-[15px] overflow-hidden border"
+      className="relative w-[217.5px] h-[255px] rounded-[15px] overflow-hidden border cursor-pointer"
       style={{
         border: "0.75px solid #333333",
       }}

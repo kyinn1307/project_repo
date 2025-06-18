@@ -6,7 +6,11 @@ import GoogleBtn from "@/assets/GoogleBtn";
 import { sendEmailCode } from "@/apis/email";
 import { cn } from "@/lib/utils";
 
-export function EmailStep({ onNext }: { onNext: () => void }) {
+interface EmailStepProps {
+  onNext: (email: string) => void;
+}
+
+export function EmailStep({ onNext }: EmailStepProps) {
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
   const isEmailValid = /^\S+@\S+\.\S+$/.test(email);
@@ -58,7 +62,7 @@ export function EmailStep({ onNext }: { onNext: () => void }) {
               try {
                 console.log("인증번호를 이메일로 보냈습니다");
                 await sendEmailCode(email);
-                onNext();
+                onNext(email);
               } catch (error) {
                 console.error("이메일 전송 실패:", error);
               }

@@ -5,13 +5,15 @@ import {
 } from "@/components/ui/popover";
 import { MoreHorizontal, Link, Edit, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-export function FeedMoreMenu() {
+
+export function ProjectMoreMenu() {
   const navigate = useNavigate();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button>
-          <MoreHorizontal size={15} className="text-[#999999]" />
+          <MoreHorizontal size={15} className="text-white" />
         </button>
       </PopoverTrigger>
 
@@ -29,7 +31,7 @@ export function FeedMoreMenu() {
           </button>
           <button
             className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]"
-            onClick={() => navigate("/upload/feed-edit")}
+            onClick={() => navigate("/upload/project-edit")}
           >
             <Edit size={13} />
             수정

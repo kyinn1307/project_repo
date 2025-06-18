@@ -1,16 +1,17 @@
 import { MoreInfoWhtieIcon } from "@/assets/Icons/my-profile/MoreInfoWhiteIcon";
 import { Clock, Eye, Heart } from "lucide-react";
+import { ProjectMoreMenu } from "../profile/ProjectMoreMenu";
 
 export const ProjectContentItem = () => {
   return (
     <div className="w-[262.5px] h-[157.5px] flex flex-col bg-[#111111] rounded-[22.5px] pt-[13.5px] px-[16.5px]">
-      <div className="flex flex-row justify-end mr-[2.25px]">
-        <MoreInfoWhtieIcon />
-      </div>
-      <div className="flex flex-col gap-[7px]">
-        <div className="h-[17px] text-[13.5px] font-bold text-white">
+      <div className="flex flex-row justify-between">
+        <div className="h-[17px] text-[13.5px] mt-[3px] font-bold text-white">
           팀원모집
         </div>
+        <ProjectMoreMenu />
+      </div>
+      <div className="flex flex-col gap-[7px] mt-[7px]">
         <div className="h-[17px] text-[13.5px] font-bold text-[#7CA8FF]">
           Creative Music Video Production
         </div>

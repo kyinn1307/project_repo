@@ -19,16 +19,30 @@ export default function SignUpPage() {
     | "field"
   >("terms");
 
+  const [email, setEmail] = useState("");
+
   return (
     <div className="flex flex-col items-center w-[400px] gap-10">
-      <div className="relative">
+      <div className="relative w-[67.24px] h-15">
         <SetaLetterLogo />
       </div>
       <div className="relative flex flex-col w-[400px] rounded-[10px] bg-[#222222] py-10 px-[25px] box-border gap-10">
         {step === "terms" && <TermsStep onNext={() => setStep("email")} />}
-        {step === "email" && <EmailStep onNext={() => setStep("emailAuth")} />}
+        {step === "email" && (
+          <EmailStep
+            onNext={(emailValue) => {
+              setEmail(emailValue);
+              setStep("emailAuth");
+            }}
+          />
+        )}
         {step === "emailAuth" && (
-          <EmailAuthStep onNext={() => setStep("password")} />
+          <EmailAuthStep
+            email={email}
+            onNext={() => {
+              console.log("이메일 인증 완료, 다음 단계로 진행");
+            }}
+          />
         )}
         {step === "password" && (
           <PasswordStep onNext={() => setStep("nickname")} />

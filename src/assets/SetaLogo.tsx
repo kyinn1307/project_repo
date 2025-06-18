@@ -1,8 +1,8 @@
 const SetaLogo = () => {
   return (
     <svg
-      width="67.24"
-      height="60"
+      width="full"
+      height="full"
       viewBox="0 0 90 80"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

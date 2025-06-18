@@ -1,8 +1,9 @@
 import MusicDefault from "@/assets/Images/MusicPlayDefault.png";
 import { Heart } from "lucide-react";
 import { PlayIcon } from "@/assets/Icons/my-profile/PlayIcon";
-import { LyricsIcon } from "@/assets/Icons/music-video/LyricsIcon";
+import { LyricsSmallIcon } from "@/assets/Icons/my-profile/LyricsSmallIcon";
 import { MusicMoreMenu } from "./MusicMoreMenu";
+
 export const MusicItem = () => {
   return (
     <div className="w-full flex flex-col pb-1 ">
@@ -51,7 +52,7 @@ export const MusicItem = () => {
           </span>
         </div>
         <span className="flex items-center">
-          <LyricsIcon />
+          <LyricsSmallIcon />
         </span>
       </div>
     </div>

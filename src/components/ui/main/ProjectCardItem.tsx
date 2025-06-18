@@ -34,7 +34,7 @@ export const ProjectCardItem = () => {
           <HeartIcon />
           <span>0</span>
         </div>
-        <Button className="bg-[#0050ef] text-white text-sm px-3 py-[2px] rounded-[5px] h-7">
+        <Button className="bg-[#0050ef] text-white text-sm px-3 py-[2px] rounded-[5px] h-7 cursor-pointer">
           문의하기
         </Button>
       </div>

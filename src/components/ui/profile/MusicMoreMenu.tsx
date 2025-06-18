@@ -4,8 +4,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { MoreHorizontal, Link, Edit, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function MusicMoreMenu() {
+  const navigate = useNavigate();
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -26,7 +29,10 @@ export function MusicMoreMenu() {
             <Link size={13} />
             링크복사
           </button>
-          <button className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]">
+          <button
+            className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]"
+            onClick={() => navigate("/upload/music-edit")}
+          >
             <Edit size={13} />
             수정
           </button>

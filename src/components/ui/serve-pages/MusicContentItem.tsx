@@ -1,8 +1,14 @@
 import MusicDefault from "@/assets/Images/MusicPlayDefault.png";
+import { useNavigate } from "react-router-dom";
 
 export const MusicContentItem = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="relative flex flex-col overflow-hidden bg-[#111111] rounded-[15px]">
+    <div
+      className="relative flex flex-col overflow-hidden bg-[#111111] rounded-[15px] cursor-pointer"
+      onClick={() => navigate("/music-video")}
+    >
       <div className="flex flex-row">
         <img
           src={MusicDefault}

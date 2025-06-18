@@ -37,7 +37,7 @@ export const MusicVideoContainer = ({ video }: Props) => {
       <div className="w-full flex flex-row justify-center text-white gap-[22.5px] snap-start flex-shrink-0">
         <div className="flex flex-col">
           <div className="flex px-[15.75px] h-[58px] items-center">
-            {isPlaying && <PauseVideoIcon />}
+            {!isPlaying && <PauseVideoIcon />}
           </div>
           <div className="w-[525px] flex flex-col">
             <div
@@ -115,7 +115,9 @@ export const MusicVideoContainer = ({ video }: Props) => {
             onTabChange={handleTabToggle}
           />
         </div>
-        {activeTab && <MusicVideoDetailContainer tab={activeTab} />}
+        {activeTab && (
+          <MusicVideoDetailContainer tab={activeTab} setTab={setActiveTab} />
+        )}
       </div>
     </>
   );

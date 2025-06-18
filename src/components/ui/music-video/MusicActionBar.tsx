@@ -28,7 +28,7 @@ export const MusicActionBar = ({ onTabChange }: Props) => {
               liked ? "text-red-500" : "text-white"
             }`}
             fill={liked ? "currentColor" : "none"}
-          />{" "}
+          />
         </button>
         <span className="text-[10.5px] mt-1">12</span>
       </div>

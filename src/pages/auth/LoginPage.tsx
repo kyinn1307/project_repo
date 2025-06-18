@@ -61,7 +61,9 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center w-[400px] gap-10">
-      <SetaLetterLogo />
+      <div className="w-[67.24px] h-15">
+        <SetaLetterLogo />
+      </div>
       <div className="w-[400px] rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
         {!showPasswordInput ? (
           <LoginForm

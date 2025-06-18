@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { ProfileEditModal } from "./ProfileEditModal";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
 import junseo from "@/assets/Images/junseo_lee.png";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
@@ -20,12 +20,7 @@ export function ProfileSideBar() {
 
         <div className="flex w-full justify-between items-center mb-5">
           <span className="text-xl font-bold">makit</span>
-          <Button
-            variant="secondary"
-            className="w-[71px] h-[19.5px] px-[7.5px] py-[2.25px] rounded-[3.75px] text-xs text-white bg-[#555555] cursor-pointer"
-          >
-            프로필편집
-          </Button>
+          <ProfileEditModal />
         </div>
 
         <div className="w-full flex flex-col gap-[4.5px] text-[9px] text-gray-400 mb-4">

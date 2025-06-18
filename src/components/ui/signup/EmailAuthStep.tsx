@@ -1,13 +1,36 @@
-// steps/EmailAuthStep.tsx
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { validateAuthCode, resendEmailCode } from "@/apis/email";
 import VerificationCodeInput from "@/components/ui/signup/VerificationCodeInput";
-import axios from "axios";
 
-export function EmailAuthStep({ onNext }: { onNext: () => void }) {
+interface EmailAuthStepProps {
+  email: string;
+  onNext: () => void;
+}
+
+export function EmailAuthStep({ email, onNext }: EmailAuthStepProps) {
   const [authCode, setAuthCode] = useState("");
-  const [email] = useState("test@example.com");
+
+  const handleValidate = async () => {
+    console.log("👉 인증 요청 시작", { email, authCode }); // 먼저 로그 찍기
+    console.log("document.cookie:", document.cookie);
+
+    try {
+      const success = await validateAuthCode(email, authCode);
+      console.log("응답 성공:", success);
+
+      if (success) {
+        console.log("✅ 인증 성공");
+        onNext();
+      } else {
+        console.log("❌ 인증 실패");
+        console.log("document.cookie:", document.cookie);
+        alert("인증 실패. 코드를 확인해주세요.");
+      }
+    } catch (err) {
+      console.error("❌ 인증 요청 실패", err);
+    }
+  };
 
   return (
     <div>
@@ -26,18 +49,7 @@ export function EmailAuthStep({ onNext }: { onNext: () => void }) {
             : "bg-[#0050ef] text-white"
         }`}
         disabled={authCode.length < 6}
-        onClick={async () => {
-          try {
-            await validateAuthCode(email, authCode);
-            onNext();
-          } catch (error) {
-            if (axios.isAxiosError(error)) {
-              alert(error.response?.data?.message || "인증에 실패했습니다.");
-            } else {
-              alert("알 수 없는 오류가 발생했습니다.");
-            }
-          }
-        }}
+        onClick={handleValidate}
       >
         다음
       </Button>
