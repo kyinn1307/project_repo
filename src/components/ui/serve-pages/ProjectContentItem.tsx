@@ -1,4 +1,3 @@
-import { MoreInfoWhtieIcon } from "@/assets/Icons/my-profile/MoreInfoWhiteIcon";
 import { Clock, Eye, Heart } from "lucide-react";
 import { ProjectMoreMenu } from "../profile/ProjectMoreMenu";
 
