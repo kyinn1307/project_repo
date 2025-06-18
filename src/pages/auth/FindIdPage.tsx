@@ -2,8 +2,10 @@ import { useState } from "react";
 import { SetaLetterLogo } from "@/assets/SetaLetterLogo";
 import { FindIdForm } from "@/components/ui/authSet/FindIdForm";
 import axiosInstance from "@/apis/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 export default function FindIdPage() {
+  const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [foundEmail, setFoundEmail] = useState<string | null>(null);
@@ -31,7 +33,9 @@ export default function FindIdPage() {
 
   return (
     <div className="flex flex-col items-center w-[400px] gap-10">
-      <SetaLetterLogo />
+      <div>
+        <SetaLetterLogo onClick={() => navigate("")} />
+      </div>
       <div className="w-[400px] rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
         {submitted ? (
           <div className="text-white text-sm">
