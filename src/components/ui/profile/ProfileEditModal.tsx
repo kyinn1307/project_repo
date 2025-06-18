@@ -14,7 +14,7 @@ export const ProfileEditModal = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  // const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const bgFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -37,14 +37,14 @@ export const ProfileEditModal = () => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setBackgroundImage(reader.result as string);
+      // setBackgroundImage(reader.result as string);
     };
     reader.readAsDataURL(file);
   };
 
   const toggleSelection = (
     value: string,
-    selectedList: string[],
+
     setSelectedList: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     setSelectedList((prev) =>
@@ -169,9 +169,7 @@ export const ProfileEditModal = () => {
               ].map((tag) => (
                 <span
                   key={tag}
-                  onClick={() =>
-                    toggleSelection(tag, selectedGenres, setSelectedGenres)
-                  }
+                  onClick={() => toggleSelection(tag, setSelectedGenres)}
                   className={`text-[10.5px] px-[7.5px] py-[2.25px] rounded-full cursor-pointer ${
                     selectedGenres.includes(tag)
                       ? "bg-[#0050ef] text-white"
@@ -203,9 +201,7 @@ export const ProfileEditModal = () => {
               ].map((tag) => (
                 <span
                   key={tag}
-                  onClick={() =>
-                    toggleSelection(tag, selectedFields, setSelectedFields)
-                  }
+                  onClick={() => toggleSelection(tag, setSelectedFields)}
                   className={`text-[10.5px] px-[7.5px] py-[2.25px] rounded-full cursor-pointer ${
                     selectedFields.includes(tag)
                       ? "bg-[#0050ef] text-white"
