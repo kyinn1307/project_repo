@@ -72,7 +72,7 @@ export const ProfileEditModal = () => {
         </DialogHeader>
 
         <div className="flex flex-col gap-[15px]">
-          {/* 🔵 프로필 이미지 선택 */}
+          {/* 프로필 이미지 선택 */}
           <div className="flex justify-center mb-[15px] relative">
             <div
               onClick={() => fileInputRef.current?.click()}
