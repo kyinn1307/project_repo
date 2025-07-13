@@ -26,20 +26,12 @@ export const postPassword = (data: PasswordRequest) => {
   return axiosInstance.post("/signup/password", data);
 };
 
-export const getSessionPassword = () => {
-  return axiosInstance.get("/signup/session-password");
+export const postNickname = (nickname: string) => {
+  return axiosInstance.post("/signup/nickname", { nickname });
 };
 
-export const postNickname = (data: string) => {
-  return axiosInstance.post("/signup/nickname", data);
-};
-
-export const getSessionNickname = () => {
-  return axiosInstance.get("/signup/session-nickname");
-};
-
-export const postPhoneNumber = (data: string) => {
-  return axiosInstance.post("/signup/phone-number", data);
+export const postPhoneNumber = (phoneNumber: string) => {
+  return axiosInstance.post("/signup/phone-number", { phoneNumber });
 };
 
 export const getSessionPhoneNumber = () => {
