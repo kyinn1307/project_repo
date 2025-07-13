@@ -1,35 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-
-const FIELD_OPTIONS = [
-  "작사",
-  "믹싱",
-  "비트메이커",
-  "프로듀서",
-  "작곡/편곡",
-  "마스터링",
-  "앨범아트",
-  "세션",
-  "보컬",
-  "영상",
-  "그 외",
-];
-
-const GENRE_OPTIONS = [
-  "팝",
-  "힙합",
-  "록",
-  "재즈",
-  "인디",
-  "R&B",
-  "클래식",
-  "트로트",
-  "컨트리",
-  "일렉트로닉",
-  "발라드",
-  "그 외",
-];
-
+import { getFieldsGenres } from "@/apis/signup";
+import { postComplete } from "@/apis/signup";
 function SelectableTag({
   label,
   selected,
@@ -52,13 +25,26 @@ function SelectableTag({
   );
 }
 
-export default function FieldGenreSelector({
-  onSubmit,
-}: {
-  onSubmit: (data: { fields: string[]; genres: string[] }) => void;
-}) {
+export default function FieldGenreSelector() {
+  const navigate = useNavigate();
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [fieldOptions, setFieldOptions] = useState<string[]>([]);
+  const [genreOptions, setGenreOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const res = await getFieldsGenres(); // ✅ API 요청
+        setFieldOptions(res.data.fields);
+        setGenreOptions(res.data.genres);
+      } catch (error) {
+        console.error("분야/장르 가져오기 실패:", error);
+      }
+    };
+
+    fetchOptions();
+  }, []);
 
   const toggleSelection = (
     item: string,
@@ -74,6 +60,21 @@ export default function FieldGenreSelector({
 
   const isNextEnabled = selectedFields.length > 0 || selectedGenres.length > 0;
 
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        selectedFields,
+        selectedGenres,
+      };
+      const res = await postComplete(payload);
+      console.log("회원가입 완료 응답 ✅", res);
+      navigate("/");
+    } catch (err) {
+      console.error("회원가입 완료 요청 실패 ❌", err);
+      alert("회원가입을 완료할 수 없습니다.");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-10">
       <div>
@@ -87,7 +88,7 @@ export default function FieldGenreSelector({
         <div>
           <p className="text-xs font-medium mb-[3px] text-white">분야</p>
           <div className="flex flex-wrap gap-x-[5px]">
-            {FIELD_OPTIONS.map((field) => (
+            {fieldOptions.map((field) => (
               <SelectableTag
                 key={field}
                 label={field}
@@ -103,7 +104,7 @@ export default function FieldGenreSelector({
         <div>
           <p className="text-xs font-medium mb-[3px] text-white">장르</p>
           <div className="flex flex-wrap gap-[5px]">
-            {GENRE_OPTIONS.map((genre) => (
+            {genreOptions.map((genre) => (
               <SelectableTag
                 key={genre}
                 label={genre}
@@ -124,9 +125,7 @@ export default function FieldGenreSelector({
               ? "bg-[#0050ef] text-white"
               : "bg-[#555555] text-[#777777]"
           }`}
-        onClick={() =>
-          onSubmit({ fields: selectedFields, genres: selectedGenres })
-        }
+        onClick={handleSubmit}
       >
         완료
       </Button>

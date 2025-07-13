@@ -1,14 +1,34 @@
+import { useQuery } from "@tanstack/react-query";
+import { getMyFeeds, getMyProjects, getMyTracks } from "@/apis/my-profile";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { MusicList } from "./MusicList";
 import { FeedList } from "./FeedLIst";
+import { ProjectList } from "./ProejctList";
 import { HistoryContent } from "./HistoryContent";
 import { SubscribeBusinessContent } from "./SubscribeBusinessContent";
 import { UnsubscribeBusinessContent } from "./UnsubscribeBusinessContent";
 import { useUserStore } from "@/stores/useUserStore";
-import { ProjectList } from "./ProejctList";
 
 export function ProfileMenu() {
   const { isSubscribed } = useUserStore();
+
+  const { data: tracksRes } = useQuery({
+    queryKey: ["myTracks"],
+    queryFn: getMyTracks,
+    select: (res) => res.data.data.tracks,
+  });
+
+  const { data: feedsRes } = useQuery({
+    queryKey: ["myFeeds"],
+    queryFn: getMyFeeds,
+    select: (res) => res.data.data.feeds,
+  });
+
+  const { data: projectsRes } = useQuery({
+    queryKey: ["myProjects"],
+    queryFn: getMyProjects,
+    select: (res) => res.data.data.projects,
+  });
 
   const tabList = [
     { value: "music", label: "음원" },
@@ -39,13 +59,13 @@ export function ProfileMenu() {
       </TabsList>
 
       <TabsContent value="music">
-        <MusicList />
+        <MusicList list={tracksRes || []} />
       </TabsContent>
       <TabsContent value="feed">
-        <FeedList />
+        <FeedList list={feedsRes || []} />
       </TabsContent>
       <TabsContent value="project">
-        <ProjectList />
+        <ProjectList list={projectsRes || []} />
       </TabsContent>
       <TabsContent value="history">
         <HistoryContent />

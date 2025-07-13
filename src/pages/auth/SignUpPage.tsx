@@ -3,7 +3,7 @@ import SetaLetterLogo from "@/assets/SetaLogo";
 import { TermsStep } from "@/components/ui/signup/TermsStep";
 import { EmailStep } from "@/components/ui/signup/EmailStep";
 import { EmailAuthStep } from "@/components/ui/signup/EmailAuthStep";
-import { PasswordStep } from "@/components/ui/signup/\bPasswordStep";
+import { PasswordStep } from "@/components/ui/signup/PasswordStep";
 import { NumberStep } from "@/components/ui/signup/NumberStep";
 import { NicknameStep } from "@/components/ui/signup/NicknameStep";
 import FieldGenreSelector from "@/components/ui/signup/FieldGenreSelector";

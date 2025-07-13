@@ -8,10 +8,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import type { MyProfile } from "@/types/my-profile";
+import { updateProfile, uploadProfileImage } from "@/apis/my-profile";
 
-export const ProfileEditModal = () => {
+export const ProfileEditModal = ({ info }: { info: MyProfile | null }) => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -20,6 +24,21 @@ export const ProfileEditModal = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
 
+  const [nickname, setNickname] = useState("");
+  const [introduction, setIntroduction] = useState("");
+  const [link, setLink] = useState("");
+
+  useEffect(() => {
+    if (info) {
+      setNickname(info.nickname || "");
+      setIntroduction(info.introduction || "");
+      setLink(info.link || "");
+      setProfileImage(info.profileImageUrl); // null도 허용
+      setSelectedGenres(info.genres ?? []); // 값이 없으면 빈 배열
+      setSelectedFields(info.fields ?? []);
+    }
+  }, [info]);
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -27,6 +46,7 @@ export const ProfileEditModal = () => {
     const reader = new FileReader();
     reader.onload = () => {
       setProfileImage(reader.result as string);
+      setProfileImageFile(file); // ✅ 파일 저장
     };
     reader.readAsDataURL(file);
   };
@@ -52,6 +72,36 @@ export const ProfileEditModal = () => {
         ? prev.filter((item) => item !== value)
         : [...prev, value]
     );
+  };
+
+  const handleSave = async () => {
+    try {
+      // 1. 프로필 이미지 업로드
+      if (profileImageFile) {
+        try {
+          const res = await uploadProfileImage(profileImageFile);
+          console.log("✅ 프로필 이미지 업로드 성공", res.data);
+        } catch (err) {
+          console.error("❌ 프로필 이미지 업로드 실패", err);
+        }
+      } else {
+        console.log("ℹ️ 프로필 이미지 파일이 선택되지 않음 (업로드 생략)");
+      }
+
+      // 2. 프로필 정보 업데이트
+      await updateProfile({
+        nickname,
+        phoneNumber: "", // 필요시 input 추가해서 state 관리
+        link,
+        career: "", // 필요시 input 추가해서 state 관리
+        introduction,
+        selectedFields,
+        selectedGenres,
+      });
+      console.log("프로필 수정 성공");
+    } catch (error) {
+      console.error("프로필 수정 실패", error);
+    }
   };
 
   return (
@@ -106,22 +156,28 @@ export const ProfileEditModal = () => {
             <div className="flex justify-between items-center">
               <label className="text-[10.5px]">닉네임</label>
               <Input
+                value={nickname}
                 placeholder="닉네임을 입력해주세요"
-                className="w-[300px] h-[19px] p-[3px] bg-black rounded-[3.75px] text-white border border-gray-700 placeholder:text-[10.5px]"
+                onChange={(e) => setNickname(e.target.value)}
+                className="w-[300px] h-[19px] p-[3px] !text-[10.5px] bg-black rounded-[3.75px] text-white border border-gray-700 placeholder:text-[10.5px]"
               />
             </div>
             <div className="flex justify-between items-center">
               <label className="text-[10.5px]">소개</label>
               <Input
+                value={introduction}
+                onChange={(e) => setIntroduction(e.target.value)}
                 placeholder="텍스트를 입력해주세요"
-                className="w-[300px] h-[19px] p-[3px] bg-black rounded-[3.75px] text-white border border-gray-700 placeholder:text-[10.5px]"
+                className="w-[300px] h-[19px] p-[3px] !text-[10.5px] bg-black rounded-[3.75px] text-white border border-gray-700 placeholder:text-[10.5px]"
               />
             </div>
             <div className="flex justify-between items-center">
               <label className="text-[10.5px]">링크</label>
               <Input
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
                 placeholder="텍스트를 입력해주세요"
-                className="w-[300px] h-[19px] p-[3px] bg-black rounded-[3.75px] text-white border border-gray-700 placeholder:text-[10.5px]"
+                className="w-[300px] h-[19px] p-[3px] !text-[10.5px] bg-black rounded-[3.75px] text-white border border-gray-700 placeholder:text-[10.5px]"
               />
             </div>
           </div>
@@ -216,7 +272,10 @@ export const ProfileEditModal = () => {
         </div>
 
         <div className="flex justify-center">
-          <Button className="w-15 h-[22.5px] text-xs bg-[#0050ef] text-white items-center cursor-pointer">
+          <Button
+            className="w-15 h-[22.5px] text-xs bg-[#0050ef] text-white items-center cursor-pointer"
+            onClick={handleSave}
+          >
             저장
           </Button>
         </div>

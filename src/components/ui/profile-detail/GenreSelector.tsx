@@ -1,31 +1,22 @@
-import { useState } from "react";
 import { GenreItemBtn } from "./GenreItemBtn";
-
-type Genre =
-  | "팝"
-  | "힙합"
-  | "록"
-  | "재즈"
-  | "인디"
-  | "R&B"
-  | "클래식"
-  | "트로트"
-  | "컨트리"
-  | "일렉트로닉"
-  | "발라드"
-  | "그 외";
+import type { Genre } from "@/types/music";
 
 const genreList: Genre[][] = [
   ["팝", "힙합", "록", "재즈", "인디", "R&B", "클래식", "트로트", "컨트리"],
   ["일렉트로닉", "발라드", "그 외"],
 ];
 
-export const GenreSelector = () => {
-  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
+interface GenreSelectorProps {
+  value: Genre[];
+  setValue: (genres: Genre[]) => void;
+}
 
+export const GenreSelector = ({ value, setValue }: GenreSelectorProps) => {
   const handleGenreClick = (genre: Genre) => {
-    setSelectedGenres((prev) =>
-      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+    setValue(
+      value.includes(genre)
+        ? value.filter((g) => g !== genre)
+        : [...value, genre]
     );
   };
 
@@ -39,7 +30,7 @@ export const GenreSelector = () => {
               <GenreItemBtn
                 key={genre}
                 genre={genre}
-                isSelected={selectedGenres.includes(genre)}
+                isSelected={value.includes(genre)}
                 onClick={() => handleGenreClick(genre)}
               />
             ))}

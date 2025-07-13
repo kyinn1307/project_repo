@@ -21,6 +21,8 @@ import TermsPage from "@/pages/auth/TermsPage";
 import { PrivacyPage } from "@/pages/auth/PrivacyPage";
 import { MusicianRegisterPage } from "@/pages/MusicianRegisterPage";
 import { ProjectEditPage } from "@/pages/ProjectEditPage";
+import UserProfilePage from "@/pages/UserProfilePage";
+import { PrivacySettingPage } from "@/pages/PrivacySettingPage";
 
 export const router = createBrowserRouter([
   {
@@ -33,9 +35,11 @@ export const router = createBrowserRouter([
       { path: "feed", element: <FeedPage /> },
       { path: "project", element: <ProjectPage /> },
       { path: "my-profile", element: <MyProfilPage /> },
+      { path: "user-profile", element: <UserProfilePage /> },
       { path: "business-setting", element: <BusinessSettingPage /> },
       { path: "music-video", element: <MusicVideoPage /> },
       { path: "musician-register", element: <MusicianRegisterPage /> },
+      { path: "privacy-setting", element: <PrivacySettingPage /> },
     ],
   },
   {
@@ -61,7 +65,7 @@ export const router = createBrowserRouter([
     element: <DetailLayout />,
     children: [
       { path: "", element: <UploadPage /> },
-      { path: "music-edit", element: <MusicEditPage /> },
+      { path: "music-edit/:id", element: <MusicEditPage /> },
       { path: "feed-edit", element: <FeedEditPage /> },
       { path: "project-edit", element: <ProjectEditPage /> },
     ],
