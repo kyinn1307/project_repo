@@ -1,18 +1,26 @@
 import { Clock, Eye, Heart } from "lucide-react";
 import { ProjectMoreMenu } from "../profile/ProjectMoreMenu";
+import type { Project } from "@/types/project";
 
-export const ProjectContentItem = () => {
+interface ProjectContentItemProps {
+  project: Project;
+}
+
+export const ProjectContentItem = ({ project }: ProjectContentItemProps) => {
+  const { title, tags, likeCount, viewCount, createdAt, categoryName } =
+    project;
+
   return (
     <div className="w-[262.5px] h-[157.5px] flex flex-col bg-[#111111] rounded-[22.5px] pt-[13.5px] px-[16.5px]">
       <div className="flex flex-row justify-between">
         <div className="h-[17px] text-[13.5px] mt-[3px] font-bold text-white">
-          팀원모집
+          {categoryName || "팀원모집"}
         </div>
         <ProjectMoreMenu />
       </div>
       <div className="flex flex-col gap-[7px] mt-[7px]">
         <div className="h-[17px] text-[13.5px] font-bold text-[#7CA8FF]">
-          Creative Music Video Production
+          {title}
         </div>
         <div className="h-[14px] text-[11.25px] font-medium text-white">
           프로듀서 | 비트메이커 | 보컬

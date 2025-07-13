@@ -5,10 +5,34 @@ import {
 } from "@/components/ui/popover";
 import { MoreHorizontal, Link, Edit, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { deleteTrack } from "@/apis/music";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export function MusicMoreMenu() {
+interface MusicMoreMenuProps {
+  musicId: number;
+}
+
+export function MusicMoreMenu({ musicId }: MusicMoreMenuProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: () => deleteTrack(musicId),
+    onSuccess: () => {
+      alert("삭제가 완료되었습니다.");
+      // 캐시 무효화 → 트랙 목록 refetch 유도
+      queryClient.invalidateQueries({ queryKey: ["myTracks"] });
+    },
+    onError: () => {
+      alert("삭제에 실패했습니다.");
+    },
+  });
+
+  const handleDelete = () => {
+    const confirmed = window.confirm("정말로 삭제하시겠습니까?");
+    if (!confirmed) return;
+    deleteMutate(); // 삭제 실행
+  };
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -31,12 +55,15 @@ export function MusicMoreMenu() {
           </button>
           <button
             className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]"
-            onClick={() => navigate("/upload/music-edit")}
+            onClick={() => navigate(`/upload/music-edit/${musicId}`)}
           >
             <Edit size={13} />
             수정
           </button>
-          <button className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]">
+          <button
+            className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]"
+            onClick={handleDelete}
+          >
             <X size={13} />
             삭제
           </button>
