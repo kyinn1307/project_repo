@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { AxiosError } from "axios";
-import axiosInstance from "@/apis/axiosInstance";
 import SetaLetterLogo from "@/assets/SetaLogo";
 import GoogleBtn from "@/assets/GoogleBtn";
 import { LoginForm } from "@/components/ui/login/LoginForm";
 import { PasswordForm } from "@/components/ui/login/PasswordForm";
 import { useNavigate } from "react-router-dom";
+import { login } from "@/apis/login";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -19,21 +18,6 @@ export default function LoginPage() {
   const isEmailValid = /^\S+@\S+\.\S+$/.test(email);
   const showEmailError = emailTouched && email !== "" && !isEmailValid;
   const showPasswordError = false;
-  const login = async ({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) => {
-    try {
-      const res = await axiosInstance.post("/auth/login", { email, password });
-      return res.data;
-    } catch (err) {
-      const axiosErr = err as AxiosError<{ message?: string }>;
-      throw axiosErr.response?.data || axiosErr;
-    }
-  };
 
   const handleNextClick = () => {
     setEmailTouched(true);
@@ -50,8 +34,9 @@ export default function LoginPage() {
     setPasswordTouched(true);
 
     try {
-      const data = await login({ email, password });
+      const data = await login(email, password);
       console.log("로그인 성공", data);
+      navigate("/");
     } catch (err) {
       const message =
         (err as { message?: string })?.message || "알 수 없는 오류";

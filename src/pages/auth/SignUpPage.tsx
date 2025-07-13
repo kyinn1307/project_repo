@@ -20,6 +20,7 @@ export default function SignUpPage() {
   >("terms");
 
   const [email, setEmail] = useState("");
+  const [timer, setTimer] = useState("");
 
   return (
     <div className="flex flex-col items-center w-[400px] gap-10">
@@ -30,6 +31,7 @@ export default function SignUpPage() {
         {step === "terms" && <TermsStep onNext={() => setStep("email")} />}
         {step === "email" && (
           <EmailStep
+            setTimer={(t) => setTimer(t)}
             onNext={(emailValue) => {
               setEmail(emailValue);
               setStep("emailAuth");
@@ -38,9 +40,11 @@ export default function SignUpPage() {
         )}
         {step === "emailAuth" && (
           <EmailAuthStep
+            timer={timer}
             email={email}
             onNext={() => {
               console.log("이메일 인증 완료, 다음 단계로 진행");
+              setStep("password");
             }}
           />
         )}
@@ -53,7 +57,7 @@ export default function SignUpPage() {
         {step === "number" && <NumberStep onNext={() => setStep("field")} />}
         {step === "field" && (
           <>
-            <FieldGenreSelector onSubmit={() => {}} />
+            <FieldGenreSelector />
           </>
         )}
       </div>

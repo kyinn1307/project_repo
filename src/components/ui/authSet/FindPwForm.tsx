@@ -21,12 +21,14 @@ export const FindPwForm = ({
 }: FindPwFormProps) => {
   return (
     <>
-      <div className="text-white text-xl font-bold">비밀번호찾기</div>
-      <div className="text-white text-base font-medium">
+      <div className="text-white text-[15px] font-bold mb-[2px]">
+        비밀번호찾기
+      </div>
+      <div className="text-white text-xs font-medium">
         이메일을 입력해주세요
       </div>
 
-      <div className="text-white text-xs font-medium mt-10">이메일</div>
+      <div className="text-white text-[9px] font-medium mt-[30px]">이메일</div>
       <Input
         id="email"
         type="text"
@@ -34,7 +36,7 @@ export const FindPwForm = ({
         onChange={(e) => setEmail(e.target.value)}
         placeholder="여기에 입력"
         className={cn(
-          "mt-1 h-9 w-[350px] bg-[#111111] text-white text-sm border",
+          "mt-[2.5px] h-[27px] w-full !text-[10.5px] bg-[#111111] text-white border rounded-[3.75px] placeholder:text-[10.5px] px-[6px] py-[7px]",
           emailTouched && email !== "" && !isEmailValid
             ? "border-red-500"
             : "border-[#555555]",
@@ -43,10 +45,12 @@ export const FindPwForm = ({
       />
 
       {errorMessage && (
-        <div className="text-red-500 text-xs mt-1 ml-1">{errorMessage}</div>
+        <div className="text-red-500 text-[10.5px] mt-1 ml-1">
+          {errorMessage}
+        </div>
       )}
       <Button
-        className="mt-3 w-[350px] h-10 bg-[#0050ef] text-white text-sm cursor-pointer"
+        className="mt-[7.5px] w-full h-[30px] bg-[#0050ef] text-white text-[10.5px] cursor-pointer rounded-[3.75px]"
         onClick={onSubmit}
       >
         다음

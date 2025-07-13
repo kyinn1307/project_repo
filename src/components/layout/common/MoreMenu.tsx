@@ -1,13 +1,27 @@
 import { useState } from "react";
 import { EtcIcon } from "@/assets/Icons/EtcIcon";
+import { logout } from "@/apis/login";
+import { useNavigate } from "react-router-dom";
+
 export function MoreMenu() {
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const res = await logout();
+      console.log("로그아웃 완료!", res);
+      navigate("/");
+    } catch (err) {
+      console.log("로그아웃 안됨.", err);
+    }
+  };
 
   return (
     <div className="relative">
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-3 px-4 py-2 text-white w-full hover:bg-[#222]"
+        className="flex items-center gap-3 px-4 py-2 text-white w-full hover:bg-[#222] cursor-pointer"
       >
         <EtcIcon />
         <span className="text-sm">더보기</span>
@@ -33,12 +47,12 @@ export function MoreMenu() {
               </a>
             </li>
             <li>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-white hover:bg-[#333]"
+              <span
+                className="block px-4 py-2 text-sm text-white hover:bg-[#333] cursor-pointer"
+                onClick={handleLogout}
               >
                 로그아웃
-              </a>
+              </span>
             </li>
           </ul>
         </div>

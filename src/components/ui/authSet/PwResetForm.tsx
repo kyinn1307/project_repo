@@ -20,14 +20,14 @@ export const PwResetForm = ({ onSubmit }: Props) => {
   const isValid = isPasswordValid && doPasswordsMatch;
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="text-white text-base font-medium">
+    <div className="flex flex-col gap-[30px]">
+      <div className="text-white text-[15px] font-medium">
         비밀번호를 입력해주세요.
       </div>
 
       <div className="flex flex-col">
         <div>
-          <div className="text-xs text-white">비밀번호</div>
+          <div className="text-[9px] text-white">비밀번호</div>
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
@@ -35,7 +35,7 @@ export const PwResetForm = ({ onSubmit }: Props) => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="8자리 이상, 특수문자 포함"
               className={cn(
-                "mt-1 h-9 w-[350px] bg-[#111111] text-white text-sm pr-10 border",
+                "mt-[2.5px] px-[6px] h-[27px] w-full bg-[#111111] text-white !text-[10.5px] pr-10 border rounded-[3.75px]",
                 password !== "" && !isPasswordValid
                   ? "border-red-500"
                   : "border-[#555555]",
@@ -53,7 +53,7 @@ export const PwResetForm = ({ onSubmit }: Props) => {
         </div>
 
         <div className="mt-3">
-          <div className="text-xs text-white">비밀번호 확인</div>
+          <div className="text-[9px] text-white">비밀번호 확인</div>
           <div className="relative">
             <Input
               type={showConfirmPassword ? "text" : "password"}
@@ -61,7 +61,7 @@ export const PwResetForm = ({ onSubmit }: Props) => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="비밀번호를 다시 입력하세요"
               className={cn(
-                "mt-1 h-9 w-[350px] bg-[#111111] text-white text-sm pr-10 border",
+                "mt-[2.5px] px-[6px] h-[27px] w-full bg-[#111111] text-white !text-[10.5px] pr-10 border rounded-[3.75px]",
                 confirmPassword !== "" && !doPasswordsMatch
                   ? "border-red-500"
                   : "border-[#555555]",
@@ -83,7 +83,7 @@ export const PwResetForm = ({ onSubmit }: Props) => {
 
         <Button
           className={cn(
-            "mt-5 w-[350px] h-10 text-sm cursor-pointer",
+            "mt-5 w-full h-[30px] text-[15px] cursor-pointer rounded-[3.75px]",
             isValid ? "bg-[#0050ef] text-white" : "bg-[#555555] text-[#777777]"
           )}
           disabled={!isValid}

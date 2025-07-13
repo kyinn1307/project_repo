@@ -1,8 +1,8 @@
 export const PasswordBtn = () => {
   return (
     <svg
-      width="19"
-      height="17"
+      width="13.75"
+      height="12.38"
       viewBox="0 0 19 17"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

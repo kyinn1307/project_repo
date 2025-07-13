@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PasswordBtn } from "@/assets/PasswordBtn";
+import { postPassword } from "@/apis/signup";
 
 export const PasswordStep = ({ onNext }: { onNext: () => void }) => {
   const [password, setPassword] = useState("");
@@ -14,6 +15,23 @@ export const PasswordStep = ({ onNext }: { onNext: () => void }) => {
     password.length >= 8 && /[!@#$%^&*(),.?":{}|<>]/.test(password);
   const doPasswordsMatch = password === confirmPassword;
   const isPasswordStepValid = isPasswordValid && doPasswordsMatch;
+
+  const handlePwClick = async () => {
+    try {
+      const success = await postPassword({ password, confirmPassword });
+      console.log("응답 성공:", success);
+
+      if (success) {
+        console.log("✅ 인증 성공");
+        onNext();
+      } else {
+        console.log("❌ 인증 실패");
+        alert("인증 실패. 코드를 확인해주세요.");
+      }
+    } catch (err) {
+      console.error("❌ 인증 요청 실패", err);
+    }
+  };
 
   return (
     <>
@@ -96,7 +114,7 @@ export const PasswordStep = ({ onNext }: { onNext: () => void }) => {
               : "bg-[#555555] text-[#777777]"
           )}
           disabled={!isPasswordStepValid}
-          onClick={() => onNext()}
+          onClick={handlePwClick}
         >
           다음
         </Button>

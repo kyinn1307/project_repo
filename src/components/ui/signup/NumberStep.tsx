@@ -2,10 +2,28 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { postPhoneNumber } from "@/apis/signup";
 
 export const NumberStep = ({ onNext }: { onNext: () => void }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const isPhoneNumberValid = /^\d{10,11}$/.test(phoneNumber);
+
+  const handlePhoneNumberClick = async () => {
+    try {
+      const success = await postPhoneNumber(phoneNumber);
+      console.log("응답 성공:", success);
+
+      if (success) {
+        console.log("✅ 인증 성공");
+        onNext();
+      } else {
+        console.log("❌ 인증 실패");
+        alert("인증 실패. 코드를 확인해주세요.");
+      }
+    } catch (err) {
+      console.error("❌ 인증 요청 실패", err);
+    }
+  };
 
   return (
     <>
@@ -42,7 +60,7 @@ export const NumberStep = ({ onNext }: { onNext: () => void }) => {
               : "bg-[#555555] text-[#777777]"
           )}
           disabled={!isPhoneNumberValid}
-          onClick={() => onNext()}
+          onClick={handlePhoneNumberClick}
         >
           다음
         </Button>

@@ -5,12 +5,12 @@ import { Label } from "@radix-ui/react-label";
 import GoogleBtn from "@/assets/GoogleBtn";
 import { sendEmailCode } from "@/apis/email";
 import { cn } from "@/lib/utils";
-
 interface EmailStepProps {
+  setTimer: (timer: string) => void;
   onNext: (email: string) => void;
 }
 
-export function EmailStep({ onNext }: EmailStepProps) {
+export function EmailStep({ setTimer, onNext }: EmailStepProps) {
   const [email, setEmail] = useState("");
   const [emailTouched, setEmailTouched] = useState(false);
   const isEmailValid = /^\S+@\S+\.\S+$/.test(email);
@@ -61,7 +61,9 @@ export function EmailStep({ onNext }: EmailStepProps) {
             if (isEmailValid) {
               try {
                 console.log("인증번호를 이메일로 보냈습니다");
-                await sendEmailCode(email);
+                const res = await sendEmailCode(email);
+                console.log(res);
+                setTimer(res.data.timer);
                 onNext(email);
               } catch (error) {
                 console.error("이메일 전송 실패:", error);
