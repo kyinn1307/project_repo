@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { ProfileEditModal } from "./ProfileEditModal";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
@@ -17,7 +18,7 @@ import { useUserStore } from "@/stores/useUserStore";
 
 import { getFollowerList } from "@/apis/follower";
 import { getFollowingList } from "@/apis/follower";
-import { Follower } from "@/types/follower";
+import type { Follower } from "@/types/follower";
 
 export function ProfileSideBar() {
   const userId = useUserStore.getState().userId;
@@ -63,7 +64,7 @@ export function ProfileSideBar() {
       const list = res.data.data.map((user: Follower) => ({
         userId: user.userId,
         nickname: user.nickname,
-        profileImg: user.profileImageUrl ?? junseo, // 기본 이미지 대체
+        profileImageUrl: user.profileImageUrl ?? junseo, // 기본 이미지 대체
       }));
 
       if (type === "follower") setFollowerList(list);
@@ -235,7 +236,7 @@ export function ProfileSideBar() {
                 >
                   <div className="flex flex-row items-center gap-[15px]">
                     <img
-                      src={user.profileImageUrl ?? junseo} // ❗ null 처리해서 기본 이미지 사용
+                      src={user.profileImageUrl}
                       alt={user.nickname}
                       className="w-[37.5px] h-[37.5px] rounded-full object-cover"
                     />

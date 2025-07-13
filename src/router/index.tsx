@@ -66,8 +66,8 @@ export const router = createBrowserRouter([
     children: [
       { path: "", element: <UploadPage /> },
       { path: "music-edit/:id", element: <MusicEditPage /> },
-      { path: "feed-edit", element: <FeedEditPage /> },
-      { path: "project-edit", element: <ProjectEditPage /> },
+      { path: "feed-edit/:id", element: <FeedEditPage /> },
+      { path: "project-edit/:id", element: <ProjectEditPage /> },
     ],
   },
 ]);

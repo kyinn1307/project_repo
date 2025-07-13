@@ -1,4 +1,4 @@
-import { MoreMenu } from "./\bMoreMenu";
+import { MoreMenu } from "./MoreMenu";
 
 import {
   CirclePlus,

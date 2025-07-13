@@ -11,15 +11,8 @@ interface FeedItemProps {
 }
 
 export const FeedItem = ({ feed }: FeedItemProps) => {
-  const {
-    // id,
-    title,
-    description,
-    imageUrl,
-    creatorNickname,
-    likeCount,
-    tags,
-  } = feed;
+  const { id, title, description, imageUrl, creatorNickname, likeCount, tags } =
+    feed;
 
   const [isExpanded, setIsExpanded] = useState(true);
   const [isLiked, setIsLiked] = useState(false);
@@ -37,7 +30,7 @@ export const FeedItem = ({ feed }: FeedItemProps) => {
             <span className="text-[#777777]">3일전</span>
           </span>
           <div className="flex items-start">
-            <FeedMoreMenu />
+            <FeedMoreMenu feedId={id} />
           </div>
         </div>
 
@@ -45,7 +38,7 @@ export const FeedItem = ({ feed }: FeedItemProps) => {
           <img
             src={imageUrl}
             alt="포스트 썸네일"
-            className="w-[225px] h-[225px]"
+            className="w-[225px] h-[225px] object-cover"
           />
         </div>
 
