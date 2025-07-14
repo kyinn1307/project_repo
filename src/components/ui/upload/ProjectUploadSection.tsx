@@ -1,63 +1,86 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { Button } from "../button";
 import { FileItem } from "../profile-detail/FileItem";
 import { FileUploadIcon } from "@/assets/Icons/FileUploadIcon";
 
-export const ProjectUploadSection = () => {
-  const [files, setFiles] = useState<string[]>([]);
+interface ProjectUploadSectionProps {
+  files: File[];
+  setFiles: (files: File[]) => void;
+  audioPreviewUrls?: string[];
+}
+
+export const ProjectUploadSection = ({
+  files,
+  setFiles,
+  audioPreviewUrls = [],
+}: ProjectUploadSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = () => {
-    fileInputRef.current?.click(); // input 클릭 트리거
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = Array.from(event.target.files || []);
-    const fileNames = selectedFiles.map((file) => file.name);
-    setFiles((prev) => [...prev, ...fileNames]);
+    const selectedFiles = Array.from(event.target.files ?? []);
+    setFiles([...files, ...selectedFiles].slice(0, 5));
   };
 
-  const renderEmptyState = () => (
-    <div className="flex flex-col items-center justify-center gap-[6px] mt-[5px]">
-      <FileUploadIcon />
-      <Button
-        className="w-[94px] h-[22px] bg-[#0050ef] text-white text-[10.5px] font-medium cursor-pointer"
-        onClick={handleUpload}
-      >
-        컴퓨터에서 선택
-      </Button>
-      <p className="text-[9px] text-[#777777]">
-        지원 파일은 MP3, WAV, AAC, FLAC, JPG, PNG, RAW
-      </p>
-      <p className="text-[9px] text-[#777777]">
-        첨부된 파일은 사용자들에게 공유됩니다.{" "}
-      </p>
-    </div>
-  );
+  const getFilenameFromUrl = (url: string) => {
+    return decodeURIComponent(url.split("/").pop() || "음원");
+  };
 
-  const renderFileList = () => (
-    <div className="flex flex-col mt-[7.5px] gap-[7.5px] max-h-[120px] overflow-y-auto pr-[2px]">
-      {files.map((filename, index) => (
+  const handleRemoveFile = (index: number) => {
+    const newFiles = [...files];
+    newFiles.splice(index, 1);
+    setFiles(newFiles);
+  };
+
+  const renderFileList = () => {
+    if (files.length > 0) {
+      return files.map((file, index) => (
         <FileItem
-          key={index}
-          filename={filename}
-          onRemove={() => {
-            setFiles((prev) => prev.filter((_, i) => i !== index));
-          }}
+          key={file.name + index}
+          filename={file.name}
+          onRemove={() => handleRemoveFile(index)}
         />
-      ))}
-    </div>
-  );
+      ));
+    }
+
+    if (audioPreviewUrls.length > 0) {
+      return audioPreviewUrls.map((url, index) => (
+        <FileItem
+          key={url + index}
+          filename={getFilenameFromUrl(url)}
+          onRemove={() => setFiles([])}
+        />
+      ));
+    }
+
+    return (
+      <div className="flex flex-col items-center justify-center gap-[6px] mt-[5px]">
+        <FileUploadIcon />
+        <Button
+          className="w-[94px] h-[22px] bg-[#0050ef] text-white text-[10.5px] font-medium cursor-pointer mt-[6.75px]"
+          onClick={handleUpload}
+        >
+          컴퓨터에서 선택
+        </Button>
+        <p className="text-[9px] text-[#777777]">
+          MP3, WAV, AAC, FLAC 파일을 최대 5개까지 업로드할 수 있어요
+        </p>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col flex-1 bg-[#111111] p-[7.5px] rounded-[3.75px]">
       <div className="text-white font-medium text-[10.5px] mb-[7.5px]">
         첨부파일
       </div>
-      {files.length === 0 ? renderEmptyState() : renderFileList()}
+      {renderFileList()}
       <input
         type="file"
-        accept="image/jpeg,image/png,image/webp"
+        accept="audio/*"
         multiple
         ref={fileInputRef}
         onChange={handleFileChange}

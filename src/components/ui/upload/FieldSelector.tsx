@@ -1,5 +1,7 @@
-import { useState } from "react";
-
+interface FieldSelectorProps {
+  value: string[];
+  setValue: React.Dispatch<React.SetStateAction<string[]>>;
+}
 const fieldList = [
   "작사",
   "작곡/편곡",
@@ -14,11 +16,9 @@ const fieldList = [
   "그 외",
 ];
 
-export const FieldSelector = () => {
-  const [selectedFields, setSelectedFields] = useState<string[]>([]);
-
+export const FieldSelector = ({ value, setValue }: FieldSelectorProps) => {
   const handleClick = (label: string) => {
-    setSelectedFields((prev) =>
+    setValue((prev) =>
       prev.includes(label)
         ? prev.filter((item) => item !== label)
         : [...prev, label]
@@ -30,7 +30,7 @@ export const FieldSelector = () => {
       <div className="text-[10.5px] font-medium mb-[6px]">분야</div>
       <div className="flex flex-wrap gap-[7.5px]">
         {fieldList.map((label) => {
-          const isSelected = selectedFields.includes(label);
+          const isSelected = value.includes(label);
           return (
             <button
               key={label}

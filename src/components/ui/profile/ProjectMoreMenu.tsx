@@ -5,9 +5,33 @@ import {
 } from "@/components/ui/popover";
 import { MoreHorizontal, Link, Edit, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteProject } from "@/apis/project";
 
-export function ProjectMoreMenu() {
+interface ProjectMoreMenuProps {
+  projectId: number;
+}
+
+export function ProjectMoreMenu({ projectId }: ProjectMoreMenuProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: () => deleteProject(projectId),
+    onSuccess: () => {
+      alert("삭제가 완료되었습니다.");
+      queryClient.invalidateQueries({ queryKey: ["myTracks"] });
+    },
+    onError: () => {
+      alert("삭제에 실패했습니다.");
+    },
+  });
+
+  const handleDelete = () => {
+    const confirmed = window.confirm("정말로 삭제하시겠습니까?");
+    if (!confirmed) return;
+    deleteMutate(); // 삭제 실행
+  };
 
   return (
     <Popover>
@@ -31,12 +55,15 @@ export function ProjectMoreMenu() {
           </button>
           <button
             className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]"
-            onClick={() => navigate("/upload/project-edit")}
+            onClick={() => navigate(`/upload/project-edit/${projectId}`)}
           >
             <Edit size={13} />
             수정
           </button>
-          <button className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]">
+          <button
+            className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]"
+            onClick={handleDelete}
+          >
             <X size={13} />
             삭제
           </button>
