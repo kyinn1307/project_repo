@@ -23,7 +23,7 @@ export const FeedEditPage = () => {
   const [audioPreviewUrl, setAudioPreviewUrl] = useState<string | null>(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
 
-  // 트랙 상세 정보 fetch
+  // 피드 상세 정보 fetch
   useEffect(() => {
     if (!id) return;
 
@@ -44,7 +44,7 @@ export const FeedEditPage = () => {
     fetchTrack();
   }, [id]);
 
-  // track 정보 수정
+  // 피드 정보 수정
   const handleUpdate = async () => {
     if (!id) return;
 
