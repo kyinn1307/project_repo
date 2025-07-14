@@ -1,13 +1,28 @@
 import { Clock, Eye, Heart } from "lucide-react";
 import { ProjectMoreMenu } from "../profile/ProjectMoreMenu";
 import type { Project } from "@/types/project";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toggleProjectLike } from "@/apis/project";
 interface ProjectContentItemProps {
   project: Project;
 }
 
 export const ProjectContentItem = ({ project }: ProjectContentItemProps) => {
-  const { id, title } = project;
+  const { id, title, genres, fields, liked, likeCount } = project;
+
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: () => toggleProjectLike(id),
+    onSuccess: () => {
+      console.log("좋아요 성공");
+      queryClient.invalidateQueries({ queryKey: ["myProjects"] });
+    },
+    onError: (err) => {
+      console.error("좋아요 실패", err);
+      alert("좋아요 처리에 실패했습니다.");
+    },
+  });
 
   return (
     <div className="w-[262.5px] h-[157.5px] flex flex-col bg-[#111111] rounded-[22.5px] pt-[13.5px] px-[16.5px]">
@@ -22,17 +37,24 @@ export const ProjectContentItem = ({ project }: ProjectContentItemProps) => {
           {title}
         </div>
         <div className="h-[14px] text-[11.25px] font-medium text-white">
-          프로듀서 | 비트메이커 | 보컬
+          {fields.join(" | ")}
         </div>
       </div>
       <div className="h-[13px] mt-[30.25px] text-[10.5px] text-white mb-[8px]">
-        랩,힙합,R&B
+        {genres.join(", ")}
       </div>
       <div className="flex flex-row justify-between text-[#999999] text-[10.5px]">
         <div className="flex flex-row gap-[7.5px]">
-          <span className="flex flex-row gap-[1.5px] items-center">
-            <Heart size={13.5} />
-            1000
+          <span
+            className="flex flex-row gap-[1.5px] items-center"
+            onClick={() => mutate()}
+          >
+            <Heart
+              size={13.5}
+              className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
+              fill={liked ? "#ff2b2b" : "none"}
+            />
+            {likeCount}
           </span>
           <span className="flex flex-row gap-[1.5px] items-center">
             <Eye size={13.5} />

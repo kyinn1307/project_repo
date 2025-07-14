@@ -28,3 +28,8 @@ export const updateProject = async (projectId: number, formData: FormData) => {
 export const deleteProject = async (projectId: number) => {
   return axiosInstance.delete(`/project/delete/${projectId}`);
 };
+
+// 프로젝트 좋아요 토글
+export const toggleProjectLike = async (projectId: number) => {
+  return axiosInstance.post(`/project/${projectId}/like`);
+};

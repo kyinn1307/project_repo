@@ -28,3 +28,8 @@ export const updateFeed = async (formData: FormData) => {
 export const deleteFeed = async (feedId: number) => {
   return axiosInstance.delete(`/feed/delete/${feedId}`);
 };
+
+// 피드 좋아요 토글
+export const toggleFeedLike = async (feedId: number) => {
+  return axiosInstance.post(`/feed/${feedId}/like`);
+};

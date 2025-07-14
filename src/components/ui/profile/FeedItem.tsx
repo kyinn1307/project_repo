@@ -1,24 +1,44 @@
 import { useState } from "react";
 import { AvatarDemo } from "../common/AvatarDemo";
-// import sample_post from "@/assets/Images/post_thumbnail.png";
 import { Heart } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { FeedMoreMenu } from "./FeedMoreMenu";
 import type { Feed } from "@/types/feed";
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toggleFeedLike } from "@/apis/feed";
 interface FeedItemProps {
   feed: Feed;
 }
 
 export const FeedItem = ({ feed }: FeedItemProps) => {
-  const { id, title, description, imageUrl, creatorNickname, likeCount, tags } =
-    feed;
+  const {
+    id,
+    title,
+    description,
+    imageUrl,
+    creatorNickname,
+    likeCount,
+    liked,
+    tags,
+  } = feed;
+
+  const queryClient = useQueryClient();
 
   const [isExpanded, setIsExpanded] = useState(true);
-  const [isLiked, setIsLiked] = useState(false);
+
+  const { mutate } = useMutation({
+    mutationFn: () => toggleFeedLike(id),
+    onSuccess: () => {
+      console.log("좋아요 성공");
+      queryClient.invalidateQueries({ queryKey: ["myFeeds"] });
+    },
+    onError: (err) => {
+      console.error("좋아요 실패", err);
+      alert("좋아요 처리에 실패했습니다.");
+    },
+  });
 
   const handleToggle = () => setIsExpanded((prev) => !prev);
-  const handleLike = () => setIsLiked((prev) => !prev);
 
   return (
     <div className="w-full p-3 flex flex-col gap-[15px] rounded-[15px] bg-[#111] mb-5">
@@ -45,12 +65,12 @@ export const FeedItem = ({ feed }: FeedItemProps) => {
         <div className="flex flex-row justify-between">
           <span
             className="flex flex-row gap-2 items-center text-[13.5px] text-[#777777] cursor-pointer"
-            onClick={handleLike}
+            onClick={() => mutate()}
           >
             <Heart
               size={13.5}
-              fill={isLiked ? "red" : "none"}
-              className={isLiked ? "text-red-500" : "text-[#777777]"}
+              className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
+              fill={liked ? "#ff2b2b" : "none"}
             />
             {likeCount}
           </span>
