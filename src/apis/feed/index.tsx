@@ -1,5 +1,12 @@
 import axiosInstance from "../axiosInstance";
 
+// 피드 전체 조회 (무한스크롤)
+export const getAllFeeds = async () => {
+  const res = await axiosInstance.get(`/feed`);
+  console.log(res.data.data);
+  return res.data.data;
+};
+
 // 피드 업로드
 export const uploadFeed = async (formData: FormData) => {
   return axiosInstance.post("/feed/upload", formData, {

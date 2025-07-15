@@ -1,5 +1,12 @@
 import axiosInstance from "../axiosInstance";
 
+// 전체 프로젝트 정보 조회 (트랙 수정 시, 정보 호출)
+export const getAllProjects = async () => {
+  const res = await axiosInstance.get(`/project`);
+  console.log(res.data.data);
+  return res.data.data;
+};
+
 // 프로젝트 업로드
 export const uploadProject = async (formData: FormData) => {
   return axiosInstance.post("/project/upload", formData, {
@@ -9,7 +16,7 @@ export const uploadProject = async (formData: FormData) => {
   });
 };
 
-// 특정 프로젝트 정보 조회 (트랙 수정 시, 정보 호출)
+// 특정 프로젝트 정보 조회 (프로젝트 수정 시, 정보 호출)
 export const getProjectDetail = async (projectId: number) => {
   const res = await axiosInstance.get(`/project/${projectId}`);
   return res.data.data;

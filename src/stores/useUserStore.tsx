@@ -13,7 +13,7 @@ interface UserState {
 export const useUserStore = create<UserState>()(
   persist(
     (set) => ({
-      isSubscribed: false,
+      isSubscribed: true,
       isLoggedIn: false,
       userId: null,
       setSubscribed: (subscribed) => set({ isSubscribed: subscribed }),

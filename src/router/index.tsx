@@ -37,7 +37,7 @@ export const router = createBrowserRouter([
       { path: "my-profile", element: <MyProfilPage /> },
       { path: "user-profile", element: <UserProfilePage /> },
       { path: "business-setting", element: <BusinessSettingPage /> },
-      { path: "music-video", element: <MusicVideoPage /> },
+      { path: "music-video/:id", element: <MusicVideoPage /> },
       { path: "musician-register", element: <MusicianRegisterPage /> },
       { path: "privacy-setting", element: <PrivacySettingPage /> },
     ],
