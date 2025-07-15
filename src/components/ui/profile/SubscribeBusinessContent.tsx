@@ -5,6 +5,15 @@ import { BusinessList } from "./BusinessList";
 export const SubscribeBusinessContent = () => {
   const [isContentEmpty] = useState(false);
   return (
-    <div>{isContentEmpty ? <EmptyBusinessContent /> : <BusinessList />}</div>
+    <div className="flex flex-col pt-[14.5px] gap-[30px]">
+      {isContentEmpty ? (
+        <EmptyBusinessContent />
+      ) : (
+        <>
+          <EmptyBusinessContent />
+          <BusinessList />
+        </>
+      )}
+    </div>
   );
 };
