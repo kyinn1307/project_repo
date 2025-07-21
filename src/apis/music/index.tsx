@@ -1,8 +1,26 @@
 import axiosInstance from "../axiosInstance";
+import { TrackResponse } from "@/types/music";
 
 // 전체 트랙 조회 (메인 페이지)
-export const getAllTracks = () => {
-  return axiosInstance.get("/tracks");
+// export const getAllTracks = async (
+//   pageParam?: number
+// ): Promise<TrackResponse> => {
+//   const query = `/tracks?cursorId=${pageParam}&size=20`;
+//   const res = await axiosInstance.get(query);
+//   console.log(res.data);
+//   return res.data.data;
+// };
+
+export const getAllTracks = async (
+  pageParam?: number
+): Promise<TrackResponse> => {
+  const query =
+    pageParam !== undefined
+      ? `/tracks?cursorId=${pageParam}&size=20`
+      : `/tracks`;
+
+  const res = await axiosInstance.get(query);
+  return res.data.data;
 };
 
 // 트랙 업로드
@@ -17,6 +35,7 @@ export const uploadTrack = async (formData: FormData) => {
 // 특정 트랙 정보 조회 (트랙 수정 시, 정보 호출)
 export const getTrackDetail = async (trackId: number) => {
   const res = await axiosInstance.get(`/tracks/${trackId}`);
+  console.log(res.data.data);
   return res.data.data;
 };
 

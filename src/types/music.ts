@@ -12,6 +12,12 @@ export interface Music {
   liked: boolean;
 }
 
+export interface TrackResponse {
+  tracks: Music[];
+  nextCursor?: number;
+  last: boolean;
+}
+
 export type Genre =
   | "팝"
   | "힙합"

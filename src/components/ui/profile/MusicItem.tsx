@@ -9,12 +9,13 @@ import type { Music } from "@/types/music";
 import { toggleTrackLike } from "@/apis/music";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Play, Pause } from "lucide-react";
-
+import { UserMusicMoreMenu } from "./UserMusicMoreMenu";
 interface MusicItemProps {
   music: Music;
+  isUser?: boolean;
 }
 
-export const MusicItem = ({ music }: MusicItemProps) => {
+export const MusicItem = ({ music, isUser }: MusicItemProps) => {
   const {
     id,
     imageUrl,
@@ -107,7 +108,12 @@ export const MusicItem = ({ music }: MusicItemProps) => {
           </div>
 
           <div className="flex flex-col items-end text-[#ffffff] mt-[3.44px] mr-[11.12px]">
-            <MusicMoreMenu musicId={id} />
+            {isUser ? (
+              // <UserMusicMoreMenu musicId={id} />
+              <UserMusicMoreMenu />
+            ) : (
+              <MusicMoreMenu musicId={id} />
+            )}
 
             <div className="flex flex-row gap-[7.5px]">
               {tags.map((tag) => (
@@ -134,7 +140,7 @@ export const MusicItem = ({ music }: MusicItemProps) => {
             const audio = audioRef.current;
             if (audio) {
               audio.currentTime = value * (audio.duration || 0);
-              setProgress(value); // 즉시 반영
+              setProgress(value);
             }
           }}
           className="absolute bottom-0 w-full h-1 bg-[#555555] cursor-pointer"
