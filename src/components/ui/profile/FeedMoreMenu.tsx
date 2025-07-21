@@ -35,7 +35,7 @@ export function FeedMoreMenu({ feedId }: FeedMoreMenuProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button>
+        <button className="cursor-pointer">
           <MoreHorizontal size={15} className="text-[#999999]" />
         </button>
       </PopoverTrigger>

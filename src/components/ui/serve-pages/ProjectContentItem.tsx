@@ -1,13 +1,18 @@
 import { Clock, Eye, Heart } from "lucide-react";
 import { ProjectMoreMenu } from "../profile/ProjectMoreMenu";
+import { UserProjectMoreMenu } from "../profile/UserProjectMoreMenu";
 import type { Project } from "@/types/project";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleProjectLike } from "@/apis/project";
 interface ProjectContentItemProps {
   project: Project;
+  isUser?: boolean;
 }
 
-export const ProjectContentItem = ({ project }: ProjectContentItemProps) => {
+export const ProjectContentItem = ({
+  project,
+  isUser,
+}: ProjectContentItemProps) => {
   const { id, title, genres, fields, liked, likeCount } = project;
 
   const queryClient = useQueryClient();
@@ -30,7 +35,12 @@ export const ProjectContentItem = ({ project }: ProjectContentItemProps) => {
         <div className="h-[17px] text-[13.5px] mt-[3px] font-bold text-white">
           {"팀원모집"}
         </div>
-        <ProjectMoreMenu projectId={id} />
+        {isUser ? (
+          // <UserProjectMoreMenu projectId={id} />
+          <UserProjectMoreMenu />
+        ) : (
+          <ProjectMoreMenu projectId={id} />
+        )}
       </div>
       <div className="flex flex-col gap-[7px] mt-[7px]">
         <div className="h-[17px] text-[13.5px] font-bold text-[#7CA8FF]">

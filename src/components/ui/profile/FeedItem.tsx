@@ -3,19 +3,25 @@ import { AvatarDemo } from "../common/AvatarDemo";
 import { Heart } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { FeedMoreMenu } from "./FeedMoreMenu";
+import { UserFeedMoreMenu } from "./UserFeedMoreMenu";
 import type { Feed } from "@/types/feed";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleFeedLike } from "@/apis/feed";
+import { useUserStore } from "@/stores/useUserStore";
+import { useNavigate } from "react-router-dom";
 interface FeedItemProps {
   feed: Feed;
+  isUser?: boolean;
 }
 
-export const FeedItem = ({ feed }: FeedItemProps) => {
+export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
+  const { userId } = useUserStore();
   const {
     id,
     title,
     description,
     imageUrl,
+    creatorId,
     creatorNickname,
     likeCount,
     liked,
@@ -23,6 +29,8 @@ export const FeedItem = ({ feed }: FeedItemProps) => {
   } = feed;
 
   const queryClient = useQueryClient();
+
+  const navigate = useNavigate();
 
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -40,17 +48,34 @@ export const FeedItem = ({ feed }: FeedItemProps) => {
 
   const handleToggle = () => setIsExpanded((prev) => !prev);
 
+  const handleUserClick = () => {
+    if (userId === creatorId) {
+      navigate("/my-profile");
+    } else {
+      navigate(`/user-profile/${creatorId}`);
+    }
+  };
+
   return (
     <div className="w-full p-3 flex flex-col gap-[15px] rounded-[15px] bg-[#111] mb-5">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
           <span className="flex flex-row gap-[15px] items-center text-[15px]">
-            <AvatarDemo />
-            <span>{creatorNickname}</span>
+            <span className="cursor-pointer" onClick={handleUserClick}>
+              <AvatarDemo />
+            </span>
+            <span className="cursor-pointer" onClick={handleUserClick}>
+              {creatorNickname}
+            </span>
             <span className="text-[#777777]">3일전</span>
           </span>
           <div className="flex items-start">
-            <FeedMoreMenu feedId={id} />
+            {isUser ? (
+              <UserFeedMoreMenu />
+            ) : (
+              // <UserFeedMoreMenu feedId={id} />
+              <FeedMoreMenu feedId={id} />
+            )}
           </div>
         </div>
 

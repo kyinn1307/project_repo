@@ -30,13 +30,13 @@ export function ProjectMoreMenu({ projectId }: ProjectMoreMenuProps) {
   const handleDelete = () => {
     const confirmed = window.confirm("정말로 삭제하시겠습니까?");
     if (!confirmed) return;
-    deleteMutate(); // 삭제 실행
+    deleteMutate();
   };
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button>
+        <button className="cursor-pointer">
           <MoreHorizontal size={15} className="text-white" />
         </button>
       </PopoverTrigger>

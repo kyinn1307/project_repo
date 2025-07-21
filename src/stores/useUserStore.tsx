@@ -5,7 +5,7 @@ interface UserState {
   isSubscribed: boolean;
   isLoggedIn: boolean;
   userId: number | null;
-  setSubscribed: (subscribed: boolean) => void;
+  setIsSubscribed: (subscribed: boolean) => void;
   setLoggedIn: (loggedIn: boolean) => void;
   setUserId: (id: number | null) => void;
 }
@@ -16,7 +16,7 @@ export const useUserStore = create<UserState>()(
       isSubscribed: true,
       isLoggedIn: false,
       userId: null,
-      setSubscribed: (subscribed) => set({ isSubscribed: subscribed }),
+      setIsSubscribed: (subscribed) => set({ isSubscribed: subscribed }),
       setLoggedIn: (loggedIn) => set({ isLoggedIn: loggedIn }),
       setUserId: (id) => set({ userId: id }),
     }),
