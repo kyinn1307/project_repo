@@ -1,9 +1,9 @@
-import { MusicianCardList } from "@/components/ui/main/MusicianCardList";
+import { InfiniteMusicianCardList } from "@/components/ui/main/InfiniteMusicianCardList";
 import { SearchIcon } from "@/assets/Icons/SearchIcon";
 import { AdContent } from "@/components/ui/serve-pages/AdContent";
 export const MusicianPage = () => {
   return (
-    <div className="flex flex-col pt-[38px] pl-[10%]">
+    <div className="flex flex-col pt-[38px] px-[10%]">
       <AdContent />
       <section className="flex flex-col mt-[45px]">
         <div className="text-2xl text-white font-bold"> 뮤지션</div>
@@ -17,7 +17,7 @@ export const MusicianPage = () => {
           />
         </div>
         <div className="mt-[15px]">
-          <MusicianCardList />
+          <InfiniteMusicianCardList />
         </div>
       </section>
     </div>

@@ -2,8 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { FeedItem } from "@/components/ui/profile/FeedItem";
 import { getAllFeeds } from "@/apis/feed";
 import { Feed } from "@/types/feed";
+import { useUserStore } from "@/stores/useUserStore";
 
 export const FeedPage = () => {
+  const { userId } = useUserStore();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["feeds"],
     queryFn: getAllFeeds,
@@ -16,7 +18,7 @@ export const FeedPage = () => {
     <div className="flex flex-col pl-[25%] pt-[30px] gap-[13.5px]">
       {data.feeds?.map((feed: Feed) => (
         <section key={feed.id} className="w-135 text-white">
-          <FeedItem feed={feed} />
+          <FeedItem feed={feed} isUser={userId === feed.creatorId} />
         </section>
       ))}
     </div>

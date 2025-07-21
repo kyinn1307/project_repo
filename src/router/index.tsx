@@ -12,7 +12,7 @@ import { MusicEditPage } from "@/pages/MusicEditPage";
 import { FeedEditPage } from "@/pages/FeedEditPage";
 import { BusinessSettingPage } from "@/pages/BusinessSettingPage";
 import { UploadPage } from "@/pages/UploadPage";
-import { MusicVideoPage } from "@/pages/MusicVideoPage";
+import MusicVideoLayout from "@/components/layout/MusicVideoLayout";
 import { MusicianPage } from "@/pages/serve-pages/MusicianPage";
 import { MusicPage } from "@/pages/serve-pages/MusicPage";
 import { FeedPage } from "@/pages/serve-pages/FeedPage";
@@ -23,6 +23,8 @@ import { MusicianRegisterPage } from "@/pages/MusicianRegisterPage";
 import { ProjectEditPage } from "@/pages/ProjectEditPage";
 import UserProfilePage from "@/pages/UserProfilePage";
 import { PrivacySettingPage } from "@/pages/PrivacySettingPage";
+import { MusicVideoPage } from "@/pages/MusicVideoPage";
+import { RequireAuth } from "./RequireAuth"; // 로그인 시에만 접근
 
 export const router = createBrowserRouter([
   {
@@ -34,13 +36,24 @@ export const router = createBrowserRouter([
       { path: "music", element: <MusicPage /> },
       { path: "feed", element: <FeedPage /> },
       { path: "project", element: <ProjectPage /> },
-      { path: "my-profile", element: <MyProfilPage /> },
-      { path: "user-profile", element: <UserProfilePage /> },
+      {
+        path: "my-profile",
+        element: (
+          <RequireAuth>
+            <MyProfilPage />
+          </RequireAuth>
+        ),
+      },
+      { path: "user-profile/:id", element: <UserProfilePage /> },
       { path: "business-setting", element: <BusinessSettingPage /> },
-      { path: "music-video/:id", element: <MusicVideoPage /> },
       { path: "musician-register", element: <MusicianRegisterPage /> },
       { path: "privacy-setting", element: <PrivacySettingPage /> },
     ],
+  },
+  {
+    path: "/music-video",
+    element: <MusicVideoLayout />,
+    children: [{ path: ":id", element: <MusicVideoPage /> }],
   },
   {
     path: "/auth",
@@ -64,10 +77,38 @@ export const router = createBrowserRouter([
     path: "/upload",
     element: <DetailLayout />,
     children: [
-      { path: "", element: <UploadPage /> },
-      { path: "music-edit/:id", element: <MusicEditPage /> },
-      { path: "feed-edit/:id", element: <FeedEditPage /> },
-      { path: "project-edit/:id", element: <ProjectEditPage /> },
+      {
+        path: "",
+        element: (
+          <RequireAuth>
+            <UploadPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "music-edit/:id",
+        element: (
+          <RequireAuth>
+            <MusicEditPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "feed-edit/:id",
+        element: (
+          <RequireAuth>
+            <FeedEditPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "project-edit/:id",
+        element: (
+          <RequireAuth>
+            <ProjectEditPage />
+          </RequireAuth>
+        ),
+      },
     ],
   },
 ]);

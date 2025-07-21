@@ -3,8 +3,11 @@ import { SearchIcon } from "@/assets/Icons/SearchIcon";
 import { ProjectContentItem } from "@/components/ui/serve-pages/ProjectContentItem";
 import { Project } from "@/types/project";
 import { getAllProjects } from "@/apis/project";
+import { useUserStore } from "@/stores/useUserStore";
 
 export const ProjectPage = () => {
+  const { userId } = useUserStore();
+
   const { data, isLoading, isError } = useQuery({
     queryKey: ["projects"],
     queryFn: getAllProjects,
@@ -36,7 +39,11 @@ export const ProjectPage = () => {
         {hasProjects && (
           <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px]">
             {projects?.map((project: Project) => (
-              <ProjectContentItem key={project.id} project={project} />
+              <ProjectContentItem
+                key={project.id}
+                project={project}
+                isUser={userId === project.creatorId}
+              />
             ))}
           </div>
         )}

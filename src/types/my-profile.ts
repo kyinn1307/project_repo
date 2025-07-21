@@ -1,4 +1,4 @@
-export interface MyProfile {
+export interface Profile {
   email: string;
   feedCount: number;
   fields: string[];
