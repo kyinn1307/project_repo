@@ -1,9 +1,17 @@
 import axiosInstance from "../axiosInstance";
+import { ProjectResponse } from "@/types/project";
 
 // 전체 프로젝트 정보 조회 (트랙 수정 시, 정보 호출)
-export const getAllProjects = async () => {
-  const res = await axiosInstance.get(`/project`);
-  console.log(res.data.data);
+export const getAllProjects = async (
+  pageParam?: number
+): Promise<ProjectResponse> => {
+  const query =
+    pageParam !== undefined
+      ? `/project?cursorId=${pageParam}&size=5`
+      : `/project`;
+
+  const res = await axiosInstance.get(query);
+  console.log(res.data);
   return res.data.data;
 };
 

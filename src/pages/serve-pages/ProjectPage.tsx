@@ -1,21 +1,45 @@
-import { useQuery } from "@tanstack/react-query";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { SearchIcon } from "@/assets/Icons/SearchIcon";
 import { ProjectContentItem } from "@/components/ui/serve-pages/ProjectContentItem";
-import { Project } from "@/types/project";
+import { Project, ProjectResponse } from "@/types/project";
 import { getAllProjects } from "@/apis/project";
+import { useInView } from "react-intersection-observer";
 import { useUserStore } from "@/stores/useUserStore";
-
 export const ProjectPage = () => {
   const { userId } = useUserStore();
-
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+  } = useInfiniteQuery<
+    ProjectResponse,
+    Error,
+    InfiniteData<ProjectResponse>,
+    [string],
+    number
+  >({
     queryKey: ["projects"],
-    queryFn: getAllProjects,
+    queryFn: ({ pageParam = 1 }) => getAllProjects(pageParam),
+    initialPageParam: 2,
+    getNextPageParam: (lastPage: ProjectResponse) => lastPage.nextCursor,
   });
 
-  const projects = data?.projects ?? [];
+  // 올 트랙 합치기
+  const allProjects: Project[] =
+    data?.pages.flatMap((page) => page.projects) ?? [];
 
-  const hasProjects = projects && projects.length > 0;
+  const { inView } = useInView();
+
+  // 👇 inView가 true이면 다음 페이지 요청
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div className="flex flex-col pt-[38px] px-[15%]">
@@ -36,9 +60,9 @@ export const ProjectPage = () => {
         <div className="text-2xl text-white font-bold mb-[15px]">프로젝트</div>
         {isLoading && <div className="text-white">로딩 중...</div>}
         {isError && <div className="text-red-500">프로젝트 불러오기 실패</div>}
-        {hasProjects && (
+        {allProjects && (
           <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px]">
-            {projects?.map((project: Project) => (
+            {allProjects?.map((project: Project) => (
               <ProjectContentItem
                 key={project.id}
                 project={project}

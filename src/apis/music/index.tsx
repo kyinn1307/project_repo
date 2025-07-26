@@ -12,14 +12,16 @@ import { TrackResponse } from "@/types/music";
 // };
 
 export const getAllTracks = async (
-  pageParam?: number
+  pageParam?: number,
+  size: number = 20
 ): Promise<TrackResponse> => {
   const query =
     pageParam !== undefined
-      ? `/tracks?cursorId=${pageParam}&size=20`
+      ? `/tracks?cursorId=${pageParam}&size=${size}`
       : `/tracks`;
 
   const res = await axiosInstance.get(query);
+  console.log(res.data.data);
   return res.data.data;
 };
 

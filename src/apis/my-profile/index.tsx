@@ -35,12 +35,27 @@ export const getMyTracks = () => {
   return axiosInstance.get("/tracks/my");
 };
 
-// 내 음원 목록 조회
+// 내 피드 목록 조회
 export const getMyFeeds = () => {
   return axiosInstance.get("/feed/my");
 };
 
-// 내 음원 목록 조회
+// 내 프로젝트 목록 조회
 export const getMyProjects = () => {
   return axiosInstance.get("/project/my");
+};
+
+// 좋아요 음원 목록 조회
+export const getLikedTracks = () => {
+  return axiosInstance.get("/tracks/liked");
+};
+
+// 좋아요 피드 목록 조회
+export const getLikedFeeds = () => {
+  return axiosInstance.get("/feed/liked");
+};
+
+// 좋아요 프로젝트 목록 조회
+export const getLikedProjects = () => {
+  return axiosInstance.get("/project/liked");
 };
