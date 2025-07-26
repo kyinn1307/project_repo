@@ -2,7 +2,6 @@ import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
-// import { SidebarIcon } from "@/assets/Icons/SidebarIcon";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -152,7 +151,7 @@ function SidebarProvider({
 function Sidebar({
   side = "left",
   variant = "sidebar",
-  collapsible = "offcanvas",
+  collapsible = "icon", // ✅ 기존은 "offcanvas"
   className,
   children,
   ...props
