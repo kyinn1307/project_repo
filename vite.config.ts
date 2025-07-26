@@ -7,6 +7,9 @@ import svgr from "vite-plugin-svgr";
 export default defineConfig({
   base: "/",
   plugins: [react(), tailwindcss(), svgr()],
+  define: {
+    global: {},
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -18,6 +21,11 @@ export default defineConfig({
         target: "http://3.230.162.160:8080",
         changeOrigin: true,
         cookieDomainRewrite: "localhost",
+      },
+      "/ws": {
+        target: "http://3.230.162.160:8080",
+        ws: true,
+        changeOrigin: true,
       },
     },
   },
