@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
+import { checkLogin } from "@/utils/checkLogin";
 import { MoreMenu } from "./MoreMenu";
-
+import { useSidebar } from "@/components/ui/sidebar";
 import {
   CirclePlus,
   Home,
@@ -56,10 +58,25 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const [userId, setUserId] = useState<number | null>(null);
+  const { state } = useSidebar(); // "collapsed" or "expanded"
+
+  useEffect(() => {
+    const check = async () => {
+      const id = await checkLogin();
+      setUserId(id);
+    };
+    check();
+  }, []);
+
   return (
-    <Sidebar className="w-40 border-r border-[#777777] flex flex-col h-screen">
+    <Sidebar
+      className={`${
+        state === "collapsed" ? "!w-[64px]" : "w-40"
+      } border-r border-[#777777] flex flex-col h-screen`}
+    >
       <SidebarContent className="bg-black text-white flex-1 overflow-y-auto pt-10">
-        <SidebarGroup>
+        <SidebarGroup className="p-0">
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -67,10 +84,22 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <a
                       href={item.url}
-                      className="flex items-center gap-3 px-4 py-2"
+                      className={`${
+                        state === "collapsed"
+                          ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
+                          : "flex items-center gap-3 px-4 py-2"
+                      } hover:bg-[#222] transition-colors duration-200`}
                     >
-                      <item.icon size={20} />
-                      <span className="text-sm">{item.title}</span>
+                      <item.icon size={18} />
+                      <span
+                        className={`${
+                          state === "collapsed"
+                            ? "text-[9px] text-center leading-tight"
+                            : "text-sm"
+                        }`}
+                      >
+                        {item.title}
+                      </span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -80,32 +109,63 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-black text-white">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <a href="#" className="flex items-center gap-3 px-4 py-2">
-                <MessageIcon />
-                <span className="text-sm">메세지</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <a
-                href="/my-profile"
-                className="flex items-center gap-3 px-4 py-2"
-              >
-                <User size={20} />
-                <span className="text-sm">내프로필</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <MoreMenu />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+      {userId && (
+        <SidebarFooter className="bg-black text-white p-0">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a
+                  href="/chat"
+                  className={`${
+                    state === "collapsed"
+                      ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
+                      : "flex items-center gap-3 px-4 py-2"
+                  } hover:bg-[#222] transition-colors duration-200`}
+                >
+                  <MessageIcon />
+                  <span
+                    className={`${
+                      state === "collapsed"
+                        ? "text-[9px] text-center leading-tight"
+                        : "text-sm"
+                    }`}
+                  >
+                    메세지
+                  </span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <a
+                  href="/my-profile"
+                  className={`${
+                    state === "collapsed"
+                      ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
+                      : "flex items-center gap-3 px-4 py-2"
+                  } hover:bg-[#222] transition-colors duration-200`}
+                >
+                  <User size={18} />
+                  <span
+                    className={`${
+                      state === "collapsed"
+                        ? "text-[9px] text-center leading-tight"
+                        : "text-sm"
+                    }`}
+                  >
+                    내프로필
+                  </span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <MoreMenu collapsed={state === "collapsed"} />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+      )}
     </Sidebar>
   );
 }
