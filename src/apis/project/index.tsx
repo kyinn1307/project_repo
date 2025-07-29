@@ -3,15 +3,18 @@ import { ProjectResponse } from "@/types/project";
 
 // 전체 프로젝트 정보 조회 (트랙 수정 시, 정보 호출)
 export const getAllProjects = async (
-  pageParam?: number
+  pageParam?: number,
+  size: number = 5
 ): Promise<ProjectResponse> => {
-  const query =
-    pageParam !== undefined
-      ? `/project?cursorId=${pageParam}&size=5`
-      : `/project`;
+  const params = new URLSearchParams();
+  params.append("size", String(size));
+  if (pageParam !== undefined) {
+    params.append("cursorId", String(pageParam));
+  }
 
+  const query = `/project?${params.toString()}`;
   const res = await axiosInstance.get(query);
-  console.log(res.data);
+  console.log(res.data.data);
   return res.data.data;
 };
 
@@ -27,6 +30,7 @@ export const uploadProject = async (formData: FormData) => {
 // 특정 프로젝트 정보 조회 (프로젝트 수정 시, 정보 호출)
 export const getProjectDetail = async (projectId: number) => {
   const res = await axiosInstance.get(`/project/${projectId}`);
+  console.log(res.data);
   return res.data.data;
 };
 

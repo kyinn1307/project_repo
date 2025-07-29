@@ -6,8 +6,11 @@ import { Project, ProjectResponse } from "@/types/project";
 import { getAllProjects } from "@/apis/project";
 import { useInView } from "react-intersection-observer";
 import { useUserStore } from "@/stores/useUserStore";
+
 export const ProjectPage = () => {
   const { userId } = useUserStore();
+  const size = 5;
+
   const {
     data,
     fetchNextPage,
@@ -20,21 +23,19 @@ export const ProjectPage = () => {
     Error,
     InfiniteData<ProjectResponse>,
     [string],
-    number
+    number | undefined
   >({
     queryKey: ["projects"],
-    queryFn: ({ pageParam = 1 }) => getAllProjects(pageParam),
-    initialPageParam: 2,
+    queryFn: ({ pageParam }) => getAllProjects(pageParam, size),
+    initialPageParam: undefined,
     getNextPageParam: (lastPage: ProjectResponse) => lastPage.nextCursor,
   });
 
-  // 올 트랙 합치기
   const allProjects: Project[] =
     data?.pages.flatMap((page) => page.projects) ?? [];
 
-  const { inView } = useInView();
+  const { ref, inView } = useInView();
 
-  // 👇 inView가 true이면 다음 페이지 요청
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -56,13 +57,14 @@ export const ProjectPage = () => {
           placeholder="프로젝트찾기"
         />
       </div>
+
       <section className="flex flex-col mt-[37.5px] mb-[37.5px]">
         <div className="text-2xl text-white font-bold mb-[15px]">프로젝트</div>
         {isLoading && <div className="text-white">로딩 중...</div>}
         {isError && <div className="text-red-500">프로젝트 불러오기 실패</div>}
         {allProjects && (
           <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px]">
-            {allProjects?.map((project: Project) => (
+            {allProjects.map((project) => (
               <ProjectContentItem
                 key={project.id}
                 project={project}
@@ -71,6 +73,15 @@ export const ProjectPage = () => {
             ))}
           </div>
         )}
+
+        {/* 👇 관찰 대상 */}
+        <div ref={ref} className="h-12 mt-6 text-center text-white">
+          {isFetchingNextPage
+            ? "다음 프로젝트 불러오는 중..."
+            : hasNextPage
+            ? "더 불러오는 중..."
+            : ""}
+        </div>
       </section>
     </div>
   );

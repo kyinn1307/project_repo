@@ -10,3 +10,9 @@ export interface Project {
   creatorId: number;
   creatorNickname: string;
 }
+
+export interface ProjectResponse {
+  projects: Project[];
+  nextCursor?: number;
+  last: boolean;
+}

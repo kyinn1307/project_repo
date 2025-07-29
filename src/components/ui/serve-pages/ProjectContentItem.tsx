@@ -4,6 +4,8 @@ import { UserProjectMoreMenu } from "../profile/UserProjectMoreMenu";
 import type { Project } from "@/types/project";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleProjectLike } from "@/apis/project";
+import { useNavigate } from "react-router-dom";
+
 interface ProjectContentItemProps {
   project: Project;
   isUser?: boolean;
@@ -14,6 +16,7 @@ export const ProjectContentItem = ({
   isUser,
 }: ProjectContentItemProps) => {
   const { id, title, genres, fields, liked, likeCount } = project;
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -29,8 +32,15 @@ export const ProjectContentItem = ({
     },
   });
 
+  const handleCardClick = () => {
+    navigate(`/project-detail/${id}`);
+  };
+
   return (
-    <div className="w-[262.5px] h-[157.5px] flex flex-col bg-[#111111] rounded-[22.5px] pt-[13.5px] px-[16.5px]">
+    <div
+      onClick={handleCardClick}
+      className="w-[262.5px] h-[157.5px] flex flex-col bg-[#111111] rounded-[22.5px] pt-[13.5px] px-[16.5px] cursor-pointer"
+    >
       <div className="flex flex-row justify-between">
         <div className="h-[17px] text-[13.5px] mt-[3px] font-bold text-white">
           {"팀원모집"}
