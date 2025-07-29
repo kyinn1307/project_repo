@@ -10,3 +10,9 @@ export interface Feed {
   creatorNickname: string;
   tags: string[];
 }
+
+export interface FeedResponse {
+  feeds: Feed[];
+  nextCursor?: number;
+  last: boolean;
+}

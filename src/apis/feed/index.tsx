@@ -1,9 +1,20 @@
+import { FeedResponse } from "@/types/feed";
 import axiosInstance from "../axiosInstance";
 
 // 피드 전체 조회 (무한스크롤)
-export const getAllFeeds = async () => {
-  const res = await axiosInstance.get(`/feed`);
-  console.log(res.data.data);
+export const getAllFeeds = async (
+  pageParam?: number, // nextCursor 값
+  size: number = 20
+): Promise<FeedResponse> => {
+  const params = new URLSearchParams();
+  params.append("size", String(size));
+  if (pageParam !== undefined) {
+    params.append("cursorId", String(pageParam));
+  }
+
+  const query = `/feed?${params.toString()}`;
+  const res = await axiosInstance.get(query);
+  console.log("📦 응답:", res.data.data);
   return res.data.data;
 };
 
