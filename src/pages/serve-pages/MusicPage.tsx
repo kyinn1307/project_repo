@@ -20,12 +20,12 @@ export const MusicPage = () => {
     Error,
     InfiniteData<TrackResponse>,
     [string],
-    number
+    number | undefined // ✅ pageParam이 undefined일 수 있음
   >({
     queryKey: ["tracks"],
-    queryFn: ({ pageParam = 1 }) => getAllTracks(pageParam),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage: TrackResponse) => lastPage.nextCursor,
+    queryFn: ({ pageParam }) => getAllTracks(pageParam, 15),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage: TrackResponse) => lastPage.nextCursor, // ✅ 서버에서 주는 nextCursor 사용
   });
 
   // 올 트랙 합치기

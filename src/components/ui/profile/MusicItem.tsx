@@ -108,12 +108,7 @@ export const MusicItem = ({ music, isUser }: MusicItemProps) => {
           </div>
 
           <div className="flex flex-col items-end text-[#ffffff] mt-[3.44px] mr-[11.12px]">
-            {isUser ? (
-              // <UserMusicMoreMenu musicId={id} />
-              <UserMusicMoreMenu />
-            ) : (
-              <MusicMoreMenu musicId={id} />
-            )}
+            {isUser ? <UserMusicMoreMenu /> : <MusicMoreMenu musicId={id} />}
 
             <div className="flex flex-row gap-[7.5px]">
               {tags.map((tag) => (
@@ -150,7 +145,7 @@ export const MusicItem = ({ music, isUser }: MusicItemProps) => {
       <div className="flex flex-row justify-between text-[10.5px] px-[15px] mb-[22.5px]">
         <div className="flex flex-row gap-5 justify-between">
           <span
-            className="flex flex-row gap-2 items-center"
+            className="flex flex-row gap-2 items-center cursor-pointer"
             onClick={() => mutate()}
           >
             <Heart

@@ -9,8 +9,8 @@ export const MusicCardList = () => {
   const handleAllTracks = async () => {
     try {
       const res = await getAllTracks();
-      console.log(res.data.data.tracks);
-      setMusicList(res.data.data.tracks);
+      console.log(res.tracks);
+      setMusicList(res.tracks);
     } catch (error) {
       console.log(error);
     }

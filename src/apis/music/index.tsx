@@ -1,27 +1,19 @@
 import axiosInstance from "../axiosInstance";
 import { TrackResponse } from "@/types/music";
 
-// 전체 트랙 조회 (메인 페이지)
-// export const getAllTracks = async (
-//   pageParam?: number
-// ): Promise<TrackResponse> => {
-//   const query = `/tracks?cursorId=${pageParam}&size=20`;
-//   const res = await axiosInstance.get(query);
-//   console.log(res.data);
-//   return res.data.data;
-// };
-
 export const getAllTracks = async (
-  pageParam?: number,
+  pageParam?: number, // nextCursor 값
   size: number = 20
 ): Promise<TrackResponse> => {
-  const query =
-    pageParam !== undefined
-      ? `/tracks?cursorId=${pageParam}&size=${size}`
-      : `/tracks`;
+  const params = new URLSearchParams();
+  params.append("size", String(size));
+  if (pageParam !== undefined) {
+    params.append("cursorId", String(pageParam));
+  }
 
+  const query = `/tracks?${params.toString()}`;
   const res = await axiosInstance.get(query);
-  console.log(res.data.data);
+  console.log("📦 응답:", res.data.data);
   return res.data.data;
 };
 
