@@ -34,8 +34,8 @@ export const getFeedDetail = async (feedId: number) => {
 };
 
 // 피드 업데이트
-export const updateFeed = async (formData: FormData) => {
-  return axiosInstance.post(`/feed/update`, formData, {
+export const updateFeed = async (feedId: number, formData: FormData) => {
+  return axiosInstance.put(`/feed/${feedId}`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },

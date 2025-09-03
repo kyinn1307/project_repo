@@ -2,8 +2,8 @@ export interface Feed {
   id: number;
   title: string;
   description: string;
-  audioUrl: string;
-  imageUrl: string;
+  audioFiles: RemoteFile[];
+  imageFiles: RemoteFile[];
   liked: boolean;
   likeCount: number;
   creatorId: number;
@@ -15,4 +15,13 @@ export interface FeedResponse {
   feeds: Feed[];
   nextCursor?: number;
   last: boolean;
+}
+
+export interface RemoteFile {
+  fileId: string;
+  fileSize: number;
+  fileType: string;
+  order: number;
+  originalFileName: string;
+  url: string;
 }

@@ -8,20 +8,26 @@ import { MusicUploadSection } from "./MusicUploadSection";
 import { LyricsInput } from "./LyricsInput";
 import type { EmotionTag } from "@/types/music";
 import { uploadFeed } from "@/apis/feed";
+import { buildUploadActions } from "@/utils/buildUploadActions";
 
 export const FeedUploadContent = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState<EmotionTag[]>([]);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [audioFiles, setAudioFiles] = useState<File[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+
+  const audioFileActions = buildUploadActions(audioFiles);
+  const imageFileActions = buildUploadActions(imageFiles);
 
   const handleUpload = async () => {
     const requestData = {
       title,
       description,
       tags,
+      audioFileActions,
+      imageFileActions,
     };
 
     const formData = new FormData();
@@ -29,9 +35,18 @@ export const FeedUploadContent = () => {
       "data",
       new Blob([JSON.stringify(requestData)], { type: "application/json" })
     );
-    if (audioFile) formData.append("audio", audioFile); // ✅ 'audioFile' → 'audio'
-    if (imageFile) formData.append("image", imageFile); // ✅ 'imageFile' → 'image'
 
+    if (audioFiles) {
+      audioFiles.forEach((file) => {
+        formData.append("audio", file);
+      });
+    }
+
+    if (imageFiles.length > 0) {
+      imageFiles.forEach((file) => {
+        formData.append("image", file);
+      });
+    }
     try {
       const res = await uploadFeed(formData);
       console.log(res);
@@ -51,8 +66,8 @@ export const FeedUploadContent = () => {
         <LyricsInput value={description} setValue={setDescription} />
       </div>
       <div className="flex flex-row gap-[7.5px]">
-        <MusicUploadSection file={audioFile} setFile={setAudioFile} />
-        <ImageUploadSection file={imageFile} setFile={setImageFile} />
+        <MusicUploadSection files={audioFiles} setFiles={setAudioFiles} />
+        <ImageUploadSection files={imageFiles} setFiles={setImageFiles} />
       </div>
 
       <div>

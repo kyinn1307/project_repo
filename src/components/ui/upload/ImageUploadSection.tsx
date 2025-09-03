@@ -2,49 +2,56 @@ import { useRef } from "react";
 import { Button } from "../button";
 import { FileItem } from "../profile-detail/FileItem";
 import { FileUploadIcon } from "@/assets/Icons/FileUploadIcon";
+import type { RemoteFile } from "@/types/feed";
 
 interface ImageUploadSectionProps {
-  file: File | null;
-  setFile: (file: File | null) => void;
-  imagePreviewUrl?: string | null;
+  files: File[];
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  imagePreviewFiles?: RemoteFile[];
+  onRemoveServerPreview?: () => void;
 }
 
 export const ImageUploadSection = ({
-  file,
-  setFile,
-  imagePreviewUrl,
+  files,
+  setFiles,
+  imagePreviewFiles = [],
+  onRemoveServerPreview,
 }: ImageUploadSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleUpload = () => {
-    fileInputRef.current?.click();
+  const handleUpload = () => fileInputRef.current?.click();
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = Array.from(e.target.files || []);
+    if (selected.length > 0) setFiles([selected[0]]);
+    e.target.value = "";
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0] || null;
-    setFile(selectedFile);
-  };
+  const hasLocal = files.length > 0;
+  const hasServer = imagePreviewFiles.length > 0;
+  const hasAny = hasLocal || hasServer;
 
-  const getFilenameFromUrl = (url: string) => {
-    return decodeURIComponent(url.split("/").pop() || "이미지");
-  };
+  console.log(files);
+  return (
+    <div className="relative flex flex-col flex-1 h-30 bg-[#111111] p-[7.5px] pb-[30px] rounded-[3.75px]">
+      {/* pb-[30px]: 버튼(22px) + 하단여백(7.5px) 만큼 내용이 가려지지 않도록 패딩 */}
+      <div className="text-white font-medium text-[10.5px] mb-[7.5px]">
+        이미지
+      </div>
 
-  const renderFilePreview = () => {
-    if (file) {
-      return <FileItem filename={file.name} onRemove={() => setFile(null)} />;
-    } else if (imagePreviewUrl) {
-      return (
+      {/* 로컬 우선, 없으면 서버 프리뷰, 둘 다 없으면 빈 상태 */}
+      {hasLocal ? (
+        <FileItem filename={files[0].name} onRemove={() => setFiles([])} />
+      ) : hasServer ? (
         <FileItem
-          filename={getFilenameFromUrl(imagePreviewUrl)}
-          onRemove={() => setFile(null)} // ❗️ 삭제하면 file만 null됨 → preview는 남겨둘 수도 있음
+          filename={imagePreviewFiles[0].originalFileName ?? "이미지"}
+          onRemove={onRemoveServerPreview}
         />
-      );
-    } else {
-      return (
-        <div className="flex flex-col items-center justify-center gap-[6px] mt-[5px]">
+      ) : (
+        <div className="flex flex-col items-center justify-center gap-[6px]">
           <FileUploadIcon />
           <Button
-            className="w-[94px] h-[22px] bg-[#0050ef] text-white text-[10.5px] font-medium cursor-pointer mt-[6.75px]"
+            className="w-[94px] h-[22px] bg-[#0050ef] text-white text-[10.5px] font-medium cursor-pointer"
             onClick={handleUpload}
           >
             컴퓨터에서 선택
@@ -53,16 +60,18 @@ export const ImageUploadSection = ({
             지원 파일은 JPG, PNG, WEBP
           </p>
         </div>
-      );
-    }
-  };
+      )}
 
-  return (
-    <div className="flex flex-col flex-1 h-30 bg-[#111111] p-[7.5px] rounded-[3.75px]">
-      <div className="text-white font-medium text-[10.5px] mb-[7.5px]">
-        이미지
-      </div>
-      {renderFilePreview()}
+      {/* 파일 있거나 서버 프리뷰 있을 때: 하단 중앙 고정 버튼 */}
+      {hasAny && (
+        <Button
+          className="absolute bottom-[7.5px] left-1/2 -translate-x-1/2 w-[94px] h-[22px] bg-[#0050ef] text-white text-[10.5px] font-medium cursor-pointer"
+          onClick={handleUpload}
+        >
+          컴퓨터에서 선택
+        </Button>
+      )}
+
       <input
         type="file"
         accept="image/jpeg,image/png,image/webp"

@@ -48,7 +48,7 @@ export const FeedPage = () => {
 
       {allFeeds.map((feed) => (
         <section key={feed.id} className="w-135 text-white">
-          <FeedItem feed={feed} isUser={userId === feed.creatorId} />
+          <FeedItem feed={feed} isUser={userId !== feed.creatorId} />
         </section>
       ))}
 

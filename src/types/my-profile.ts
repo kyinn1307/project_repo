@@ -12,4 +12,5 @@ export interface Profile {
   profileImageUrl: string | null;
   relationship: number;
   trackCount: number;
+  phoneNumber?: string;
 }

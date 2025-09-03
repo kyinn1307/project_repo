@@ -1,7 +1,25 @@
+import { MusicianResponse } from "@/types/musician";
 import axiosInstance from "../axiosInstance";
 
+// 뮤지션 전체 조회 (무한스크롤)
+export const getAllMusicians = async (
+  pageParam?: number,
+  size: number = 20
+): Promise<MusicianResponse> => {
+  const params = new URLSearchParams();
+  params.append("size", String(size));
+  if (pageParam !== undefined) {
+    params.append("cursorId", String(pageParam));
+  }
+
+  const query = `/musician/list?${params.toString()}`;
+  const res = await axiosInstance.get(query);
+  console.log("📦 응답:", res.data.data);
+  return res.data.data;
+};
+
 // 유저 프로필 조회
-export const getUserProfile = (userId: number) => {
+export const getUserProfile = (userId: number | null) => {
   return axiosInstance.get(`/profile/${userId}`);
 };
 
