@@ -1,12 +1,12 @@
 type SetaLetterLogoProps = {
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 export const SetaLetterLogo = ({ onClick }: SetaLetterLogoProps) => {
   return (
     <svg
-      width="102"
-      height="19"
+      width="full"
+      height="full"
       viewBox="0 0 102 19"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

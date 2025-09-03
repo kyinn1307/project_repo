@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/ui/main/SearchBar";
 import { AlarmIcon } from "@/assets/Icons/AlarmIcon";
 import { SetaLetterLogo } from "@/assets/SetaLetterLogo";
@@ -28,45 +28,62 @@ export const Header = () => {
           className="text-white hover:text-white hover:bg-transparent cursor-pointer"
           onClick={toggle}
         />
-        <SetaLetterLogo onClick={() => handleBtnClick("")} />
+        <div className="w-[102px] h-[19px]">
+          <SetaLetterLogo onClick={() => handleBtnClick("")} />
+        </div>
       </div>
 
       <div className="mx-[0.5vw] flex-1 flex justify-center min-w-0">
         <div className="w-full max-w-[500px] min-w-[180px] transition-all duration-300">
-          <SearchBar />
+          <SearchBar placeholder="새로운 사운드 찾기" />
         </div>
       </div>
 
       <div className="flex items-center gap-[1vw] min-w-max">
-        {/* {isLoggedIn ? ( */}
-        <>
-          <div
+        {isLoggedIn ? (
+          <>
+            {/* <div
             className="hidden lg:block"
             onClick={() => handleBtnClick("musician-register")}
           >
             <Button className="flex items-center w-[66px] h-[18px] bg-[#0050ef] text-white text-[10.25px] rounded-[3.75px] cursor-pointer whitespace-nowrap">
               뮤지션 등록
             </Button>
+          </div> */}
+            <div
+              className="hidden md:block"
+              onClick={() => handleBtnClick("/")}
+            >
+              <AlarmIcon />
+            </div>
+            <div
+              className="hidden sm:block"
+              onClick={() => handleBtnClick("my-profile")}
+            >
+              <MypageIcon />
+            </div>
+          </>
+        ) : (
+          //  약관 동의 페이지 우측 헤더 버튼
+          <div className="flex gap-[1vw] mr-2">
+            <span
+              className="text-white text-sm cursor-pointer"
+              onClick={() => {
+                navigate("/auth");
+              }}
+            >
+              로그인
+            </span>
+            <span
+              className="text-white text-sm cursor-pointer"
+              onClick={() => {
+                navigate("/auth/signup");
+              }}
+            >
+              회원가입
+            </span>
           </div>
-          <div
-            className="hidden md:block"
-            onClick={() => handleBtnClick("alarm")}
-          >
-            <AlarmIcon />
-          </div>
-          <div
-            className="hidden sm:block"
-            onClick={() => handleBtnClick("my-profile")}
-          >
-            <MypageIcon />
-          </div>
-        </>
-
-        {/* 약관 동의 페이지 우측 헤더 버튼 */}
-        {/* <div className="flex gap-[1vw] mr-2">
-          <span className="text-white text-sm cursor-pointer">로그인</ㄴ>
-          <span className="text-white text-sm cursor-pointer">회원가입</span>
-        </div> */}
+        )}
       </div>
     </header>
   );
