@@ -24,7 +24,7 @@ export function UserProjectMoreMenu() {
         align="start"
         sideOffset={14}
         alignOffset={-14}
-        className="w-32 p-2 bg-[#111111] rounded-lg text-white border border-[#777777]"
+        className="w-32 p-2 bg-[#111111] rounded-lg text-white border border-[#777777] "
       >
         <div className="flex flex-col gap-2">
           <button className="flex items-center gap-2 hover:bg-[#222222] rounded px-1 py-[2px]">

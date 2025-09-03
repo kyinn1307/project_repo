@@ -1,3 +1,4 @@
+import sample from "@/assets/Images/hmson.png";
 import { useState } from "react";
 import { AvatarDemo } from "../common/AvatarDemo";
 import { Heart } from "lucide-react";
@@ -20,7 +21,7 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
     id,
     title,
     description,
-    imageUrl,
+    imageFiles,
     creatorId,
     creatorNickname,
     likeCount,
@@ -39,6 +40,7 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
     onSuccess: () => {
       console.log("좋아요 성공");
       queryClient.invalidateQueries({ queryKey: ["myFeeds"] });
+      queryClient.invalidateQueries({ queryKey: ["feeds"] });
     },
     onError: (err) => {
       console.error("좋아요 실패", err);
@@ -55,6 +57,8 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
       navigate(`/user-profile/${creatorId}`);
     }
   };
+
+  console.log("imagefiles", imageFiles);
 
   return (
     <div className="w-full p-3 flex flex-col gap-[15px] rounded-[15px] bg-[#111] mb-5">
@@ -81,7 +85,7 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
 
         <div className="flex justify-center">
           <img
-            src={imageUrl}
+            src={imageFiles[0]?.url || sample}
             alt="포스트 썸네일"
             className="w-[225px] h-[225px] object-cover"
           />
@@ -103,7 +107,7 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
             {tags?.map((tag) => (
               <span
                 key={tag}
-                className="h-4 px-1 text-[10.5px] bg-[#555555] rounded-[7.5px]"
+                className="flex items-center h-[13px] px-[7.5px] text-[10.5px] bg-[#555555] rounded-[7.5px]"
               >
                 {tag}
               </span>

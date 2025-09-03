@@ -37,7 +37,7 @@ export function MusicMoreMenu({ musicId }: MusicMoreMenuProps) {
     <Popover>
       <PopoverTrigger asChild>
         <button>
-          <MoreHorizontal size={15} className="text-[#999999]" />
+          <MoreHorizontal size={15} className="text-[#999999] cursor-pointer" />
         </button>
       </PopoverTrigger>
 

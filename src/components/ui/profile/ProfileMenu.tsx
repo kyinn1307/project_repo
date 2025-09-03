@@ -27,7 +27,10 @@ export function ProfileMenu() {
   const { data: projectsRes } = useQuery({
     queryKey: ["myProjects"],
     queryFn: getMyProjects,
-    select: (res) => res.data.data.projects,
+    select: (res) => {
+      console.log("프로젝트 목록:", res.data.data.projects);
+      return res.data.data.projects;
+    },
   });
 
   const tabList = [

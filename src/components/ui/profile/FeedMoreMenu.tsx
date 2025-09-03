@@ -19,7 +19,8 @@ export function FeedMoreMenu({ feedId }: FeedMoreMenuProps) {
     mutationFn: () => deleteFeed(feedId),
     onSuccess: () => {
       alert("삭제가 완료되었습니다.");
-      queryClient.invalidateQueries({ queryKey: ["myTracks"] });
+      queryClient.invalidateQueries({ queryKey: ["myFeeds"] });
+      queryClient.invalidateQueries({ queryKey: ["feeds"] });
     },
     onError: () => {
       alert("삭제에 실패했습니다.");

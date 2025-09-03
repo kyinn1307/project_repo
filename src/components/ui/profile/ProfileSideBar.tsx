@@ -13,11 +13,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getMyProfile } from "@/apis/my-profile";
-import type { MyProfile } from "@/types/my-profile";
+import type { Profile } from "@/types/my-profile";
 import { useUserStore } from "@/stores/useUserStore";
-
-import { getFollowerList } from "@/apis/follower";
-import { getFollowingList } from "@/apis/follower";
+import { getFollowerList, getFollowingList } from "@/apis/follower";
 import type { Follower } from "@/types/follower";
 
 export function ProfileSideBar() {
@@ -26,11 +24,12 @@ export function ProfileSideBar() {
   const [modalType, setModalType] = useState<"follower" | "following" | null>(
     null
   );
-  const [info, setInfo] = useState<MyProfile | null>(null);
+  const [info, setInfo] = useState<Profile | null>(null);
   const [profileImageLoaded, setProfileImageLoaded] = useState(false);
 
   const [followerList, setFollowerList] = useState<Follower[]>([]);
   const [followingList, setFollowingList] = useState<Follower[]>([]);
+
   // 마이 프로필 정보 조회
   const handleMyProfile = async () => {
     if (userId === null) {
@@ -109,15 +108,6 @@ export function ProfileSideBar() {
       <Card className="w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
         <CardContent className="p-6 flex flex-col items-center">
           <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden mb-[30px] bg-[#222222]">
-            {/* 기본 이미지 항상 렌더 */}
-            <img
-              src={junseo}
-              alt="기본 프로필"
-              className={`w-full h-full object-cover absolute top-0 left-0 transition-opacity duration-300 ${
-                profileImageLoaded ? "opacity-0" : "opacity-100"
-              }`}
-            />
-
             {/* 서버 이미지 조건부 렌더 */}
             {info?.profileImageUrl && (
               <img
@@ -147,7 +137,7 @@ export function ProfileSideBar() {
             {/* genre 영어로 바꾸기 */}
             <div className="flex flex-row items-center h-[11px] text-[#ffffff] gap-[7.5px]">
               <MusicIcon />
-              hiphop, kpop
+              {info?.genres[0]},{info?.genres[1]}
             </div>
             <div className="flex flex-row gap-[7.5px] h-[11px] items-center">
               <EmailIcon />

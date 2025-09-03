@@ -20,7 +20,7 @@ export function ProjectMoreMenu({ projectId }: ProjectMoreMenuProps) {
     mutationFn: () => deleteProject(projectId),
     onSuccess: () => {
       alert("삭제가 완료되었습니다.");
-      queryClient.invalidateQueries({ queryKey: ["myTracks"] });
+      queryClient.invalidateQueries({ queryKey: ["myProjects"] });
     },
     onError: () => {
       alert("삭제에 실패했습니다.");

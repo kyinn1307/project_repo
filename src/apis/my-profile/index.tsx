@@ -20,9 +20,7 @@ export const uploadProfileImage = (file: File) => {
 // 프로필 텍스트 정보 수정
 export const updateProfile = (data: {
   nickname: string;
-  phoneNumber: string;
   link: string;
-  career: string;
   introduction: string;
   selectedFields: string[];
   selectedGenres: string[];

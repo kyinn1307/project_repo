@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
-import type { MyProfile } from "@/types/my-profile";
+import type { Profile } from "@/types/my-profile";
 import { updateProfile, uploadProfileImage } from "@/apis/my-profile";
 
-export const ProfileEditModal = ({ info }: { info: MyProfile | null }) => {
+export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
@@ -46,7 +46,7 @@ export const ProfileEditModal = ({ info }: { info: MyProfile | null }) => {
     const reader = new FileReader();
     reader.onload = () => {
       setProfileImage(reader.result as string);
-      setProfileImageFile(file); // ✅ 파일 저장
+      setProfileImageFile(file);
     };
     reader.readAsDataURL(file);
   };
@@ -91,9 +91,7 @@ export const ProfileEditModal = ({ info }: { info: MyProfile | null }) => {
       // 2. 프로필 정보 업데이트
       await updateProfile({
         nickname,
-        phoneNumber: "", // 필요시 input 추가해서 state 관리
         link,
-        career: "", // 필요시 input 추가해서 state 관리
         introduction,
         selectedFields,
         selectedGenres,
