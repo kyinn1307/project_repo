@@ -1,12 +1,13 @@
 import { InfiniteMusicianCardList } from "@/components/ui/main/InfiniteMusicianCardList";
 import { SearchIcon } from "@/assets/Icons/SearchIcon";
-import { AdContent } from "@/components/ui/serve-pages/AdContent";
+
 export const MusicianPage = () => {
   return (
-    <div className="flex flex-col pt-[38px] px-[10%]">
-      <AdContent />
-      <section className="flex flex-col mt-[45px]">
-        <div className="text-2xl text-white font-bold"> 뮤지션</div>
+    <div className="flex flex-col">
+      <section className="flex flex-col mt-[52px] pl-[10%]">
+        <div className="h-[30px] flex items-center text-2xl text-white font-bold">
+          뮤지션
+        </div>
         <div className="relative flex flex-row mt-[22.5px]">
           <span className="absolute left-[15px] top-[5.25px]">
             <SearchIcon />
@@ -16,7 +17,7 @@ export const MusicianPage = () => {
             placeholder="뮤지션찾기"
           />
         </div>
-        <div className="mt-[15px]">
+        <div className="mt-[22.5px] text-white">
           <InfiniteMusicianCardList />
         </div>
       </section>
