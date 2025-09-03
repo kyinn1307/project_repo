@@ -1,24 +1,28 @@
 import hmson from "@/assets/Images/hmson.png";
-import { BasicMusic } from "@/assets/Images/BasicMusic";
+import { Musician } from "@/types/musician";
 
-export const MusicianCardItem = () => {
+interface MusicianCardItemProps {
+  musician: Musician;
+}
+
+export const MusicianCardItem = ({ musician }: MusicianCardItemProps) => {
   return (
     <div
-      className="relative w-[217.5px] h-[255px] rounded-[15px] overflow-hidden border cursor-pointer"
+      className="relative min-w-[263.5px] h-[263.5px] rounded-[15px] border cursor-pointer"
       style={{
         border: "0.75px solid #333333",
       }}
     >
       {/* 배경 이미지 */}
       <img
-        src={hmson}
+        src={musician.profileImageUrl || hmson}
         alt="프로필"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute w-full h-full rounded-[15px] object-cover"
       />
 
       {/* 블렌드 그라디언트 오버레이 */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 rounded-[15px]"
         style={{
           background: "linear-gradient(180deg, #FFFFFF 0%, #000000 79.89%)",
           mixBlendMode: "multiply",
@@ -26,25 +30,17 @@ export const MusicianCardItem = () => {
       />
 
       {/* 콘텐츠 영역 */}
-      <div className="absolute bottom-0 w-full px-[15px] py-[13.25px] text-white z-10">
-        <div className="font-semibold text-base">Artist01</div>
-        <div className="text-[#cccccc] text-xs mt-[3.75px]">
-          장르_ #Rap #base
+      <div className="absolute flex flex-col bottom-[10.75px] left-[11.25px] gap-[3.75px]">
+        <div className="h-[19px] flex items-center text-[15px] font-bold">
+          {musician.nickname}
         </div>
-        <div className="text-[#cccccc] text-xs mt-[3.75px]">
-          분야_ #Rap #base
-        </div>
-
-        <div className="flex items-center gap-[4.5px] mt-[15px]">
-          <div className="flex flex-col">
-            <div className="text-[10.5px]">대표곡</div>
-            <div className="flex flex-row gap-[6px] items-center">
-              <div className="w-[45px] h-[45px] rounded-[4px] flex items-center justify-center bg-[#333333]">
-                <BasicMusic />
-              </div>
-              <div className="text-[9px]">Untitled01</div>
-            </div>
-          </div>
+        <div className="flex flex-col gap-[7.5px] font-medium text-[10.5px]">
+          <span className="h-[13px] flex item-center">
+            장르_{(musician.genres ?? []).join(", ")}
+          </span>
+          <span className="h-[13px] flex item-center">
+            분야_{(musician.fields ?? []).join(", ")}
+          </span>
         </div>
       </div>
     </div>

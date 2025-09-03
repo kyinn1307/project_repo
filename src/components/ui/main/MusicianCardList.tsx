@@ -1,18 +1,10 @@
-import { MusicianCardItem } from "./MusicianCardItem";
-
-// 뮤지션 api 없음
+import { MainMusicianCardList } from "./MainMusicianCardList";
 
 export const MusicianCardList = () => {
   return (
     <div className="w-full overflow-x-auto">
       <div className="min-w-max flex gap-x-6">
-        <MusicianCardItem />
-        <MusicianCardItem />
-        <MusicianCardItem />
-        <MusicianCardItem />
-        <MusicianCardItem />
-        <MusicianCardItem />
-        <MusicianCardItem />
+        <MainMusicianCardList />
       </div>
     </div>
   );
