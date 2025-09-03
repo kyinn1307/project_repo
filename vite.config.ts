@@ -18,12 +18,12 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://3.230.162.160:8080",
+        target: "http://18.232.187.209:8080",
         changeOrigin: true,
         cookieDomainRewrite: "localhost",
       },
       "/ws": {
-        target: "http://3.230.162.160:8080",
+        target: "http://18.232.187.209:8080",
         ws: true,
         changeOrigin: true,
       },
