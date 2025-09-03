@@ -1,37 +1,45 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ChatBody } from "./ChatBody";
 import { ChatHeader } from "./ChatHeader";
 import { ChatInputTool } from "./ChatInputTool";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import { ChatMessage } from "@/types/chat";
-// import { fetchChatMessages } from "@/apis/chat"; // ✅ import 추가
-import { createChatRoom } from "@/apis/chat";
+import { getUserProfile } from "@/apis/user";
+import { Profile } from "@/types/my-profile";
+interface ChatContainerProps {
+  roomId: number | null;
+  opponentId: number | null;
+  myUserId: number | null;
+  chats: ChatMessage[];
+  setChats: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
+}
 
-export const ChatContainer = () => {
-  const myUserId = 1;
-  const [roomId, setRoomId] = useState<number | null>(1);
-  const [chats, setChats] = useState<ChatMessage[]>([]);
+export const ChatContainer = ({
+  roomId,
+  opponentId,
+  myUserId,
+  chats,
+  setChats,
+}: ChatContainerProps) => {
+  const [profile, setProfile] = useState<Profile>();
 
-  //   ✅ 채팅방 생성 + 기존 메시지 불러오기
   useEffect(() => {
-    const initRoom = async () => {
+    const fetchProfile = async () => {
+      if (!opponentId) return;
       try {
-        const { roomId } = await createChatRoom(); // 서버에서 채팅방 생성
-        setRoomId(roomId);
-
-        // const prevMessages = await fetchChatMessages(roomId); // 과거 메시지 불러오기
-        // console.log("📦 불러온 메시지:", prevMessages);
-        // setChats(prevMessages);
+        const data = await getUserProfile(opponentId);
+        console.log(data.data.data);
+        setProfile(data.data.data);
       } catch (err) {
-        console.error("채팅방 초기화 실패", err);
+        console.error("프로필 불러오기 실패", err);
       }
     };
 
-    initRoom();
-  }, []);
+    fetchProfile();
+  }, [opponentId]);
 
   // ✅ 소켓 연결 및 실시간 수신 처리
-  const { sendMessage } = useChatSocket(roomId, (newMsg: ChatMessage) => {
+  const { sendMessage } = useChatSocket(roomId!, (newMsg: ChatMessage) => {
     console.log("💬 실시간 메시지 수신:", newMsg);
     setChats((prev) => [...prev, newMsg]);
   });
@@ -39,6 +47,7 @@ export const ChatContainer = () => {
   // ✅ 메시지 전송 핸들러
   const handleSend = (text: string) => {
     if (!roomId) return;
+    if (!myUserId) return;
 
     const message: ChatMessage = {
       roomId,
@@ -49,10 +58,16 @@ export const ChatContainer = () => {
 
     sendMessage(message);
   };
+
+  if (!opponentId || !roomId) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-white text-lg"></div>
+    );
+  }
   return (
     <div className="flex flex-col h-full">
-      <ChatHeader />
-      <ChatBody chats={chats} />
+      {profile && <ChatHeader profile={profile} />}
+      {profile && <ChatBody chats={chats} profile={profile} />}
       <ChatInputTool onSend={handleSend} />
     </div>
   );

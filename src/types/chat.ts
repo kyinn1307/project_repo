@@ -4,3 +4,19 @@ export interface ChatMessage {
   sender: number;
   message: string;
 }
+
+export interface ChatRoomCheckResponse {
+  success: boolean;
+  message: string;
+  roomId: number | null;
+}
+
+export interface ChatRoomPreview {
+  roomId: number;
+  lastMessage: string;
+  lastMessageTime: string;
+  participantIds: number[];
+  nickname: string;
+  opponentUserNickname?: string;
+  otherProfileImageUrl?: string;
+}

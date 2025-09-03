@@ -1,13 +1,16 @@
 import { useRef, useEffect } from "react";
 import { ChatBox } from "./ChatBox";
 import type { ChatMessage } from "@/types/chat";
+import { useUserStore } from "@/stores/useUserStore";
+import { Profile } from "@/types/my-profile";
 
 interface ChatBodyProps {
   chats: ChatMessage[];
+  profile: Profile;
 }
 
-export const ChatBody = ({ chats }: ChatBodyProps) => {
-  const myUserId = 1;
+export const ChatBody = ({ chats, profile }: ChatBodyProps) => {
+  const myUserId = useUserStore((state) => state.userId);
   const scrollRef = useRef<HTMLDivElement>(null); // ✅ 스크롤 위치 제어용 ref
 
   useEffect(() => {
@@ -20,9 +23,11 @@ export const ChatBody = ({ chats }: ChatBodyProps) => {
   return (
     <div ref={scrollRef} className="flex-1 overflow-y-auto px-[9px] py-[7.5px]">
       {chats.map((chat, idx) => {
+        const next = chats[idx + 1];
         const prevChat = chats[idx - 1];
         const isSameUserAsPrevious = prevChat?.sender === chat.sender;
         const isMe = chat.sender === myUserId;
+        const isLast = !next || next.sender !== chat.sender;
 
         return (
           <ChatBox
@@ -30,6 +35,8 @@ export const ChatBody = ({ chats }: ChatBodyProps) => {
             content={chat.message}
             isMe={isMe}
             isContinuous={isSameUserAsPrevious}
+            isLast={isLast} // ✅ 전달
+            profile={profile}
           />
         );
       })}
