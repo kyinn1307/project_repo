@@ -16,13 +16,12 @@ export const MusicVideoPage = () => {
     useInfiniteQuery({
       queryKey: ["tracks"],
       queryFn: ({ pageParam = 0 }) => getAllTracks(pageParam, 1),
-      initialPageParam: 100,
+      initialPageParam: 606,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
 
   const trackList: Music[] = data?.pages.flatMap((page) => page.tracks) || [];
 
-  // ✅ URL 동기화
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -48,7 +47,6 @@ export const MusicVideoPage = () => {
     return () => observer.disconnect();
   }, [trackList]);
 
-  // ✅ 마지막 요소 관찰 → 다음 페이지 로딩
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage) return;
 

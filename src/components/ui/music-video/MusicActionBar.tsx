@@ -2,14 +2,16 @@ import { useState } from "react";
 import { Heart, Users } from "lucide-react";
 import { KeyComment } from "@/assets/Icons/music-video/KeyComment";
 import { LyricsIcon } from "@/assets/Icons/music-video/LyricsIcon";
+import { Music } from "@/types/music";
 
 interface Props {
   currentTab: "LYRICS" | "COMMENT" | "CREDIT" | null;
   onTabChange: (tab: "LYRICS" | "COMMENT" | "CREDIT") => void;
+  track: Music;
 }
 
-export const MusicActionBar = ({ onTabChange }: Props) => {
-  const [liked, setLiked] = useState(false);
+export const MusicActionBar = ({ onTabChange, track }: Props) => {
+  const [liked, setLiked] = useState(track.liked);
 
   const toggleLike = () => {
     setLiked((prev) => !prev);
@@ -30,7 +32,7 @@ export const MusicActionBar = ({ onTabChange }: Props) => {
             fill={liked ? "currentColor" : "none"}
           />
         </button>
-        <span className="text-[10.5px] mt-1">12</span>
+        <span className="text-[10.5px] mt-1">{track.likeCount}</span>
       </div>
 
       {/* 가사 */}

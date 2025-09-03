@@ -1,8 +1,11 @@
+import { RemoteFile } from "./feed";
+import { Participant } from "./musician";
+
 export interface Music {
   id: number;
   title: string;
-  audioUrl: string;
-  imageUrl: string;
+  audioFiles: RemoteFile[];
+  imageFiles: RemoteFile[];
   creatorId: number;
   creatorNickname: string;
   genres: string[];
@@ -10,6 +13,8 @@ export interface Music {
   playCount: number;
   likeCount: number;
   liked: boolean;
+  lyrics?: string;
+  participants: Participant[];
 }
 
 export interface TrackResponse {
