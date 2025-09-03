@@ -5,7 +5,7 @@ import { ChatMessage } from "@/types/chat";
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 export const useChatSocket = (
-  roomId: number | null,
+  roomId: number,
   onMessageReceive: (message: ChatMessage) => void
 ) => {
   const clientRef = useRef<Client | null>(null);
@@ -49,7 +49,7 @@ export const useChatSocket = (
       console.log("🚀 보낸 메시지:", message); // ✅ 이 줄 추가
 
       clientRef.current.publish({
-        destination: "/pub/chat/message",
+        destination: "/pub/api/chat/message",
         body: JSON.stringify(message),
       });
     } else {
