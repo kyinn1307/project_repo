@@ -15,7 +15,7 @@ export const ProjectContentItem = ({
   project,
   isUser,
 }: ProjectContentItemProps) => {
-  const { id, title, genres, fields, liked, likeCount } = project;
+  const { id, title, genres, fields, liked, likeCount, views } = project;
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -36,6 +36,8 @@ export const ProjectContentItem = ({
     navigate(`/project-detail/${id}`);
   };
 
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
+
   return (
     <div
       onClick={handleCardClick}
@@ -45,12 +47,14 @@ export const ProjectContentItem = ({
         <div className="h-[17px] text-[13.5px] mt-[3px] font-bold text-white">
           {"팀원모집"}
         </div>
-        {isUser ? (
-          // <UserProjectMoreMenu projectId={id} />
-          <UserProjectMoreMenu />
-        ) : (
-          <ProjectMoreMenu projectId={id} />
-        )}
+        <div onClick={stop} onMouseDown={stop}>
+          {isUser ? (
+            // <UserProjectMoreMenu projectId={id} />
+            <UserProjectMoreMenu />
+          ) : (
+            <ProjectMoreMenu projectId={id} />
+          )}
+        </div>
       </div>
       <div className="flex flex-col gap-[7px] mt-[7px]">
         <div className="h-[17px] text-[13.5px] font-bold text-[#7CA8FF]">
@@ -78,7 +82,7 @@ export const ProjectContentItem = ({
           </span>
           <span className="flex flex-row gap-[1.5px] items-center">
             <Eye size={13.5} />
-            1000
+            {views}
           </span>
         </div>
         <span className="flex flex-row gap-[3.75px] items-center">

@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 
 interface FileItemProps {
   filename: string;
-  onRemove: () => void;
+  onRemove?: () => void;
 }
 
 export const FileItem = ({ filename, onRemove }: FileItemProps) => {

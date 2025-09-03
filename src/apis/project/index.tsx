@@ -1,7 +1,7 @@
 import axiosInstance from "../axiosInstance";
 import { ProjectResponse } from "@/types/project";
 
-// 전체 프로젝트 정보 조회 (트랙 수정 시, 정보 호출)
+// 전체 프로젝트 정보 조회
 export const getAllProjects = async (
   pageParam?: number,
   size: number = 5

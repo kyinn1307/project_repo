@@ -18,8 +18,8 @@ interface MusicItemProps {
 export const MusicItem = ({ music, isUser }: MusicItemProps) => {
   const {
     id,
-    imageUrl,
-    audioUrl,
+    audioFiles,
+    imageFiles,
     title,
     creatorNickname,
     liked,
@@ -86,7 +86,7 @@ export const MusicItem = ({ music, isUser }: MusicItemProps) => {
           <div className="flex flex-row">
             <div className="relative w-[75px] h-[75px] mr-[7.5px] rounded-[15px] overflow-hidden group">
               <img
-                src={imageUrl || MusicDefault}
+                src={imageFiles[0].url || MusicDefault}
                 alt="음악 재생"
                 className="w-[75px] h-[75px] mr-[7.5px] rounded-[15px] object-cover"
               />
@@ -96,7 +96,7 @@ export const MusicItem = ({ music, isUser }: MusicItemProps) => {
               >
                 {isPlaying ? <Pause size={20} color="white" /> : <Play />}
               </button>
-              <audio ref={audioRef} src={audioUrl} />
+              <audio ref={audioRef} src={audioFiles[0].url} />
             </div>
 
             <div className="flex flex-col mt-[18.75px]">

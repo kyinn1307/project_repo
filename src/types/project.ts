@@ -9,6 +9,7 @@ export interface Project {
   likeCount: number;
   creatorId: number;
   creatorNickname: string;
+  views: number;
 }
 
 export interface ProjectResponse {

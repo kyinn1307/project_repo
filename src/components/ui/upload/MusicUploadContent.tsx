@@ -20,8 +20,8 @@ export const MusicUploadContent = () => {
   const [description, setDescription] = useState("");
   const [genres, setGenres] = useState<Genre[]>([]);
   const [tags, setTags] = useState<EmotionTag[]>([]);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [audioFiles, setAudioFiles] = useState<File[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const handleUpload = async () => {
     const requestData = {
@@ -37,8 +37,17 @@ export const MusicUploadContent = () => {
       "request",
       new Blob([JSON.stringify(requestData)], { type: "application/json" })
     );
-    if (audioFile) formData.append("audioFile", audioFile);
-    if (imageFile) formData.append("imageFile", imageFile);
+
+    if (audioFiles.length > 0) {
+      audioFiles.forEach((file) => {
+        formData.append("audioFile", file);
+      });
+    }
+    if (imageFiles.length > 0) {
+      imageFiles.forEach((file) => {
+        formData.append("imageFile", file);
+      });
+    }
 
     try {
       const res = await uploadTrack(formData);
@@ -65,8 +74,8 @@ export const MusicUploadContent = () => {
         <CommentInput value={description} setValue={setDescription} />
       </div>
       <div className="flex flex-row gap-[7.5px]">
-        <MusicUploadSection file={audioFile} setFile={setAudioFile} />
-        <ImageUploadSection file={imageFile} setFile={setImageFile} />
+        <MusicUploadSection files={audioFiles} setFiles={setAudioFiles} />
+        <ImageUploadSection files={imageFiles} setFiles={setImageFiles} />
       </div>
       <div>
         <AssignMemberSection />

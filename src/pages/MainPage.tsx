@@ -1,13 +1,17 @@
 // import { AdBanner } from "@/components/ui/main/AdBanner";
 import { ContentSection } from "@/components/ui/ContentSection";
 import { MusicianCardList } from "@/components/ui/main/MusicianCardList";
-import { ProjectCardList } from "@/components/ui/main/ProjectCardList";
 import { loginCheck } from "@/apis/login";
 import { useEffect } from "react";
 import { useUserStore } from "@/stores/useUserStore";
 import { MusicCardList } from "@/components/ui/main/MusicCardList";
+import { MainProjectList } from "@/components/ui/main/MainProjectList";
+import { IntroductionBanner } from "@/components/ui/main/IntroductionBanner";
+import { SearchBar } from "@/components/ui/main/SearchBar";
 
 export default function MainPage() {
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+
   const handleIsLogin = async () => {
     try {
       const res = await loginCheck();
@@ -32,17 +36,33 @@ export default function MainPage() {
   });
 
   return (
-    <div className="flex flex-col items-center text-white px-[10%]">
-      <ContentSection title="뮤지션">
-        <MusicianCardList />
-      </ContentSection>
-      <ContentSection title="음원">
-        <MusicCardList />
-      </ContentSection>
+    <div className="flex flex-col items-center text-white">
+      {!isLoggedIn && (
+        <div className="w-full pt-[37.5px]">
+          <IntroductionBanner />
+        </div>
+      )}
 
-      <ContentSection title="프로젝트">
-        <ProjectCardList />
-      </ContentSection>
+      <div>
+        <ContentSection title="뮤지션">
+          <div className="max-w-[540px]">
+            <SearchBar placeholder="뮤지션 찾기" />
+          </div>
+          <MusicianCardList />
+        </ContentSection>
+        <ContentSection title="음원">
+          <div className="max-w-[540px]">
+            <SearchBar placeholder="음원 찾기" />
+          </div>
+          <MusicCardList />
+        </ContentSection>
+        <ContentSection title="프로젝트">
+          <div className="max-w-[540px]">
+            <SearchBar placeholder="프로젝트 찾기" />
+          </div>
+          <MainProjectList />
+        </ContentSection>
+      </div>
     </div>
   );
 }

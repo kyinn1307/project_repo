@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { GenreSelector } from "@/components/ui/profile-detail/GenreSelector";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import { TitleInput } from "@/components/ui/profile-detail/TitleInput";
 
 import type { Genre } from "@/types/music";
 import { getProjectDetail, updateProject } from "@/apis/project";
+import { RemoteFile } from "@/types/feed";
+import { buildActionsMulti } from "@/utils/buildActionMulti";
 
 export const ProjectEditPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -24,28 +26,46 @@ export const ProjectEditPage = () => {
   const [fields, setFields] = useState<string[]>([]);
   const [isMusician] = useState<boolean>(true);
   const [audioFiles, setAudioFiles] = useState<File[]>([]);
-  const [audioPreviewUrls, setAudioPreviewUrls] = useState<string[]>([]);
+  const [audioPreviewFiles, setAudioPreviewFiles] = useState<RemoteFile[]>([]);
+
+  const initialAudioPreviewRef = useRef<RemoteFile[]>([]);
 
   // 프로젝트 상세 정보 fetch
   useEffect(() => {
     if (!id) return;
 
-    const fetchTrack = async () => {
+    const fetchProject = async () => {
       try {
-        const track = await getProjectDetail(Number(id));
-        console.log(track);
-        setTitle(track.title);
-        setDescription(track.description);
-        setFields(track.fields);
-        setGenres(track.genres);
-        setAudioPreviewUrls(track.fileUrls ?? []);
+        const project = await getProjectDetail(Number(id));
+        console.log(project);
+        setTitle(project.title);
+        setDescription(project.description);
+        setFields(project.fields);
+        setGenres(project.genres);
+        const serverList: RemoteFile[] = Array.isArray(project.audioFiles)
+          ? project.audioFiles
+          : [];
+        setAudioPreviewFiles(serverList);
+        setAudioFiles([]);
+
+        initialAudioPreviewRef.current = serverList;
       } catch (err) {
         console.error("트랙 조회 실패", err);
       }
     };
 
-    fetchTrack();
+    fetchProject();
   }, [id]);
+
+  const audioFileActions = buildActionsMulti(
+    initialAudioPreviewRef.current, // ✅ 초기 서버 파일
+    audioPreviewFiles, // ✅ 현재 프리뷰(삭제 반영됨)
+    audioFiles // ✅ 로컬 신규
+  );
+
+  const removeServerAudioPreview = (index: number) => {
+    setAudioPreviewFiles((prev) => prev.filter((_, i) => i !== index));
+  };
 
   // 프로젝트 정보 수정
   const handleUpdate = async () => {
@@ -57,8 +77,11 @@ export const ProjectEditPage = () => {
       genres,
       fields,
       isMusician,
+      audioFileActions,
     };
 
+    console.log("request data", requestData);
+    console.log("file action", audioFileActions);
     const formData = new FormData();
     formData.append(
       "data",
@@ -81,7 +104,10 @@ export const ProjectEditPage = () => {
   };
 
   return (
-    <div className="w-[540px] bg-[#222222] px-[11.25px] py-[15px] rounded-[7.5px] mt-[5.5px]">
+    <div className="w-[540px] bg-[#222222] p-[11.25px] rounded-[7.5px] mt-[5.5px]">
+      <div className="flex items-center w-fit px-[22.5px] h-[22.5px] text-xs font-bold rounded-full bg-white/10 text-white mb-[7.5px]">
+        프로젝트
+      </div>
       <div className="flex flex-col gap-[7.5px]">
         <div>
           <div>
@@ -104,7 +130,8 @@ export const ProjectEditPage = () => {
           <ProjectUploadSection
             files={audioFiles}
             setFiles={setAudioFiles}
-            audioPreviewUrls={audioPreviewUrls}
+            audioPreviewFiles={audioPreviewFiles ?? []}
+            onRemoveServerPreview={removeServerAudioPreview}
           />
         </div>
 
