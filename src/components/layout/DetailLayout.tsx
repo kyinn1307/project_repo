@@ -13,7 +13,7 @@ export default function DetailLayout() {
           <AppSidebar />
           <main
             className={clsx(
-              "flex-1 transition-all duration-300 overflow-y-auto bg-[#000000] pt-[36px] px-5 flex justify-center"
+              "flex-1 transition-all duration-300 overflow-y-auto bg-[#000000] pt-[36px] px-5 flex justify-center ml-[160px]"
             )}
           >
             <div className="w-full max-w-[720px] flex justify-center">

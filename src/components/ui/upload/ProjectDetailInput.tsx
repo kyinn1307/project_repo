@@ -8,8 +8,13 @@ export const ProjectDetailInput = ({
   setValue,
 }: ProjectDetailInputProps) => {
   return (
-    <div className="w-full h-26 bg-[#111111] rounded-[3.75px] p-[7.5px] ">
-      <div className="text-white text-[10.5px] mb-[7.5px]">상세내용</div>
+    <div className="w-full h-26 bg-[#111111] rounded-[3.75px] p-[7.5px]">
+      <div className="flex flex-row justify-between">
+        <div className="text-white font-medium text-[10.5px] mb-[7.5px]">
+          상세내용
+        </div>
+        <div className="text-[#0050ef] text-[9px] mb-[7.5px]">필수항목</div>
+      </div>
       <textarea
         value={value}
         onChange={(e) => setValue(e.target.value)}

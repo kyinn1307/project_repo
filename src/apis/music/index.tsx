@@ -13,7 +13,6 @@ export const getAllTracks = async (
 
   const query = `/tracks?${params.toString()}`;
   const res = await axiosInstance.get(query);
-  console.log("📦 응답:", res.data.data);
   return res.data.data;
 };
 
@@ -50,4 +49,27 @@ export const deleteTrack = async (trackId: number) => {
 // 트랙 좋아요 토글
 export const toggleTrackLike = async (trackId: number) => {
   return axiosInstance.post(`/tracks/${trackId}/like`);
+};
+
+// 트랙 재생 횟수 증가
+export const playTrack = async (trackId: number) => {
+  return axiosInstance.post(`/tracks/${trackId}/play`);
+};
+
+// 트랙 검색하기
+export const getTrackSearch = async ({
+  k,
+  cursorId,
+  size = 20,
+}: {
+  k: string;
+  cursorId?: number;
+  size?: number;
+}): Promise<TrackResponse> => {
+  const params: Record<string, string | number> = { k, size };
+  if (cursorId !== undefined) params.cursorId = cursorId;
+
+  const res = await axiosInstance.get("/tracks/list/search", { params });
+  console.log(res.data.data);
+  return res.data?.data;
 };

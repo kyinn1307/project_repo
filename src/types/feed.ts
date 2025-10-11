@@ -4,6 +4,7 @@ export interface Feed {
   description: string;
   audioFiles: RemoteFile[];
   imageFiles: RemoteFile[];
+  creatorProfileImageUrl: string;
   liked: boolean;
   likeCount: number;
   creatorId: number;

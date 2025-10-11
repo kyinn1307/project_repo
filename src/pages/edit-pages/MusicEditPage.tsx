@@ -16,6 +16,7 @@ import { updateTrack } from "@/apis/music";
 import { useNavigate } from "react-router-dom";
 import { RemoteFile } from "@/types/feed";
 import { buildActionsMulti } from "@/utils/buildActionMulti";
+import { Musician } from "@/types/musician";
 
 export const MusicEditPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +29,7 @@ export const MusicEditPage = () => {
   const [tags, setTags] = useState<EmotionTag[]>([]);
   const [audioFiles, setAudioFiles] = useState<File[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<Musician[]>([]);
 
   const [audioPreviewFiles, setAudioPreviewFiles] = useState<RemoteFile[]>([]);
   const [imagePreviewFiles, setImagePreviewFiles] = useState<RemoteFile[]>([]);
@@ -131,7 +133,11 @@ export const MusicEditPage = () => {
           <TitleInput value={title} setValue={setTitle} />
         </div>
         <div className="flex flex-row">
-          <GenreSelector value={genres} setValue={setGenres} />
+          <GenreSelector
+            value={genres}
+            setValue={setGenres}
+            isRequired={true}
+          />
         </div>
         <div>
           <LyricsInput value={lyrics} setValue={setLyrics} />
@@ -154,7 +160,10 @@ export const MusicEditPage = () => {
           />
         </div>
         <div>
-          <AssignMemberSection />
+          <AssignMemberSection
+            value={selectedMembers}
+            setValue={setSelectedMembers}
+          />
         </div>
         <div>
           <MusicTagSelector value={tags} setValue={setTags} />

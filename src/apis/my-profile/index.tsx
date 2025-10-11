@@ -43,6 +43,11 @@ export const getMyProjects = () => {
   return axiosInstance.get("/project/my");
 };
 
+// 내 비즈니스 목록 조회
+export const getMyBusiness = () => {
+  return axiosInstance.get("/business/my");
+};
+
 // 좋아요 음원 목록 조회
 export const getLikedTracks = () => {
   return axiosInstance.get("/tracks/liked");

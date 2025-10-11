@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -10,12 +10,14 @@ import sample from "@/assets/Images/hmson.png";
 import { ChatUserCheckIcon } from "@/assets/Icons/chat/ChatUserCheckIcon";
 import { Search, X } from "lucide-react";
 import { Button } from "../button";
+import { useQuery } from "@tanstack/react-query";
 
 interface UserListPopoverProps {
   children: React.ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelectUser: (userId: number) => void;
+  userId: number;
 }
 
 export const UserListPopover = ({
@@ -23,23 +25,32 @@ export const UserListPopover = ({
   open,
   onOpenChange,
   onSelectUser,
+  userId,
 }: UserListPopoverProps) => {
-  const [users, setUsers] = useState<Follower[]>([]);
+  const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
 
+  // 입력 디바운스
   useEffect(() => {
-    if (!open) return;
-    const fetchUsers = async () => {
-      try {
-        const res = await getFollowingList(1); // 전체 유저 API
-        console.log(res.data.data);
-        setUsers(res.data.data);
-      } catch (err) {
-        console.error("유저 목록 불러오기 실패", err);
-      }
-    };
+    const t = setTimeout(() => setDebouncedQ(q.trim()), 250);
+    return () => clearTimeout(t);
+  }, [q]);
 
-    fetchUsers();
-  }, [open]);
+  const { data: users = [] } = useQuery<Follower[]>({
+    queryKey: ["chat", "following", { open }],
+    queryFn: async () => {
+      const res = await getFollowingList(userId);
+      return res.data.data as Follower[];
+    },
+    enabled: open,
+    staleTime: 60_000,
+  });
+
+  const filtered = useMemo(() => {
+    if (!debouncedQ) return users;
+    const lower = debouncedQ.toLowerCase();
+    return users.filter((u) => u.nickname?.toLowerCase().includes(lower));
+  }, [users, debouncedQ]);
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
@@ -53,29 +64,32 @@ export const UserListPopover = ({
           />
         </div>
         <div className="relative px-[7.5px] h-[25.5px] mb-[37.5px]">
-          <input className="w-full h-full pl-[30px] flex items-center text-[13.5px] rounded-full border border-[#777777] text-[#777777] focus:outline-none focus:ring-0 focus:border-[#777777]" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="닉네임 검색"
+            className="w-full h-full pl-[30px] flex items-center text-[13.5px] rounded-full border border-[#777777] text-white focus:outline-none focus:ring-0 focus:border-[#777777]"
+          />
           <Search
             size={18}
             className="absolute left-[15px] top-1/2 transform -translate-y-1/2 text-[#777777]"
           />
         </div>
-        {users.map((user) => (
+        {filtered.map((user) => (
           <div
             key={user.userId}
             className="flex flex-row items-center p-[7.5px] justify-between hover:bg-[#0050EF]/20 cursor-pointer"
+            onClick={() => {
+              onSelectUser(user.userId);
+              onOpenChange(false);
+            }}
           >
             <div className="flex flex-row items-center gap-[7.5px]">
               <img
                 src={sample}
                 className="h-[25.5px] w-[25.5px] rounded-full object-cover"
               />
-              <div
-                className="cursor-pointer py-[4.25px] text-[13.5px] font-medium"
-                onClick={() => {
-                  onSelectUser(user.userId);
-                  onOpenChange(false);
-                }}
-              >
+              <div className="cursor-pointer py-[4.25px] text-[13.5px] font-medium">
                 {user.nickname}
               </div>
             </div>

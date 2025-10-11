@@ -6,7 +6,10 @@ interface CommentInputProps {
 export const CommentInput = ({ value, setValue }: CommentInputProps) => {
   return (
     <div className="w-full h-[77px] flex flex-col bg-[#111111] rounded-[3.75px] pt-[7.5px] px-[7.5px] text-[#ffffff]">
-      <div className="text-[10.5px] font-medium mb-[7.5px]">코멘트</div>
+      <div className="flex flex-row justify-between">
+        <div className="text-[10.5px] font-medium mb-[7.5px]">코멘트</div>
+        <div className="text-[#0050ef] text-[9px]">필수항목</div>
+      </div>
       <textarea
         value={value}
         onChange={(e) => setValue(e.target.value)}

@@ -7,7 +7,10 @@ export const TitleInput = ({
 }) => {
   return (
     <div className="w-full bg-[#111111] rounded-[3.75px] p-[7.5px] ">
-      <div className="text-white text-[10.5px]">제목</div>
+      <div className="flex flex-row justify-between">
+        <div className="text-white text-[10.5px]">제목</div>
+        <div className="text-[#0050EF] text-[9px]">필수항목</div>
+      </div>
       <input
         value={value}
         onChange={(e) => setValue(e.target.value)}

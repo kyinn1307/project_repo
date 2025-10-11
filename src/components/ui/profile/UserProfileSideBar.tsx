@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
@@ -14,45 +14,34 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../button";
 
-import { getUserProfile } from "@/apis/user";
+import { followUser, getUserProfile, unfollowUser } from "@/apis/user";
 import { getFollowerList } from "@/apis/follower";
 import { getFollowingList } from "@/apis/follower";
 import type { Profile } from "@/types/my-profile";
 import type { Follower } from "@/types/follower";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function UserProfileSidebar() {
   const { id } = useParams<{ id: string }>();
-
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const userId = Number(id);
 
   const [open, setOpen] = useState(false);
   const [modalType, setModalType] = useState<"follower" | "following" | null>(
     null
   );
-  const [info, setInfo] = useState<Profile | null>(null);
   const [profileImageLoaded, setProfileImageLoaded] = useState(false);
 
   const [followerList, setFollowerList] = useState<Follower[]>([]);
   const [followingList, setFollowingList] = useState<Follower[]>([]);
   // 마이 프로필 정보 조회
-  const handleUserProfile = async () => {
-    if (userId === null) {
-      console.log("userId가 없습니다.");
-      return;
-    }
-
-    try {
-      const res = await getUserProfile(userId);
-      console.log(res.data);
-      setInfo(res.data.data);
-    } catch (err) {
-      console.log("조회 실패.", err);
-    }
-  };
-
-  useEffect(() => {
-    handleUserProfile();
-  }, []);
+  const { data: info } = useQuery({
+    queryKey: ["userProfile", userId],
+    queryFn: () => getUserProfile(userId),
+    select: (res) => res.data.data as Profile, // 기존 setInfo(res.data.data)와 동일
+    enabled: Number.isFinite(userId),
+  });
 
   const fetchFollowList = async (type: "follower" | "following") => {
     if (!userId) return;
@@ -62,12 +51,11 @@ export function UserProfileSidebar() {
         type === "follower"
           ? await getFollowerList(userId)
           : await getFollowingList(userId);
-      console.log("팔로우 데이터:", res.data.data); // ✅ 여기에 콘솔 출력
 
       const list = res.data.data.map((user: Follower) => ({
         userId: user.userId,
         nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl ?? junseo, // 기본 이미지 대체
+        profileImageUrl: user.profileImageUrl ?? junseo,
       }));
 
       if (type === "follower") setFollowerList(list);
@@ -107,6 +95,30 @@ export function UserProfileSidebar() {
     setOpen(false);
   };
 
+  const refetchFollowRelated = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["userProfile", userId] }),
+      queryClient.invalidateQueries({ queryKey: ["followers", userId] }),
+      queryClient.invalidateQueries({ queryKey: ["followings", userId] }),
+    ]);
+    if (modalType) {
+      if (modalType === "follower") fetchFollowList("follower");
+      else fetchFollowList("following");
+    }
+  };
+
+  const { mutate: followMutate } = useMutation({
+    mutationFn: () => followUser(userId),
+    onSuccess: refetchFollowRelated,
+  });
+
+  const { mutate: unfollowMutate } = useMutation({
+    mutationFn: () => unfollowUser(userId),
+    onSuccess: () => {
+      refetchFollowRelated();
+    },
+  });
+
   return (
     <>
       <Card className="w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
@@ -132,10 +144,16 @@ export function UserProfileSidebar() {
             <div className="flex flex-row gap-[7.5px]">
               {info?.relationship === 1 && (
                 <>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => followMutate()}
+                  >
                     팔로우
                   </Button>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => navigate(`/chat/?userId=${userId}`)}
+                  >
                     메시지
                   </Button>
                 </>
@@ -143,10 +161,16 @@ export function UserProfileSidebar() {
 
               {info?.relationship === 2 && (
                 <>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => unfollowMutate()}
+                  >
                     언팔로우
                   </Button>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => navigate(`/chat/?userId=${userId}`)}
+                  >
                     메시지
                   </Button>
                 </>
@@ -154,10 +178,16 @@ export function UserProfileSidebar() {
 
               {info?.relationship === 3 && (
                 <>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => followMutate()}
+                  >
                     맞팔로우
                   </Button>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => navigate(`/chat/?userId=${userId}`)}
+                  >
                     메시지
                   </Button>
                 </>
@@ -165,10 +195,16 @@ export function UserProfileSidebar() {
 
               {info?.relationship === 4 && (
                 <>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => unfollowMutate()}
+                  >
                     언팔로우
                   </Button>
-                  <Button className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer">
+                  <Button
+                    className="flex items-center w-15 h-[22.5px] bg-[#555555] text-white text-xs rounded-[3.75px] cursor-pointer"
+                    onClick={() => navigate(`/chat/?userId=${userId}`)}
+                  >
                     메시지
                   </Button>
                 </>
@@ -185,7 +221,7 @@ export function UserProfileSidebar() {
             {/* genre 영어로 바꾸기 */}
             <div className="flex flex-row items-center h-[11px] text-[#ffffff] gap-[7.5px]">
               <MusicIcon />
-              hiphop, kpop
+              {info?.genres?.join(", ")}
             </div>
             <div className="flex flex-row gap-[7.5px] h-[11px] items-center">
               <EmailIcon />

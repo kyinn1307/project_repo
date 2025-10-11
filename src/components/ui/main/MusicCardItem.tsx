@@ -37,10 +37,9 @@ export const MusicCardItem = ({ music }: { music: Music }) => {
   return (
     <div
       className="relative min-w-[243.75px] flex flex-col overflow-hidden bg-[#111111] rounded-[15px] cursor-pointer"
-      onClick={() => navigate("/music-video")}
+      onClick={() => navigate(`/music-video/${music.id}`)}
     >
       <div className="flex flex-row gap-[22.5px]">
-        {/* ✅ 이미지 래퍼: relative + group */}
         <div
           className="relative w-[75px] h-[75px] mr-[7.5px] rounded-[15px] overflow-hidden group"
           onClick={handleTogglePlay}
@@ -50,7 +49,6 @@ export const MusicCardItem = ({ music }: { music: Music }) => {
             alt="음악 재생"
             className="w-[75px] h-[75px] rounded-[15px] object-cover"
           />
-          {/* ✅ 오버레이: group-hover로 표시, absolute 기준은 위 래퍼 */}
           <button
             type="button"
             aria-label={isPlaying ? "일시정지" : "재생"}

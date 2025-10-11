@@ -9,7 +9,6 @@ interface FeedListProps {
 export const FeedList = ({ list, isUser }: FeedListProps) => {
   if (!Array.isArray(list) || list.length === 0) return null;
 
-  console.log(list);
   return (
     <div className="flex flex-col">
       {list.map((feed) => (

@@ -1,20 +1,32 @@
 import { MusicianCardItem } from "./MusicianCardItem";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { getAllMusicians } from "@/apis/user";
+import { getAllMusicians } from "@/apis/musician";
 import type { Musician, MusicianResponse } from "@/types/musician";
 import { useEffect, useRef } from "react";
+import { getMusicianSearch } from "@/apis/musician";
 
-export const InfiniteMusicianCardList = () => {
+type Props = { searchTerm?: string };
+
+export const InfiniteMusicianCardList = ({ searchTerm = "" }: Props) => {
+  const keyword = searchTerm.trim();
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery<
       MusicianResponse,
       Error,
       InfiniteData<MusicianResponse>,
-      [string],
+      [string, string],
       number | undefined
     >({
-      queryKey: ["musicians"],
-      queryFn: ({ pageParam }) => getAllMusicians(pageParam, 20),
+      queryKey: ["musicians", keyword],
+      queryFn: ({ pageParam }) =>
+        keyword
+          ? getMusicianSearch({
+              nickname: keyword,
+              cursorId: pageParam,
+              size: 20,
+            })
+          : getAllMusicians(pageParam, 20),
       initialPageParam: undefined,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
@@ -47,7 +59,7 @@ export const InfiniteMusicianCardList = () => {
 
       <div ref={observerRef} className="h-6" />
 
-      {isLoading && <p>로딩 중...</p>}
+      {isLoading && <p>검색 중...</p>}
       {isFetchingNextPage && <p>불러오는 중...</p>}
     </div>
   );

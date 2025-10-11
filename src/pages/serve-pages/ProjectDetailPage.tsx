@@ -2,9 +2,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getProjectDetail } from "@/apis/project";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Clock, Download, Eye, Heart, Music, Share2 } from "lucide-react";
+import {
+  Clock,
+  Download,
+  Eye,
+  Heart,
+  Music,
+  Share2,
+  Image,
+} from "lucide-react";
 import { useUserStore } from "@/stores/useUserStore";
-import ProfileDefault from "@/assets/Images/hmson.png";
+import { RemoteFile } from "@/types/feed";
+import { daysLeftFrom, formatYMDdot } from "@/utils/formatDate";
 
 export const ProjectDetailPage = () => {
   const { id } = useParams();
@@ -28,55 +37,52 @@ export const ProjectDetailPage = () => {
   if (!project)
     return <div className="text-white">프로젝트 정보가 없습니다.</div>;
 
-  const handleDownload = async () => {
-    const file = project.audioFiles?.[0];
+  const handleDownload = async (file: RemoteFile) => {
     if (!file || !file.url) {
       alert("다운로드할 파일이 없습니다.");
       return;
     }
 
-    // 파일명 우선순위: originalFileName → URL에서 추정
+    // 파일명 결정
     const inferNameFromUrl = (u: string) => {
       try {
         const pathname = new URL(u, window.location.href).pathname;
-        const last = pathname.split("/").pop() || "audio";
+        const last = pathname.split("/").pop() || "file";
         return last.split("?")[0];
       } catch {
-        return "audio";
+        return "file";
       }
     };
-
     const filename =
       file.originalFileName ||
-      (typeof file.url === "string" ? inferNameFromUrl(file.url) : "audio.mp3");
+      (typeof file.url === "string" ? inferNameFromUrl(file.url) : "file");
 
     try {
       let objectUrl: string | null = null;
       let createdHere = false;
 
-      // 1) Blob 객체
-      if (file.url instanceof Blob) {
-        objectUrl = URL.createObjectURL(file.url);
-        createdHere = true;
-      }
-      // 2) blob:/data: URL
-      else if (
-        typeof file.url === "string" &&
-        (file.url.startsWith("blob:") || file.url.startsWith("data:"))
-      ) {
-        objectUrl = file.url;
-      }
-      // 3) 일반 HTTPS(S3) URL
-      else if (typeof file.url === "string") {
-        // 서명된 S3 URL이면 보통 CORS 허용되어 있음. 안 되면 폴백 처리.
-        const res = await fetch(file.url, { credentials: "omit" });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const blob = await res.blob();
-        objectUrl = URL.createObjectURL(blob);
-        createdHere = true;
-      }
+      // 🔹 먼저 지역 변수로 빼서 분기 (이렇게 해야 TS가 제대로 좁혀줍니다)
+      const urlVal = file.url;
 
-      if (!objectUrl) throw new Error("유효한 파일 URL이 없습니다.");
+      if (typeof urlVal === "string") {
+        // 2) blob:/data: 인라인 URL
+        if (urlVal.startsWith("blob:") || urlVal.startsWith("data:")) {
+          objectUrl = urlVal;
+        } else {
+          // 3) 일반 HTTPS(S3 등)
+          const res = await fetch(urlVal, { credentials: "omit" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const blob = await res.blob();
+          objectUrl = URL.createObjectURL(blob);
+          createdHere = true;
+        }
+      } else if (urlVal) {
+        // 1) Blob 객체
+        objectUrl = URL.createObjectURL(urlVal);
+        createdHere = true;
+      } else {
+        throw new Error("지원하지 않는 url 타입입니다.");
+      }
 
       const a = document.createElement("a");
       a.href = objectUrl;
@@ -85,11 +91,9 @@ export const ProjectDetailPage = () => {
       a.click();
       a.remove();
 
-      if (createdHere) {
-        URL.revokeObjectURL(objectUrl);
-      }
+      if (createdHere) URL.revokeObjectURL(objectUrl);
     } catch (err) {
-      console.error("blob 다운로드 실패, 링크 열기로 폴백:", err);
+      console.error("Blob 저장 실패 → 링크 열기로 폴백:", err);
       if (typeof file.url === "string") {
         window.open(file.url, "_blank", "noopener,noreferrer");
       } else {
@@ -103,35 +107,41 @@ export const ProjectDetailPage = () => {
     return (bytes / (1024 * 1024)).toFixed(2); // MB 단위, 소수점 2자리
   };
 
+  const leftDays = daysLeftFrom(project.createdAt, 14);
+
   return (
-    <div className="flex flex-col text-white pl-[15%] xl:pr-[10%] pt-[25.5px]">
+    <div className="flex flex-col text-white pl-[15%] xl:pr-[10%] pt-[25.5px] pr-[3%]">
       {/* project detail header */}
       <div className="flex flex-row justify-between mb-[18.5px] py-[6px] items-end border-b border-[#0050ef]">
         <div className="text-[27px] font-medium">{project.title}</div>
-        <div className="text-[9px] font-medium">등록일 : 2024.10.02</div>
+        <div className="text-[9px] font-medium">
+          등록일 : {formatYMDdot(project.createdAt)}
+        </div>
       </div>
 
       {/* project detail content */}
       <div className="flex flex-row gap-[15px]">
         <div className="flex flex-2 min-w-[400px] flex-col gap-[15px]">
           {/* project creator info */}
-          <div className="flex flex-row justify-between items-center">
+          <div className="flex flex-row p-[11.25px] justify-between items-center rounded-[15px] bg-[#111111]">
             <div className="flex flex-row gap-[18px]">
               <img
-                src={project.profileImageUrl || ProfileDefault}
+                src={project.creatorProfileImageUrl}
                 alt="프로필"
-                className="w-[70px] h-[70px] rounded-full object-cover"
+                className="w-[52.5px] h-[52.5px] rounded-full object-cover"
               />
-              <div className="flex flex-col">
-                <span className="font-bold text-[18px]">
+              <div className="flex flex-col gap-[2.5px]">
+                <span className="h-[23px] flex items-center font-bold text-[18px]">
                   {project.creatorNickname}
                 </span>
-                <span className="text-xs">
-                  장르_{project.genres.join(", ")}
-                </span>
-                <span className="text-xs">
-                  분야_{project.fields.join(", ")}
-                </span>
+                <div>
+                  <span className="h-[15px] flex items-center text-xs">
+                    장르_{project.genres.join(", ")}
+                  </span>
+                  <span className="h-[15px] flex items-center text-xs">
+                    분야_{project.fields.join(", ")}
+                  </span>
+                </div>
               </div>
             </div>
             {/* 팔로우 메시지 버튼 */}
@@ -147,13 +157,13 @@ export const ProjectDetailPage = () => {
             )}
           </div>
           {/* project description */}
-          <div className="py-[15px] px-[11.25px] text-xs">
+          <div className="py-[15px] px-[11.25px] text-xs rounded-[15px] bg-[#111111]">
             {project.description}
           </div>
         </div>
 
         <div className="flex flex-1 flex-col gap-[15px]">
-          <div className="flex flex-col p-[11.25px] gap-[15px]">
+          <div className="flex flex-col p-[11.25px] gap-[15px] rounded-[15px] bg-[#111111]">
             <div className="flex flex-col gap-[7.5px]">
               <div className="w-fit px-[7.5px] py-[2.25px] text-[13.5px] font-bold bg-[#0050ef] rounded-[9px]">
                 팀원 모집
@@ -171,7 +181,7 @@ export const ProjectDetailPage = () => {
             <div className="flex flex-row px-[24.5px] gap-15 text-[10.5px]">
               <span className="flex flex-col gap-[7.5px] items-center whitespace-nowrap">
                 <Clock size={18} />
-                14일전
+                {`${leftDays}일 전`}
               </span>
               <span className="flex flex-col gap-[7.5px] items-center whitespace-nowrap">
                 <Eye size={18} />
@@ -194,42 +204,57 @@ export const ProjectDetailPage = () => {
                 <Share2 />
                 공유하기
               </Button>
-              <Button className="flex-2 bg-[#0050ef] rounded-[3.75px] cursor-pointer">
+              <Button
+                className="flex-2 bg-[#0050ef] rounded-[3.75px] cursor-pointer"
+                onClick={() => {
+                  navigate(`/upload/project-edit/${project.id}`);
+                }}
+              >
                 {/* upload/project-edit/project.id */}
-                {userId === project.creatorId ? (
-                  <Button
-                    className="flex-2 bg-[#0050ef] rounded-[3.75px] cursor-pointer"
-                    onClick={() => {
-                      navigate(`/upload/project-edit/${project.id}`);
-                    }}
-                  >
-                    수정하기
-                  </Button>
-                ) : (
-                  <Button className="flex-2 bg-[#0050ef] rounded-[3.75px] cursor-pointer">
-                    문의하기
-                  </Button>
-                )}{" "}
+                {userId === project.creatorId ? "수정하기" : "문의하기"}
               </Button>
             </div>
           </div>
-          <div className="flex flex-col p-[11.25px]">
-            <span className="flex flex-row justify-between px-[7.5px] py-[6px] text-xs text-white bg-[#222222] rounded-[3.75px] gap-[9px]">
-              <span className="flex flex-row items-center gap-[9px]">
-                {/* <File size={18} /> */}
-                <Music size={18} />
-                {project.audioFiles[0].originalFileName}
-              </span>
-              <span
-                className="flex flex-row items-center gap-[7.5px]"
-                onClick={handleDownload}
-              >
-                <span className="text-xs text-[#888888]">
-                  {formatFileSizeMB(project.audioFiles[0].fileSize)} MB
+
+          <div className="flex flex-col p-[11.25px] rounded-[15px] bg-[#111111] gap-[9px]">
+            {project.audioFiles.map((f: RemoteFile) => (
+              <span className="flex flex-row justify-between px-[7.5px] py-[6px] text-xs text-white bg-[#222222] rounded-[3.75px] gap-[9px]">
+                <span className="flex flex-row items-center gap-[9px] whitespace-nowrap">
+                  <Music size={18} />
+                  <div className="truncate max-w-51 overflow-hidden">
+                    {f.originalFileName}
+                  </div>
                 </span>
-                <Download size={18} />
+                <span
+                  className="flex flex-row items-center gap-[7.5px]"
+                  onClick={() => handleDownload(f)}
+                >
+                  <span className="text-xs text-[#888888] whitespace-nowrap">
+                    {formatFileSizeMB(f.fileSize)} MB
+                  </span>
+                  <Download size={18} />
+                </span>
               </span>
-            </span>
+            ))}
+            {project.imageFiles.map((f: RemoteFile) => (
+              <span className="flex flex-row justify-between px-[7.5px] py-[6px] text-xs text-white bg-[#222222] rounded-[3.75px] gap-[9px]">
+                <span className="flex flex-row items-center gap-[9px] whitespace-nowrap">
+                  <Image size={18} />
+                  <div className="truncate max-w-51 overflow-hidden">
+                    {f.originalFileName}
+                  </div>
+                </span>
+                <span
+                  className="flex flex-row items-center gap-[7.5px]"
+                  onClick={() => handleDownload(f)}
+                >
+                  <span className="text-xs text-[#888888] whitespace-nowrap">
+                    {formatFileSizeMB(f.fileSize)} MB
+                  </span>
+                  <Download size={18} />
+                </span>
+              </span>
+            ))}
           </div>
         </div>
       </div>

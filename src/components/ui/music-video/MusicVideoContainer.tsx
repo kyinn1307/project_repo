@@ -4,17 +4,17 @@ import { ArrowRight } from "lucide-react";
 import { MusicPlayIcon } from "@/assets/Icons/music-video/MusicPlayIcon";
 import { PauseVideoIcon } from "@/assets/Icons/music-video/PauseVideoIcon";
 import { Button } from "../button";
-import hmson from "@/assets/Images/hmson.png";
 import { MusicVideoDetailContainer } from "./MusicVideoDetailContainer";
 import { Music } from "@/types/music";
 import { useNavigate } from "react-router-dom";
 import { useUserStore } from "@/stores/useUserStore";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { playTrack } from "@/apis/music";
 
 export const MusicVideoContainer = ({ track }: { track: Music }) => {
   const { userId } = useUserStore();
   const navigate = useNavigate();
-
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const queryClient = useQueryClient();
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -22,9 +22,23 @@ export const MusicVideoContainer = ({ track }: { track: Music }) => {
     "LYRICS" | "COMMENT" | "CREDIT" | null
   >(null);
 
-  // ✅ 안전한 URL 추출
-  const coverUrl = track.imageFiles?.[0]?.url || ""; // 이미지 없으면 빈 문자열(또는 플레이스홀더)
-  const audioUrl = track.audioFiles?.[0]?.url || ""; // 오디오 없으면 빈 문자열
+  const coverUrl = track.imageFiles?.[0]?.url || "";
+  const audioUrl = track.audioFiles?.[0]?.url || "";
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const listenedSecRef = useRef(0); // 누적 재생 시간(초)
+  const lastTimeRef = useRef<number | null>(null); // 이전 timeupdate 시점
+  const countedRef = useRef(false); // playMutate 1회만
+
+  const { mutate: playMutate } = useMutation({
+    mutationFn: () => playTrack(track.id),
+    onSuccess: () => {
+      // 재생 이후 track-detail 캐시 초기화
+      console.log("트랙 횟수 증가");
+      queryClient.invalidateQueries({ queryKey: ["track-detail", track.id] });
+    },
+  });
 
   // 재생 상태 핸들링
   const handleTogglePlay = () => {
@@ -52,10 +66,9 @@ export const MusicVideoContainer = ({ track }: { track: Music }) => {
     }
   };
 
-  // 재생 진행률 업데이트
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !audioUrl) return; // ✅
+    if (!audio || !audioUrl) return;
 
     const handleTimeUpdate = () => {
       const duration = audio.duration || 1;
@@ -74,6 +87,78 @@ export const MusicVideoContainer = ({ track }: { track: Music }) => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
     };
+  }, [audioUrl]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !audioUrl) return;
+
+    // 초기화 (트랙 바뀔 때마다)
+    listenedSecRef.current = 0;
+    lastTimeRef.current = null;
+    countedRef.current = false;
+
+    const handleTimeUpdate = () => {
+      if (audio.paused) return;
+
+      const t = audio.currentTime;
+      if (lastTimeRef.current == null) {
+        lastTimeRef.current = t;
+        return;
+      }
+
+      // 앞으로 진행한 구간만 누적(되감기/탐색은 누적 제외)
+      const delta = t - lastTimeRef.current;
+      if (delta > 0) {
+        listenedSecRef.current += delta;
+      }
+      lastTimeRef.current = t;
+
+      // 10초 도달 시 1회만 카운트 증가
+      if (!countedRef.current && listenedSecRef.current >= 5) {
+        countedRef.current = true;
+        playMutate();
+      }
+    };
+
+    const handlePlayPauseSeekAlign = () => {
+      // 탐색/일시정지/재생 시 기준점을 현재 시각으로 맞춰
+      // 다음 timeupdate에서 delta가 비정상적으로 커지는 것 방지
+      lastTimeRef.current = audio.currentTime;
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setProgress(0);
+      lastTimeRef.current = null;
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("play", handlePlayPauseSeekAlign);
+    audio.addEventListener("pause", handlePlayPauseSeekAlign);
+    audio.addEventListener("seeked", handlePlayPauseSeekAlign);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("play", handlePlayPauseSeekAlign);
+      audio.removeEventListener("pause", handlePlayPauseSeekAlign);
+      audio.removeEventListener("seeked", handlePlayPauseSeekAlign);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [audioUrl, playMutate]);
+
+  // 기존 progress bar 업데이트 effect는 그대로 유지 (아래 예시처럼)
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !audioUrl) return;
+
+    const handleTimeUpdateForUI = () => {
+      const duration = audio.duration || 1;
+      setProgress(audio.currentTime / duration);
+    };
+    audio.addEventListener("timeupdate", handleTimeUpdateForUI);
+    return () => audio.removeEventListener("timeupdate", handleTimeUpdateForUI);
   }, [audioUrl]);
 
   return (
@@ -129,7 +214,7 @@ export const MusicVideoContainer = ({ track }: { track: Music }) => {
                   onClick={handleUserClick}
                 >
                   <img
-                    src={hmson}
+                    src={track.creatorProfileImageUrl}
                     className="w-[27px] h-[27px] object-cover rounded-full"
                   />
                   <div

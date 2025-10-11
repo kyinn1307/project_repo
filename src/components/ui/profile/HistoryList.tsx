@@ -3,16 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { HistoryItem } from "./HistoryItem";
 import { getUserCareers } from "@/apis/career";
 import type { Career } from "@/types/career";
-import { useUserStore } from "@/stores/useUserStore";
 
 type Props = {
+  userId: number;
   invalidateKey: readonly unknown[];
   onEdit: (career: Career) => void;
 };
 
-export const HistoryList = ({ invalidateKey, onEdit }: Props) => {
-  const userId = useUserStore((s) => s.userId);
-
+export const HistoryList = ({ userId, invalidateKey, onEdit }: Props) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: invalidateKey,
     queryFn: () => getUserCareers(userId!),

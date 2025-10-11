@@ -8,6 +8,7 @@ export interface Music {
   imageFiles: RemoteFile[];
   creatorId: number;
   creatorNickname: string;
+  creatorProfileImageUrl: string;
   genres: string[];
   tags: string[];
   playCount: number;

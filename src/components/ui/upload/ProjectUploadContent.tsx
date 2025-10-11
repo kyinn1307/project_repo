@@ -14,6 +14,7 @@ export const ProjectUploadContent = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [collaboration, setCollaboration] = useState("");
   const [genres, setGenres] = useState<Genre[]>([]);
 
   const [fields, setFields] = useState<string[]>([]);
@@ -27,6 +28,7 @@ export const ProjectUploadContent = () => {
       genres,
       fields,
       isMusician,
+      collaboration,
     };
 
     const formData = new FormData();
@@ -40,6 +42,7 @@ export const ProjectUploadContent = () => {
     });
 
     try {
+      console.log(requestData);
       const res = await uploadProject(formData);
       console.log(res);
       alert("업로드 성공!");
@@ -55,13 +58,16 @@ export const ProjectUploadContent = () => {
         <TitleInput value={title} setValue={setTitle} />
       </div>
       <div>
-        <CollaborationTypeSelector />
+        <CollaborationTypeSelector
+          value={collaboration}
+          setValue={setCollaboration}
+        />
       </div>
       <div>
-        <GenreSelector value={genres} setValue={setGenres} />
+        <GenreSelector value={genres} setValue={setGenres} isRequired={true} />
       </div>
       <div>
-        <FieldSelector value={fields} setValue={setFields} />
+        <FieldSelector value={fields} setValue={setFields} isRequired={true} />
       </div>
       <div>
         <ProjectDetailInput value={description} setValue={setDescription} />

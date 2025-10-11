@@ -1,6 +1,6 @@
 import sample from "@/assets/Images/hmson.png";
 import { useState } from "react";
-import { AvatarDemo } from "../common/AvatarDemo";
+// import { AvatarDemo } from "../common/AvatarDemo";
 import { Heart } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { FeedMoreMenu } from "./FeedMoreMenu";
@@ -24,6 +24,7 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
     imageFiles,
     creatorId,
     creatorNickname,
+    creatorProfileImageUrl,
     likeCount,
     liked,
     tags,
@@ -66,7 +67,10 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
         <div className="flex justify-between">
           <span className="flex flex-row gap-[15px] items-center text-[15px]">
             <span className="cursor-pointer" onClick={handleUserClick}>
-              <AvatarDemo />
+              <img
+                src={creatorProfileImageUrl}
+                className="w-[30px] h-[30px] rounded-full object-cover"
+              />
             </span>
             <span className="cursor-pointer" onClick={handleUserClick}>
               {creatorNickname}
@@ -100,6 +104,10 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
               size={13.5}
               className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
               fill={liked ? "#ff2b2b" : "none"}
+              onClick={(e) => {
+                e.stopPropagation();
+                mutate();
+              }}
             />
             {likeCount}
           </span>

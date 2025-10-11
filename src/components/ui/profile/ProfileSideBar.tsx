@@ -105,10 +105,9 @@ export function ProfileSideBar() {
 
   return (
     <>
-      <Card className="w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
+      <Card className="min-w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
         <CardContent className="p-6 flex flex-col items-center">
           <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden mb-[30px] bg-[#222222]">
-            {/* 서버 이미지 조건부 렌더 */}
             {info?.profileImageUrl && (
               <img
                 src={info.profileImageUrl}
@@ -129,15 +128,15 @@ export function ProfileSideBar() {
           </div>
 
           <div className="w-full flex flex-col gap-[4.5px] text-[9px] text-gray-400 mb-4">
-            {/* field 다 띄워줘야하나? */}
+            {/* field 다 띄워줘야하나 */}
             <div className="flex flex-row gap-[7.5px] text-[#ffffff]">
               <span>ⓘ</span>
-              {info?.fields[0]},{info?.fields[1]}
+              {info?.fields.join(", ")}
             </div>
             {/* genre 영어로 바꾸기 */}
             <div className="flex flex-row items-center h-[11px] text-[#ffffff] gap-[7.5px]">
               <MusicIcon />
-              {info?.genres[0]},{info?.genres[1]}
+              {info?.genres.join(", ")}
             </div>
             <div className="flex flex-row gap-[7.5px] h-[11px] items-center">
               <EmailIcon />

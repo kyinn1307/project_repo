@@ -66,8 +66,16 @@ export const FeedUploadContent = () => {
         <LyricsInput value={description} setValue={setDescription} />
       </div>
       <div className="flex flex-row gap-[7.5px]">
-        <MusicUploadSection files={audioFiles} setFiles={setAudioFiles} />
-        <ImageUploadSection files={imageFiles} setFiles={setImageFiles} />
+        <MusicUploadSection
+          files={audioFiles}
+          setFiles={setAudioFiles}
+          isRequired={false}
+        />
+        <ImageUploadSection
+          files={imageFiles}
+          setFiles={setImageFiles}
+          isRequired={false}
+        />
       </div>
 
       <div>

@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { ChatBody } from "./ChatBody";
 import { ChatHeader } from "./ChatHeader";
 import { ChatInputTool } from "./ChatInputTool";
@@ -6,6 +5,7 @@ import { useChatSocket } from "@/hooks/useChatSocket";
 import { ChatMessage } from "@/types/chat";
 import { getUserProfile } from "@/apis/user";
 import { Profile } from "@/types/my-profile";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 interface ChatContainerProps {
   roomId: number | null;
   opponentId: number | null;
@@ -21,34 +21,31 @@ export const ChatContainer = ({
   chats,
   setChats,
 }: ChatContainerProps) => {
-  const [profile, setProfile] = useState<Profile>();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!opponentId) return;
-      try {
-        const data = await getUserProfile(opponentId);
-        console.log(data.data.data);
-        setProfile(data.data.data);
-      } catch (err) {
-        console.error("프로필 불러오기 실패", err);
-      }
-    };
-
-    fetchProfile();
-  }, [opponentId]);
-
-  // ✅ 소켓 연결 및 실시간 수신 처리
-  const { sendMessage } = useChatSocket(roomId!, (newMsg: ChatMessage) => {
-    console.log("💬 실시간 메시지 수신:", newMsg);
-    setChats((prev) => [...prev, newMsg]);
+  const { data: profile } = useQuery<Profile>({
+    queryKey: ["profile", opponentId],
+    queryFn: async () => {
+      const res = await getUserProfile(opponentId!);
+      return res.data.data as Profile;
+    },
+    enabled: !!opponentId,
+    staleTime: 60_000,
   });
 
-  // ✅ 메시지 전송 핸들러
-  const handleSend = (text: string) => {
-    if (!roomId) return;
-    if (!myUserId) return;
+  // ✅ 소켓: 수신 메시지를 로컬 상태 + Query 캐시에 함께 반영
+  const { sendMessage } = useChatSocket(roomId!, (newMsg: ChatMessage) => {
+    setChats((prev) => [...prev, newMsg]);
+    if (roomId) {
+      queryClient.setQueryData<ChatMessage[]>(
+        ["chat", "messages", roomId],
+        (old = []) => [...old, newMsg]
+      );
+    }
+  });
 
+  const handleSend = (text: string) => {
+    if (!roomId || !myUserId) return;
     const message: ChatMessage = {
       roomId,
       type: "TALK",

@@ -1,15 +1,25 @@
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { SearchIcon } from "@/assets/Icons/SearchIcon";
+import { useEffect, useState } from "react";
 import { ProjectContentItem } from "@/components/ui/serve-pages/ProjectContentItem";
 import { Project, ProjectResponse } from "@/types/project";
-import { getAllProjects } from "@/apis/project";
+import { getProjectSearch } from "@/apis/project";
 import { useInView } from "react-intersection-observer";
 import { useUserStore } from "@/stores/useUserStore";
+import { SearchBar } from "@/components/ui/main/SearchBar";
 
 export const ProjectPage = () => {
   const { userId } = useUserStore();
   const size = 5;
+  const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
+
+  // 입력 디바운스
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQ(q.trim()), 300);
+    return () => clearTimeout(id);
+  }, [q]);
+
+  const k = debouncedQ; // ⬅️ 실제 쿼리는 디바운스된 값 사용
 
   const {
     data,
@@ -22,13 +32,14 @@ export const ProjectPage = () => {
     ProjectResponse,
     Error,
     InfiniteData<ProjectResponse>,
-    [string],
+    [string, string],
     number | undefined
   >({
-    queryKey: ["projects"],
-    queryFn: ({ pageParam }) => getAllProjects(pageParam, size),
+    queryKey: ["projects", k], // 키에 keyword 포함 → 검색어 변경 시 페이지네이션 초기화
+    queryFn: ({ pageParam }) =>
+      getProjectSearch({ k, cursorId: pageParam, size }),
     initialPageParam: undefined,
-    getNextPageParam: (lastPage: ProjectResponse) => lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 
   const allProjects: Project[] =
@@ -36,6 +47,7 @@ export const ProjectPage = () => {
 
   const { ref, inView } = useInView();
 
+  // 무한스크롤 트리거
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -44,21 +56,18 @@ export const ProjectPage = () => {
 
   return (
     <div className="flex flex-col pt-[38px] px-[15%]">
-      {/* <div className="w-[832px] h-[75px] flex justify-center items-center bg-white text-black font-bold text-[24px] rounded-[7.5px]">
-        프로젝트 찾고 업로드 하기
-      </div> */}
-
       <section className="flex flex-col mb-[37.5px]">
         <div className="text-2xl text-white font-bold">프로젝트</div>
 
         <div className="relative flex flex-row mt-[22.5px] mb-[22.5px]">
-          <span className="absolute left-[15px] top-[5.25px]">
-            <SearchIcon />
-          </span>
-          <input
-            className="w-127 h-[22.5px] bg-[#222222] placeholder-[#777777] text-xs text-white pl-[34.5px] rounded outline-none ring-0 focus:ring-0 focus:outline-none"
-            placeholder="프로젝트찾기"
-          />
+          <div className="w-[540px]">
+            <SearchBar
+              placeholder="프로젝트 찾기"
+              value="project"
+              inputValue={q}
+              onInputChange={setQ}
+            />
+          </div>
         </div>
 
         {isLoading && <div className="text-white">로딩 중...</div>}

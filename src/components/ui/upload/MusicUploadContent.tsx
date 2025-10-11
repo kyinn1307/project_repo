@@ -12,6 +12,7 @@ import { AssignMemberSection } from "./AssignMemberSection";
 import type { Genre } from "@/types/music";
 import type { EmotionTag } from "@/types/music";
 import { useNavigate } from "react-router-dom";
+import { Musician } from "@/types/musician";
 
 export const MusicUploadContent = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export const MusicUploadContent = () => {
   const [tags, setTags] = useState<EmotionTag[]>([]);
   const [audioFiles, setAudioFiles] = useState<File[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [selectedMembers, setSelectedMembers] = useState<Musician[]>([]);
 
   const handleUpload = async () => {
     const requestData = {
@@ -30,6 +32,7 @@ export const MusicUploadContent = () => {
       description,
       genres,
       tags,
+      participantUserIds: selectedMembers.map((m) => m.id),
     };
 
     const formData = new FormData();
@@ -65,7 +68,7 @@ export const MusicUploadContent = () => {
         <TitleInput value={title} setValue={setTitle} />
       </div>
       <div className="flex flex-row">
-        <GenreSelector value={genres} setValue={setGenres} />
+        <GenreSelector value={genres} setValue={setGenres} isRequired={false} />
       </div>
       <div>
         <LyricsInput value={lyrics} setValue={setLyrics} />
@@ -78,7 +81,10 @@ export const MusicUploadContent = () => {
         <ImageUploadSection files={imageFiles} setFiles={setImageFiles} />
       </div>
       <div>
-        <AssignMemberSection />
+        <AssignMemberSection
+          value={selectedMembers}
+          setValue={setSelectedMembers}
+        />
       </div>
       <div>
         <MusicTagSelector value={tags} setValue={setTags} />

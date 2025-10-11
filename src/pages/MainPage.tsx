@@ -15,7 +15,7 @@ export default function MainPage() {
   const handleIsLogin = async () => {
     try {
       const res = await loginCheck();
-      const userIdMatch = res.data.message.match(/\d+/); // 정규식으로 숫자 추출
+      const userIdMatch = res.data.message.match(/\d+/);
 
       if (userIdMatch) {
         const userId = parseInt(userIdMatch[0], 10);
@@ -27,38 +27,38 @@ export default function MainPage() {
     } catch (error) {
       console.log(error);
       useUserStore.getState().setLoggedIn(false);
-      useUserStore.getState().setUserId(null);
+      useUserStore.getState().setUserId(0);
     }
   };
 
   useEffect(() => {
     handleIsLogin();
-  });
+  }, []);
 
   return (
     <div className="flex flex-col items-center text-white">
       {!isLoggedIn && (
-        <div className="w-full pt-[37.5px]">
+        <div className="w-full pt-[37.5px] shrink-0">
           <IntroductionBanner />
         </div>
       )}
 
-      <div>
+      <div className="w-full ml-[10%]">
         <ContentSection title="뮤지션">
           <div className="max-w-[540px]">
-            <SearchBar placeholder="뮤지션 찾기" />
+            <SearchBar placeholder="뮤지션 찾기" value="musician" />
           </div>
           <MusicianCardList />
         </ContentSection>
         <ContentSection title="음원">
           <div className="max-w-[540px]">
-            <SearchBar placeholder="음원 찾기" />
+            <SearchBar placeholder="음원 찾기" value="track" />
           </div>
           <MusicCardList />
         </ContentSection>
         <ContentSection title="프로젝트">
           <div className="max-w-[540px]">
-            <SearchBar placeholder="프로젝트 찾기" />
+            <SearchBar placeholder="프로젝트 찾기" value="project" />
           </div>
           <MainProjectList />
         </ContentSection>

@@ -1,6 +1,7 @@
 interface FieldSelectorProps {
   value: string[];
   setValue: React.Dispatch<React.SetStateAction<string[]>>;
+  isRequired: boolean;
 }
 const fieldList = [
   "작사",
@@ -16,7 +17,11 @@ const fieldList = [
   "그 외",
 ];
 
-export const FieldSelector = ({ value, setValue }: FieldSelectorProps) => {
+export const FieldSelector = ({
+  value,
+  setValue,
+  isRequired,
+}: FieldSelectorProps) => {
   const handleClick = (label: string) => {
     setValue((prev) =>
       prev.includes(label)
@@ -26,8 +31,13 @@ export const FieldSelector = ({ value, setValue }: FieldSelectorProps) => {
   };
 
   return (
-    <div className="w-full bg-[#111111] p-[7.5px] rounded-md text-white">
-      <div className="text-[10.5px] font-medium mb-[6px]">분야</div>
+    <div className="w-full bg-[#111111] p-[7.5px] rounded-[5px] text-white">
+      <div className="flex flex-row justify-between">
+        <div className="text-[10.5px] font-medium mb-[6px]">분야</div>
+        {isRequired && (
+          <div className="text-[9px] text-[#0050ef] mb-[6px]">필수항목</div>
+        )}
+      </div>
       <div className="flex flex-wrap gap-[7.5px]">
         {fieldList.map((label) => {
           const isSelected = value.includes(label);

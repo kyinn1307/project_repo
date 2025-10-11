@@ -7,7 +7,7 @@ export const ContentSection = ({
 }) => {
   return (
     <section className="w-full mt-[37.5px]">
-      <div className="w-full px-4">
+      <div className="px-4">
         <div className="flex flex-row justify-between">
           <h2 className="text-2xl font-bold text-white">{title}</h2>
         </div>

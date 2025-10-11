@@ -13,8 +13,8 @@ export function MoreMenu({ collapsed }: { collapsed: boolean }) {
       console.log("로그아웃 완료!", res);
 
       useUserStore.getState().setLoggedIn(false);
-      useUserStore.getState().setUserId(null);
-      useUserStore.getState().setIsSubscribed(false);
+      useUserStore.getState().setUserId(0);
+      // useUserStore.getState().setIsSubscribed(false);
 
       localStorage.removeItem("user-storage");
       window.location.href = "/";
@@ -47,7 +47,7 @@ export function MoreMenu({ collapsed }: { collapsed: boolean }) {
       </button>
 
       {open && (
-        <div className="absolute left-full top-[-85px] ml-2 w-40 bg-black border border-[#777] rounded-md shadow-md">
+        <div className="absolute left-full top-[-85px] w-40 bg-black border border-[#777] rounded-md shadow-md">
           <ul className="flex flex-col py-2">
             <li>
               <Link

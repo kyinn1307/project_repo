@@ -1,24 +1,23 @@
-import { getMyProfile } from "@/apis/my-profile";
+import { getUserProfile } from "@/apis/user";
 import { AtSignIcon } from "@/assets/Icons/AtSignIcon";
 import { InfoIcon } from "@/assets/Icons/InfoIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
-import { useUserStore } from "@/stores/useUserStore";
+
 import { Profile } from "@/types/my-profile";
 import { useEffect, useState } from "react";
 
-export const HistoryProfile = () => {
-  const userId = useUserStore.getState().userId;
+export const HistoryProfile = ({ userId }: { userId: number }) => {
   const [info, setInfo] = useState<Profile | null>(null);
 
   // 마이 프로필 정보 조회
-  const handleMyProfile = async () => {
+  const handleUserProfile = async () => {
     if (userId === null) {
       console.log("userId가 없습니다.");
       return;
     }
 
     try {
-      const res = await getMyProfile(userId);
+      const res = await getUserProfile(userId);
       console.log(res.data.data);
       setInfo(res.data.data);
     } catch (err) {
@@ -27,7 +26,7 @@ export const HistoryProfile = () => {
   };
 
   useEffect(() => {
-    handleMyProfile();
+    handleUserProfile();
   }, []);
 
   return (
@@ -49,11 +48,11 @@ export const HistoryProfile = () => {
         <div className="flex flex-col gap-[4.5px] text-[9px] leading-[11.25px]">
           <span className="flex flex-row items-center gap-[7.5px]">
             <InfoIcon />
-            {info?.fields[0]},{info?.fields[1]}
+            {info?.fields.join(", ")}
           </span>
           <span className="flex flex-row items-center gap-[7.5px]">
             <MusicIcon />
-            {info?.genres[0]},{info?.genres[1]}
+            {info?.genres.join(", ")}
           </span>
           <span className="flex flex-row items-center gap-[7.5px]">
             <AtSignIcon />

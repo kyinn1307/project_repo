@@ -1,34 +1,46 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import type { InfiniteData } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { MusicContentItem } from "@/components/ui/serve-pages/MusicContentItem";
-import { getAllTracks } from "@/apis/music";
+import { getAllTracks, getTrackSearch } from "@/apis/music";
 import type { Music, TrackResponse } from "@/types/music";
 import { SearchBar } from "@/components/ui/main/SearchBar";
 import { Loader2 } from "lucide-react";
 
 export const MusicPage = () => {
+  const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQ(q.trim()), 300);
+    return () => clearTimeout(id);
+  }, [q]);
+
+  const k = debouncedQ; // 실제 쿼리는 디바운스된 값 사용
+  const pageSize = 15;
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery<
       TrackResponse,
       Error,
       InfiniteData<TrackResponse>,
-      [string],
-      number | undefined // ✅ pageParam이 undefined일 수 있음
+      [string, string], // ⬅️ queryKey 타입에 검색어 포함
+      number | undefined
     >({
-      queryKey: ["tracks"],
-      queryFn: ({ pageParam }) => getAllTracks(pageParam, 15),
+      queryKey: ["tracks", k], // ⬅️ 검색어 포함 → 검색 변경 시 페이지네이션 초기화
+      queryFn: ({ pageParam }) =>
+        k
+          ? getTrackSearch({ k, cursorId: pageParam, size: pageSize })
+          : getAllTracks(pageParam, pageSize),
       initialPageParam: undefined,
-      getNextPageParam: (lastPage: TrackResponse) => lastPage.nextCursor, // ✅ 서버에서 주는 nextCursor 사용
+      getNextPageParam: (lastPage: TrackResponse) => lastPage.nextCursor,
     });
 
-  // 올 트랙 합치기
   const allTracks: Music[] = data?.pages.flatMap((page) => page.tracks) ?? [];
 
   const { ref, inView } = useInView();
 
-  // 👇 inView가 true이면 다음 페이지 요청
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -41,7 +53,12 @@ export const MusicPage = () => {
         음원
       </div>
       <div className="w-[540px] mt-[22.5px]">
-        <SearchBar placeholder="음원 찾기" />
+        <SearchBar
+          placeholder="음원 찾기"
+          value="track"
+          inputValue={q}
+          onInputChange={setQ}
+        />
       </div>
       <section className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px] mt-[22.5px]">
         {isLoading && <div className="text-white">로딩 중...</div>}

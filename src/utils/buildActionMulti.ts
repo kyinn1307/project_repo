@@ -4,7 +4,6 @@ type Act = "KEEP" | "DELETE" | "ADD";
 type FileAction = {
   fileId: number | null;
   action: Act;
-  order?: number; // ✅ KEEP/ADD만
   fileIndex?: number; // ✅ ADD만
 };
 
@@ -30,7 +29,6 @@ export function buildActionsMulti(
       actions.push({
         fileId: id,
         action: "KEEP",
-        order: curIdx, // 필요시 +1
       });
     } else {
       // ✅ DELETE: order, fileIndex 없음
@@ -41,13 +39,10 @@ export function buildActionsMulti(
     }
   });
 
-  // 2) ADD — fileIndex는 0..N-1
-  const baseOrder = currentServer.length;
   locals.forEach((_, i) => {
     actions.push({
       fileId: null,
       action: "ADD",
-      order: baseOrder + i, // 필요시 +1
       fileIndex: i, // 0,1,2,...
     });
   });

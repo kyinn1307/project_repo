@@ -1,38 +1,59 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import clsx from "clsx";
 import { Button } from "../button";
 import { FileItem } from "../profile-detail/FileItem";
 import { FileUploadIcon } from "@/assets/Icons/FileUploadIcon";
 import { RemoteFile } from "@/types/feed";
 
+type LocalMedia = { type: "image" | "audio"; file: File };
+
 interface ProjectUploadSectionProps {
-  files: File[];
-  setFiles: (files: File[]) => void;
-  audioPreviewFiles?: RemoteFile[]; // 서버에 이미 있는 파일 목록
-  onRemoveServerPreview?: (index: number) => void; // ✅ 개별 삭제로 변경
-  maxCount?: number; // 기본 5
+  serverPreviewFiles?: RemoteFile[];
+  onRemoveServerPreview?: (type: "image" | "audio", index: number) => void;
+
+  // 신규(통합)
+  localCombined?: LocalMedia[];
+  setLocalCombined?: (list: LocalMedia[]) => void;
+
+  // 레거시(부모가 현재 사용 중)
+  files?: File[];
+  setFiles?: (files: File[]) => void;
+
+  maxCount?: number;
 }
 
 export const ProjectUploadSection = ({
+  serverPreviewFiles,
+  onRemoveServerPreview,
+  localCombined,
+  setLocalCombined,
   files,
   setFiles,
-  audioPreviewFiles = [],
-  onRemoveServerPreview,
   maxCount = 5,
 }: ProjectUploadSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const totalCount = (audioPreviewFiles?.length ?? 0) + files.length; // ✅ 합계
+
+  // 길이 계산은 "원천 props" 기준으로
+  const serverLen = Array.isArray(serverPreviewFiles)
+    ? serverPreviewFiles.length
+    : 0;
+  const localLen = Array.isArray(localCombined)
+    ? localCombined.length
+    : Array.isArray(files)
+    ? files.length
+    : 0;
+
+  const totalCount = serverLen + localLen;
   const remain = Math.max(0, maxCount - totalCount);
 
   const handleUpload = () => {
-    if (remain <= 0) return; // 꽉 차면 막기
+    if (remain <= 0) return;
     fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(event.target.files ?? []);
     event.target.value = "";
-
     if (!selected.length) return;
 
     if (remain <= 0) {
@@ -40,43 +61,98 @@ export const ProjectUploadSection = ({
       return;
     }
 
-    const onlyAudio = selected.filter((f) => f.type.startsWith("audio/"));
-    const next = [...files, ...onlyAudio.slice(0, remain)];
-    setFiles(next);
+    const allowed = selected.filter((f) => {
+      const t = f.type || "";
+      return t.startsWith("audio/") || t.startsWith("image/");
+    });
 
-    if (onlyAudio.length > remain) {
+    const slice = allowed.slice(0, remain);
+
+    // localCombined 우선, 없으면 files로 업데이트
+    if (
+      Array.isArray(localCombined) &&
+      typeof setLocalCombined === "function"
+    ) {
+      const toAdd: LocalMedia[] = slice.map((f) => ({
+        type: (f.type || "").startsWith("image/") ? "image" : "audio",
+        file: f,
+      }));
+      setLocalCombined([...localCombined, ...toAdd]);
+    } else if (typeof setFiles === "function") {
+      setFiles([...(files ?? []), ...slice]);
+    }
+
+    if (allowed.length > slice.length) {
       alert(
         `최대 ${maxCount}개까지 업로드 가능해요. ${remain}개만 추가되었습니다.`
       );
     }
+    const rejected = selected.length - allowed.length;
+    if (rejected > 0) {
+      alert("지원 형식: MP3, WAV, AAC, FLAC, JPG, PNG, SVG");
+    }
   };
 
   const handleRemoveLocal = (index: number) => {
-    const next = [...files];
-    next.splice(index, 1);
-    setFiles(next);
+    if (
+      Array.isArray(localCombined) &&
+      typeof setLocalCombined === "function"
+    ) {
+      const next = [...localCombined];
+      next.splice(index, 1);
+      setLocalCombined(next);
+    } else if (typeof setFiles === "function") {
+      const base = [...(files ?? [])];
+      base.splice(index, 1);
+      setFiles(base);
+    }
   };
 
-  const combinedList = [
-    ...(audioPreviewFiles ?? [])
+  // ✅ 파생값은 useMemo 안에서 계산하고, deps는 "원천 props"만!
+  const combinedList = useMemo(() => {
+    const inferTypeFromName = (
+      name?: string
+    ): "image" | "audio" | "unknown" => {
+      const n = (name ?? "").toLowerCase();
+      if (/\.(png|jpg|jpeg|gif|webp|svg)$/.test(n)) return "image";
+      if (/\.(mp3|wav|aac|flac|ogg|m4a)$/.test(n)) return "audio";
+      return "unknown";
+    };
+
+    const safeServer = Array.isArray(serverPreviewFiles)
+      ? serverPreviewFiles
+      : [];
+
+    const localSource: LocalMedia[] = Array.isArray(localCombined)
+      ? localCombined
+      : Array.isArray(files)
+      ? files.map((f) => ({
+          type: (f.type || "").startsWith("image/") ? "image" : "audio",
+          file: f,
+        }))
+      : [];
+
+    const server = safeServer
       .filter((f): f is RemoteFile => !!f && !!f.originalFileName)
       .map((f, idx) => ({
-        id: `server-${f.fileId}`,
-        filename: f.originalFileName || "서버 파일",
+        id: `server-${f.fileId ?? idx}`,
+        filename: f.originalFileName!,
         isServer: true as const,
+        type: inferTypeFromName(f.originalFileName),
         index: idx,
-      })),
-    ...(files ?? [])
-      .filter((f): f is File => !!f && !!f.name)
-      .map((f, idx) => ({
-        id: `local-${idx}`,
-        filename: f.name || "로컬 파일",
-        isServer: false as const,
-        index: idx,
-      })),
-  ];
+      }));
 
-  // console.log(combinedList);
+    const locals = localSource.map((m, idx) => ({
+      id: `local-${idx}`,
+      filename: m.file.name,
+      isServer: false as const,
+      type: m.type,
+      index: idx,
+    }));
+
+    return [...server, ...locals];
+  }, [serverPreviewFiles, localCombined, files]);
+
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center gap-[6px]">
       <FileUploadIcon />
@@ -106,7 +182,6 @@ export const ProjectUploadSection = ({
       <div className="text-white font-medium text-[10.5px] mb-[7.5px]">
         첨부파일
       </div>
-      {/* 미리보기 영역: 스크롤 가능 */}
       <div className="flex-1 overflow-y-auto pr-[2px]">
         {totalCount > 0 ? (
           <div>
@@ -117,7 +192,8 @@ export const ProjectUploadSection = ({
                   filename={item.filename}
                   onRemove={() => {
                     if (item.isServer) {
-                      onRemoveServerPreview?.(item.index);
+                      const t = item.type === "audio" ? "audio" : "image";
+                      onRemoveServerPreview?.(t, item.index);
                     } else {
                       handleRemoveLocal(item.index);
                     }
@@ -136,9 +212,10 @@ export const ProjectUploadSection = ({
           <EmptyState />
         )}
       </div>
+
       <input
         type="file"
-        accept="audio/*"
+        accept="audio/*,image/*"
         multiple
         ref={fileInputRef}
         onChange={handleFileChange}

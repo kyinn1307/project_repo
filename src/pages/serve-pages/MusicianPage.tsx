@@ -1,7 +1,17 @@
+import { useState, useEffect } from "react";
 import { InfiniteMusicianCardList } from "@/components/ui/main/InfiniteMusicianCardList";
 import { SearchIcon } from "@/assets/Icons/SearchIcon";
+import { SearchBar } from "@/components/ui/main/SearchBar";
 
 export const MusicianPage = () => {
+  const [q, setQ] = useState("");
+  const [debouncedQ, setDebouncedQ] = useState("");
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQ(q.trim()), 300);
+    return () => clearTimeout(id);
+  }, [q]);
+
   return (
     <div className="flex flex-col">
       <section className="flex flex-col mt-[52px] pl-[10%]">
@@ -12,13 +22,17 @@ export const MusicianPage = () => {
           <span className="absolute left-[15px] top-[5.25px]">
             <SearchIcon />
           </span>
-          <input
-            className="w-127 h-[22.5px] bg-[#222222] placeholder-[#777777] text-xs text-white pl-[34.5px] rounded outline-none ring-0 focus:ring-0 focus:outline-none"
-            placeholder="뮤지션찾기"
+        </div>
+        <div className="max-w-[540px]">
+          <SearchBar
+            placeholder="뮤지션 찾기"
+            value="musician"
+            inputValue={q} // 입력값을 상태와 연결
+            onInputChange={setQ}
           />
         </div>
         <div className="mt-[22.5px] text-white">
-          <InfiniteMusicianCardList />
+          <InfiniteMusicianCardList searchTerm={debouncedQ} />
         </div>
       </section>
     </div>

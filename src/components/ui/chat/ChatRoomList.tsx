@@ -9,10 +9,9 @@ interface ChatRoomListProps {
 
 export const ChatRoomList = ({ rooms, onRoomClick }: ChatRoomListProps) => {
   return (
-    <div className="flex flex-col w-[300px] border-r border-white h-full">
-      <ChatRoomHeader onSelectUser={onRoomClick} /> {/* ✅ 전달 */}
+    <div className="flex flex-col w-[262.5px] border-r border-white h-full">
+      <ChatRoomHeader onSelectUser={onRoomClick} />
       <div className="flex-1 overflow-y-auto">
-        {/* 채팅방 리스트 */}
         {rooms?.map((room) => (
           <ChatRoom key={room.roomId} room={room} onClick={onRoomClick} />
         ))}

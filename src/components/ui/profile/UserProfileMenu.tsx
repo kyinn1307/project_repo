@@ -10,8 +10,11 @@ import { HistoryContent } from "./HistoryContent";
 import { SubscribeBusinessContent } from "./SubscribeBusinessContent";
 import { UnsubscribeBusinessContent } from "./UnsubscribeBusinessContent";
 import { useUserStore } from "@/stores/useUserStore";
+import { getUserBusiness } from "@/apis/business";
 
 export function UserProfileMenu() {
+  const loggedInUserId = useUserStore((s) => s.userId);
+
   const { isSubscribed } = useUserStore();
   const { id } = useParams<{ id: string }>();
 
@@ -35,6 +38,13 @@ export function UserProfileMenu() {
     queryKey: ["userProjects", userId],
     queryFn: () => getUserProjects(userId),
     select: (res) => res.data.data.projects,
+    enabled: !!userId,
+  });
+
+  const { data: businessRes } = useQuery({
+    queryKey: ["userBusiness", userId],
+    queryFn: () => getUserBusiness(userId),
+    select: (res) => res.data,
     enabled: !!userId,
   });
 
@@ -76,11 +86,14 @@ export function UserProfileMenu() {
         <ProjectList list={projectsRes || []} isUser={true} />
       </TabsContent>
       <TabsContent value="history">
-        <HistoryContent />
+        <HistoryContent userId={userId || 0} />
       </TabsContent>
       <TabsContent value="business">
         {isSubscribed ? (
-          <SubscribeBusinessContent />
+          <SubscribeBusinessContent
+            list={businessRes || []}
+            isOtherUser={userId !== loggedInUserId}
+          />
         ) : (
           <UnsubscribeBusinessContent />
         )}

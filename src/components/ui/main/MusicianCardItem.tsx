@@ -1,16 +1,21 @@
 import hmson from "@/assets/Images/hmson.png";
 import { Musician } from "@/types/musician";
+import { useNavigate } from "react-router-dom";
 
 interface MusicianCardItemProps {
   musician: Musician;
 }
 
 export const MusicianCardItem = ({ musician }: MusicianCardItemProps) => {
+  const navigate = useNavigate();
   return (
     <div
       className="relative min-w-[263.5px] h-[263.5px] rounded-[15px] border cursor-pointer"
       style={{
         border: "0.75px solid #333333",
+      }}
+      onClick={() => {
+        navigate(`/user-profile/${musician.id}`);
       }}
     >
       {/* 배경 이미지 */}

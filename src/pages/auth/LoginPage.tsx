@@ -5,6 +5,7 @@ import { LoginForm } from "@/components/ui/login/LoginForm";
 import { PasswordForm } from "@/components/ui/login/PasswordForm";
 import { useNavigate } from "react-router-dom";
 import { login } from "@/apis/login";
+import { useUserStore } from "@/stores/useUserStore";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -36,6 +37,7 @@ export default function LoginPage() {
     try {
       const data = await login(email, password);
       console.log("로그인 성공", data);
+      useUserStore.getState().setLoggedIn(true);
       navigate("/");
     } catch (err) {
       const message =

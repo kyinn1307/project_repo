@@ -1,15 +1,36 @@
 import { Edit, Trash } from "lucide-react";
 import { TrackEditContent } from "./TrackEditContent";
+import { Business } from "@/types/business";
 
 type TrackItemProps = {
-  name: string;
+  name: string; // trackA/B/C 표시용
+  track: Business; // 서버 타입
   isEditing: boolean;
   onEditClick: () => void;
+  onChange: (patch: Partial<Business>) => void;
+  onSave: () => void;
+  onDelete: (id: number) => void; // 🔴 id 받도록 변경
 };
 
-export const TrackItem = ({ name, isEditing, onEditClick }: TrackItemProps) => {
+export const TrackItem = ({
+  name,
+  track,
+  isEditing,
+  onEditClick,
+  onChange,
+  onSave,
+  onDelete,
+}: TrackItemProps) => {
   if (isEditing) {
-    return <TrackEditContent name={name} onComplete={onEditClick} />;
+    return (
+      <TrackEditContent
+        name={name}
+        track={track}
+        onChange={onChange}
+        onSave={onSave}
+        onCancel={onEditClick}
+      />
+    );
   }
 
   return (
@@ -22,7 +43,12 @@ export const TrackItem = ({ name, isEditing, onEditClick }: TrackItemProps) => {
           onClick={onEditClick}
           className="cursor-pointer"
         />
-        <Trash size={15} color="#FF3B30" className="cursor-pointer" />
+        <Trash
+          size={15}
+          color="#FF3B30"
+          className="cursor-pointer"
+          onClick={() => onDelete(track.id)} // 🔴 실제 id 전달
+        />
       </div>
     </div>
   );

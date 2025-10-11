@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom"; // ✅ 추가
 import { checkLogin } from "@/utils/checkLogin";
 import { MoreMenu } from "./MoreMenu";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -8,6 +9,7 @@ import {
   Inbox,
   LayoutGrid,
   Music,
+  ShoppingCart,
   User,
   Users,
 } from "lucide-react";
@@ -25,41 +27,29 @@ import {
 import { MessageIcon } from "@/assets/Icons/MessageIcon";
 
 const items = [
-  {
-    title: "살펴보기",
-    url: "/",
-    icon: Home,
-  },
-  {
-    title: "뮤지션",
-    url: "/musician",
-    icon: Users,
-  },
-  {
-    title: "음원",
-    url: "/music",
-    icon: Music,
-  },
-  {
-    title: "피드",
-    url: "/feed",
-    icon: LayoutGrid,
-  },
-  {
-    title: "프로젝트",
-    url: "/project",
-    icon: Inbox,
-  },
-  {
-    title: "업로드",
-    url: "/upload",
-    icon: CirclePlus,
-  },
-];
+  { title: "살펴보기", url: "/", icon: Home },
+  { title: "뮤지션", url: "/musician", icon: Users },
+  { title: "음원", url: "/music", icon: Music },
+  { title: "피드", url: "/feed", icon: LayoutGrid },
+  { title: "프로젝트", url: "/project", icon: Inbox },
+  // url은 무시하고 아이콘/타이틀만 쓸 예정
+  { title: "비즈니스", url: "/business", icon: ShoppingCart },
+  { title: "업로드", url: "/upload/track", icon: CirclePlus },
+] as const;
 
 export function AppSidebar() {
   const [userId, setUserId] = useState<number | null>(null);
-  const { state } = useSidebar(); // "collapsed" or "expanded"
+  const { state } = useSidebar();
+
+  const { pathname } = useLocation(); // ✅ 현재 경로
+  const navigate = useNavigate();
+
+  // ✅ 현재 페이지에 따라 업로드 이동 경로 결정
+  const uploadUrl = useMemo(() => {
+    if (pathname.startsWith("/feed")) return "/upload/feed";
+    if (pathname.startsWith("/project")) return "/upload/project";
+    return "/upload/track";
+  }, [pathname]);
 
   useEffect(() => {
     const check = async () => {
@@ -68,6 +58,12 @@ export function AppSidebar() {
     };
     check();
   }, []);
+
+  // 스타일 공통 클래스 (중복 제거 가볍게)
+  const itemClass =
+    state === "collapsed"
+      ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
+      : "flex items-center gap-3 px-4 py-2";
 
   return (
     <Sidebar
@@ -79,31 +75,52 @@ export function AppSidebar() {
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a
-                      href={item.url}
-                      className={`${
-                        state === "collapsed"
-                          ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
-                          : "flex items-center gap-3 px-4 py-2"
-                      } hover:bg-[#222] transition-colors duration-200`}
-                    >
-                      <item.icon size={18} />
-                      <span
-                        className={`${
-                          state === "collapsed"
-                            ? "text-[9px] text-center leading-tight"
-                            : "text-sm"
-                        }`}
-                      >
-                        {item.title}
-                      </span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                const isUpload = item.title === "업로드";
+
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      {isUpload ? (
+                        // ✅ 업로드 항목만 현재 경로 기반으로 navigate
+                        <button
+                          type="button"
+                          onClick={() => navigate(uploadUrl)}
+                          className={`${itemClass} hover:bg-[#222] transition-colors duration-200`}
+                        >
+                          <item.icon size={18} />
+                          <span
+                            className={`${
+                              state === "collapsed"
+                                ? "text-[9px] text-center leading-tight"
+                                : "text-sm"
+                            }`}
+                          >
+                            {item.title}
+                          </span>
+                        </button>
+                      ) : (
+                        // 나머지는 기존처럼 링크 고정
+                        <a
+                          href={item.url}
+                          className={`${itemClass} hover:bg-[#222] transition-colors duration-200`}
+                        >
+                          <item.icon size={18} />
+                          <span
+                            className={`${
+                              state === "collapsed"
+                                ? "text-[9px] text-center leading-tight"
+                                : "text-sm"
+                            }`}
+                          >
+                            {item.title}
+                          </span>
+                        </a>
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -116,11 +133,7 @@ export function AppSidebar() {
               <SidebarMenuButton asChild>
                 <a
                   href="/chat"
-                  className={`${
-                    state === "collapsed"
-                      ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
-                      : "flex items-center gap-3 px-4 py-2"
-                  } hover:bg-[#222] transition-colors duration-200`}
+                  className={`${itemClass} hover:bg-[#222] transition-colors duration-200`}
                 >
                   <MessageIcon />
                   <span
@@ -140,11 +153,7 @@ export function AppSidebar() {
               <SidebarMenuButton asChild>
                 <a
                   href="/my-profile"
-                  className={`${
-                    state === "collapsed"
-                      ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
-                      : "flex items-center gap-3 px-4 py-2"
-                  } hover:bg-[#222] transition-colors duration-200`}
+                  className={`${itemClass} hover:bg-[#222] transition-colors duration-200`}
                 >
                   <User size={18} />
                   <span

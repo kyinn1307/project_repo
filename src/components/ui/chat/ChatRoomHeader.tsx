@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import sample from "@/assets/Images/hmson.png";
 import { useUserStore } from "@/stores/useUserStore";
 import { ExternalLink } from "lucide-react";
 import { getUserProfile } from "@/apis/user";
 import { Profile } from "@/types/my-profile";
 import { UserListPopover } from "./ChatUserPopover";
+import { useQuery } from "@tanstack/react-query";
 
 interface ChatRoomHeaderProps {
   onSelectUser: (opponentId: number) => void;
@@ -12,23 +13,17 @@ interface ChatRoomHeaderProps {
 
 export const ChatRoomHeader = ({ onSelectUser }: ChatRoomHeaderProps) => {
   const { userId } = useUserStore();
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      if (!userId) return;
-      try {
-        const data = await getUserProfile(userId);
-        console.log(data.data.data);
-        setProfile(data.data.data);
-      } catch (err) {
-        console.error("프로필 불러오기 실패", err);
-      }
-    };
-
-    fetchProfile();
-  }, [userId]);
+  const { data: profile } = useQuery<Profile>({
+    queryKey: ["profile", userId],
+    queryFn: async () => {
+      const res = await getUserProfile(userId!);
+      return res.data.data as Profile;
+    },
+    enabled: !!userId,
+    staleTime: 60_000,
+  });
 
   return (
     <div className="w-full flex flex-row justify-between mb-[7.5px] pt-[22.5px] px-[7.5px] pb-[7.5px] text-[18px] font-medium gap-[71.25px] border-b border-white">
@@ -39,11 +34,12 @@ export const ChatRoomHeader = ({ onSelectUser }: ChatRoomHeaderProps) => {
         />
         <span>{profile?.nickname}</span>
       </div>
-      {/* ✅ Popover로 유저 리스트 열기 */}
+
       <UserListPopover
         open={open}
         onOpenChange={setOpen}
         onSelectUser={onSelectUser}
+        userId={userId || 0}
       >
         <ExternalLink size={22.5} className="cursor-pointer" />
       </UserListPopover>

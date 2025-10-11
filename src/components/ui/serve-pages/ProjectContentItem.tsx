@@ -5,6 +5,7 @@ import type { Project } from "@/types/project";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleProjectLike } from "@/apis/project";
 import { useNavigate } from "react-router-dom";
+import { daysLeftFrom } from "@/utils/formatDate";
 
 interface ProjectContentItemProps {
   project: Project;
@@ -15,7 +16,8 @@ export const ProjectContentItem = ({
   project,
   isUser,
 }: ProjectContentItemProps) => {
-  const { id, title, genres, fields, liked, likeCount, views } = project;
+  const { id, title, genres, fields, liked, likeCount, views, collaboration } =
+    project;
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
@@ -25,6 +27,7 @@ export const ProjectContentItem = ({
     onSuccess: () => {
       console.log("좋아요 성공");
       queryClient.invalidateQueries({ queryKey: ["myProjects"] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
     onError: (err) => {
       console.error("좋아요 실패", err);
@@ -38,6 +41,8 @@ export const ProjectContentItem = ({
 
   const stop = (e: React.MouseEvent) => e.stopPropagation();
 
+  const leftDays = daysLeftFrom(project.createdAt, 14);
+
   return (
     <div
       onClick={handleCardClick}
@@ -45,7 +50,7 @@ export const ProjectContentItem = ({
     >
       <div className="flex flex-row justify-between">
         <div className="h-[17px] text-[13.5px] mt-[3px] font-bold text-white">
-          {"팀원모집"}
+          {collaboration}
         </div>
         <div onClick={stop} onMouseDown={stop}>
           {isUser ? (
@@ -61,22 +66,23 @@ export const ProjectContentItem = ({
           {title}
         </div>
         <div className="h-[14px] text-[11.25px] font-medium text-white">
-          {fields.join(" | ")}
+          분야_{fields.join(", ")}
         </div>
       </div>
       <div className="h-[13px] mt-[30.25px] text-[10.5px] text-white mb-[8px]">
-        {genres.join(", ")}
+        장르_{genres.join(", ")}
       </div>
       <div className="flex flex-row justify-between text-[#999999] text-[10.5px]">
         <div className="flex flex-row gap-[7.5px]">
-          <span
-            className="flex flex-row gap-[1.5px] items-center"
-            onClick={() => mutate()}
-          >
+          <span className="flex flex-row gap-[1.5px] items-center">
             <Heart
               size={13.5}
               className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
               fill={liked ? "#ff2b2b" : "none"}
+              onClick={(e) => {
+                e.stopPropagation();
+                mutate();
+              }}
             />
             {likeCount}
           </span>
@@ -87,7 +93,7 @@ export const ProjectContentItem = ({
         </div>
         <span className="flex flex-row gap-[3.75px] items-center">
           <Clock size={13.5} />
-          14일 전
+          {`${leftDays}일 전`}
         </span>
       </div>
     </div>

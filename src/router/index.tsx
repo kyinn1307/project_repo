@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import AuthLayout from "@/components/layout/AuthLayout";
 import MainLayout from "@/components/layout/MainLayout";
 import DetailLayout from "@/components/layout/DetailLayout";
@@ -29,6 +29,8 @@ import { MyPage } from "@/pages/profile-pages/MyPage";
 import { RequireAuth } from "./RequireAuth";
 import { ChatPage } from "@/pages/chat/ChatPage";
 import { ProjectDetailPage } from "@/pages/serve-pages/ProjectDetailPage";
+import { BusinessPage } from "@/pages/serve-pages/BusinessPage";
+import { BusinessEditPage } from "@/pages/edit-pages/BusinessEditPage";
 
 export const router = createBrowserRouter([
   {
@@ -40,8 +42,49 @@ export const router = createBrowserRouter([
       { path: "music", element: <MusicPage /> },
       { path: "feed", element: <FeedPage /> },
       { path: "project", element: <ProjectPage /> },
+      { path: "business", element: <BusinessPage /> },
       {
         path: "my-profile",
+        element: (
+          <RequireAuth>
+            <Navigate to="/my-profile/track" replace />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "my-profile/track",
+        element: (
+          <RequireAuth>
+            <MyProfilPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "my-profile/feed",
+        element: (
+          <RequireAuth>
+            <MyProfilPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "my-profile/project",
+        element: (
+          <RequireAuth>
+            <MyProfilPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "my-profile/history",
+        element: (
+          <RequireAuth>
+            <MyProfilPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "my-profile/business",
         element: (
           <RequireAuth>
             <MyProfilPage />
@@ -49,7 +92,11 @@ export const router = createBrowserRouter([
         ),
       },
       { path: "user-profile/:id", element: <UserProfilePage /> },
-      { path: "business-setting", element: <BusinessSettingPage /> },
+      {
+        path: "business-setting",
+        element: <Navigate to="business-setting/1" replace />,
+      },
+      { path: "business-setting/:id", element: <BusinessSettingPage /> },
       { path: "musician-register", element: <MusicianRegisterPage /> },
       {
         path: "privacy-setting",
@@ -112,14 +159,12 @@ export const router = createBrowserRouter([
     path: "/upload",
     element: <DetailLayout />,
     children: [
-      {
-        path: "",
-        element: (
-          <RequireAuth>
-            <UploadPage />
-          </RequireAuth>
-        ),
-      },
+      { index: true, element: <Navigate to="track" replace /> },
+
+      { path: "track", element: <UploadPage tab="track" /> },
+      { path: "feed", element: <UploadPage tab="feed" /> },
+      { path: "project", element: <UploadPage tab="project" /> },
+
       {
         path: "music-edit/:id",
         element: (
@@ -141,6 +186,14 @@ export const router = createBrowserRouter([
         element: (
           <RequireAuth>
             <ProjectEditPage />
+          </RequireAuth>
+        ),
+      },
+      {
+        path: "business-edit/:id",
+        element: (
+          <RequireAuth>
+            <BusinessEditPage />
           </RequireAuth>
         ),
       },

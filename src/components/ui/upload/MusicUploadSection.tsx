@@ -10,6 +10,7 @@ interface MusicUploadSectionProps {
   audioPreviewFiles?: RemoteFile[];
   serverRemoved?: boolean;
   onRemoveServerPreview?: () => void;
+  isRequired?: boolean;
 }
 
 export const MusicUploadSection = ({
@@ -17,6 +18,7 @@ export const MusicUploadSection = ({
   setFiles,
   audioPreviewFiles = [],
   onRemoveServerPreview,
+  isRequired,
 }: MusicUploadSectionProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,8 +36,11 @@ export const MusicUploadSection = ({
 
   return (
     <div className="relative flex flex-col flex-1 h-30 bg-[#111111] p-[7.5px] pb-[30px] rounded-[3.75px]">
-      <div className="text-white font-medium text-[10.5px] mb-[7.5px]">
-        음원
+      <div className="flex flex-row justify-between mb-[7.5px]">
+        <div className="text-white font-medium text-[10.5px]">음원</div>
+        {isRequired && (
+          <div className="text-[#0050ef] text-[9px]">필수항목</div>
+        )}
       </div>
 
       {hasLocal

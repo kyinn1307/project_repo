@@ -14,8 +14,24 @@ export const getAllProjects = async (
 
   const query = `/project?${params.toString()}`;
   const res = await axiosInstance.get(query);
-  console.log(res.data.data);
   return res.data.data;
+};
+
+export const getProjectSearch = async ({
+  k,
+  cursorId,
+  size = 20,
+}: {
+  k: string;
+  cursorId?: number;
+  size?: number;
+}): Promise<ProjectResponse> => {
+  const params: Record<string, string | number> = { k, size };
+  if (cursorId !== undefined) params.cursorId = cursorId;
+
+  const res = await axiosInstance.get("/project/list/search", { params });
+  console.log(res.data.data);
+  return res.data?.data;
 };
 
 // 프로젝트 업로드
