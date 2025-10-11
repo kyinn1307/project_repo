@@ -1,11 +1,10 @@
 import axios from "axios";
+import { ENV } from "@/config/runtimeEnv";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: ENV.apiBase(),
   withCredentials: true,
+  headers: { "Content-Type": "application/json" },
 });
 
 export default axiosInstance;
