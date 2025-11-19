@@ -23,7 +23,6 @@ export default defineConfig(({ mode }) => {
         "/api": {
           target: DEV_BACKEND,
           changeOrigin: true,
-          cookieDomainRewrite: "localhost",
         },
         "/ws": {
           target: DEV_BACKEND,

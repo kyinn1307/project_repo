@@ -68,7 +68,7 @@ export const MusicUploadContent = () => {
         <TitleInput value={title} setValue={setTitle} />
       </div>
       <div className="flex flex-row">
-        <GenreSelector value={genres} setValue={setGenres} isRequired={false} />
+        <GenreSelector value={genres} setValue={setGenres} isRequired={true} />
       </div>
       <div>
         <LyricsInput value={lyrics} setValue={setLyrics} />

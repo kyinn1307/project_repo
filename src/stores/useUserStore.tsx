@@ -23,9 +23,8 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: "user-storage",
-      storage: createJSONStorage(() => localStorage), // ✅ 명시
+      storage: createJSONStorage(() => localStorage),
       partialize: (s) => ({
-        // ✅ 직렬화 가능한 값만
         isSubscribed: s.isSubscribed,
         isLoggedIn: s.isLoggedIn,
         userId: s.userId,

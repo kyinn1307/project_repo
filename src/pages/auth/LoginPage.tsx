@@ -37,12 +37,14 @@ export default function LoginPage() {
     try {
       const data = await login(email, password);
       console.log("로그인 성공", data);
+      alert("로그인 성공");
       useUserStore.getState().setLoggedIn(true);
       navigate("/");
     } catch (err) {
       const message =
         (err as { message?: string })?.message || "알 수 없는 오류";
-      alert(message);
+      console.log(message);
+      // alert(message);
     }
   };
 
