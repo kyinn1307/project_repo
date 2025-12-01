@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SetaLetterLogo from "@/assets/SetaLogo";
+import SetaLogo from "@/assets/SetaLogo";
 import { TermsStep } from "@/components/ui/signup/TermsStep";
 import { EmailStep } from "@/components/ui/signup/EmailStep";
 import { EmailAuthStep } from "@/components/ui/signup/EmailAuthStep";
@@ -9,6 +9,7 @@ import { NicknameStep } from "@/components/ui/signup/NicknameStep";
 import FieldGenreSelector from "@/components/ui/signup/FieldGenreSelector";
 
 export default function SignUpPage() {
+  // 회원가입 단계 상태
   const [step, setStep] = useState<
     | "terms"
     | "email"
@@ -18,17 +19,23 @@ export default function SignUpPage() {
     | "number"
     | "field"
   >("terms");
-
+  // 마지막 회원가입 api 요청용 email
   const [email, setEmail] = useState("");
+  // 인증번호 timer 상태
   const [timer, setTimer] = useState("");
 
   return (
-    <div className="flex flex-col items-center w-[400px] gap-10">
-      <div className="relative w-[67.24px] h-15">
-        <SetaLetterLogo />
+    <div className="flex flex-col items-center w-[300px] gap-[30px]">
+      {/* 세타 로고 */}
+      <div className="relative w-[89.66px] h-20">
+        <SetaLogo />
       </div>
-      <div className="relative flex flex-col w-[400px] rounded-[10px] bg-[#222222] py-10 px-[25px] box-border gap-10">
+      {/* 회원가입 입력폼 */}
+      <div className="relative flex flex-col w-100 rounded-[10px] bg-[#222222] py-10 px-[25px] box-border gap-10">
+        {/* 약관 동의 단계 */}
         {step === "terms" && <TermsStep onNext={() => setStep("email")} />}
+
+        {/* 이메일 입력 단계 */}
         {step === "email" && (
           <EmailStep
             setTimer={(t) => setTimer(t)}
@@ -43,7 +50,6 @@ export default function SignUpPage() {
             timer={timer}
             email={email}
             onNext={() => {
-              console.log("이메일 인증 완료, 다음 단계로 진행");
               setStep("password");
             }}
           />

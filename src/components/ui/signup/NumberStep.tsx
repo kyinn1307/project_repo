@@ -6,7 +6,7 @@ import { postPhoneNumber } from "@/apis/signup";
 
 export const NumberStep = ({ onNext }: { onNext: () => void }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
-  const isPhoneNumberValid = /^\d{10,11}$/.test(phoneNumber);
+  const isPhoneNumberValid = /^\d{11}$/.test(phoneNumber);
 
   const handlePhoneNumberClick = async () => {
     try {
@@ -37,24 +37,26 @@ export const NumberStep = ({ onNext }: { onNext: () => void }) => {
           type="text"
           inputMode="numeric"
           value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
+          onChange={(e) =>
+            setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 11))
+          }
           placeholder="숫자만 입력 (예: 01012345678)"
           className={cn(
-            "mt-1 h-9 w-[350px] bg-[#111111] text-white text-sm border",
+            "mt-[3px] h-9 w-full bg-[#111111] text-white px-2 text-sm border rounded-[5px]",
             phoneNumber !== "" && !isPhoneNumberValid
-              ? "border-red-500"
+              ? "border-[#e33629]"
               : "border-[#555555]",
             "focus:outline-none"
           )}
         />
         {phoneNumber !== "" && !isPhoneNumberValid && (
-          <div className="text-red-500 text-xs ml-1 mt-[2px]">
-            숫자만 입력해주세요 (10~11자리).
+          <div className="text-[#e33629] text-xs ml-1 mt-[2px]">
+            숫자 11자리를 입력해주세요.
           </div>
         )}
         <Button
           className={cn(
-            "mt-5 w-[350px] h-10 text-sm cursor-pointer",
+            "mt-[10px] w-full h-10 text-sm cursor-pointer rounded-[5px]",
             isPhoneNumberValid
               ? "bg-[#0050ef] text-white"
               : "bg-[#555555] text-[#777777]"

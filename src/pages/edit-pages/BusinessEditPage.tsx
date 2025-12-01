@@ -63,7 +63,7 @@ export const BusinessEditPage = () => {
       alert("수정이 완료되었습니다.");
       navigate(`/my-profile/business`);
     } catch (error) {
-      console.error("트랙 수정 실패:", error);
+      console.error("비즈니스 수정 실패:", error);
       alert("수정에 실패했습니다.");
     }
   };

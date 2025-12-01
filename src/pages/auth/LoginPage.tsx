@@ -15,10 +15,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [passwordTouched, setPasswordTouched] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordError, setShowPasswordError] = useState(false);
 
   const isEmailValid = /^\S+@\S+\.\S+$/.test(email);
   const showEmailError = emailTouched && email !== "" && !isEmailValid;
-  const showPasswordError = false;
 
   const handleNextClick = () => {
     setEmailTouched(true);
@@ -35,25 +35,22 @@ export default function LoginPage() {
     setPasswordTouched(true);
 
     try {
-      const data = await login(email, password);
-      console.log("로그인 성공", data);
+      await login(email, password);
       alert("로그인 성공");
       useUserStore.getState().setLoggedIn(true);
       navigate("/");
     } catch (err) {
-      const message =
-        (err as { message?: string })?.message || "알 수 없는 오류";
-      console.log(message);
-      // alert(message);
+      console.log(err);
+      setShowPasswordError(true);
     }
   };
 
   return (
-    <div className="flex flex-col items-center w-[400px] gap-10">
-      <div className="w-[67.24px] h-15">
+    <div className="flex flex-col items-center gap-[30px]">
+      <div className="w-[89.66px] h-20">
         <SetaLetterLogo />
       </div>
-      <div className="w-[400px] rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
+      <div className="w-100 rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
         {!showPasswordInput ? (
           <LoginForm
             email={email}
@@ -79,7 +76,7 @@ export default function LoginPage() {
         )}
         {!showPasswordInput && (
           <>
-            <div className="flex flex-row justify-center gap-2 mt-3 text-white text-xs">
+            <div className="flex flex-row justify-center gap-[10px] mt-[10px] text-white text-xs">
               <span
                 className="cursor-pointer"
                 onClick={() => {
@@ -108,13 +105,13 @@ export default function LoginPage() {
               </span>
             </div>
 
-            <div className="flex flex-row items-center gap-2 mt-9 mb-5">
-              <div className="w-[155px] border-t border-white" />
+            <div className="flex flex-row items-center gap-2 mt-[35px] mb-5">
+              <div className="flex-1 border-t border-white" />
               <span className="text-white text-xs">또는</span>
-              <div className="w-[155px] border-t border-white" />
+              <div className="flex-1 border-t border-white" />
             </div>
 
-            <div className="mb-8 cursor-pointer">
+            <div className="mb-[33px] cursor-pointer">
               <GoogleBtn />
             </div>
           </>

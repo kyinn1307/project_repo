@@ -2,20 +2,43 @@ import { Business } from "@/types/business";
 import { StarterBusiness } from "./StarterBusinessItem";
 import { GrowthBusiness } from "./GrowthBusiness";
 import { ProBusiness } from "./ProBusiness";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteBusiness } from "@/apis/business";
+import { getMyProfile } from "@/apis/my-profile";
+import { Profile } from "@/types/my-profile";
 
 export const BusinessList = ({
   list,
   isOtherUser,
+  userId,
 }: {
   list: Business[];
   isOtherUser?: boolean;
+  userId: number | null;
 }) => {
+  const [info, setInfo] = useState<Profile | null>(null);
+
+  // 마이 프로필 정보 조회
+  const handleMyProfile = async () => {
+    if (userId === null) {
+      console.log("userId가 없습니다.");
+      return;
+    }
+
+    try {
+      const res = await getMyProfile(userId);
+      console.log(res.data);
+      setInfo(res.data.data);
+    } catch (err) {
+      console.log("조회 실패.", err);
+    }
+  };
+
   useEffect(() => {
-    console.log(list);
-  });
+    handleMyProfile();
+  }, []);
+
   const byGrade = (grade: "Starter" | "Growth" | "Pro") =>
     list.find((b) => b.grade?.toLowerCase() === grade.toLowerCase());
 
@@ -46,12 +69,14 @@ export const BusinessList = ({
           isEmpty={!starter}
           business={starter}
           onDelete={handleDelete}
+          profileImageUrl={info?.profileImageUrl ?? undefined}
         />
         <GrowthBusiness
           isOtherUser={isOtherUser}
           isEmpty={!growth}
           business={growth}
           onDelete={handleDelete}
+          profileImageUrl={info?.profileImageUrl ?? undefined}
         />
       </div>
       <ProBusiness
@@ -59,6 +84,7 @@ export const BusinessList = ({
         isEmpty={!pro}
         business={pro}
         onDelete={handleDelete}
+        profileImageUrl={info?.profileImageUrl ?? undefined}
       />
     </div>
   );

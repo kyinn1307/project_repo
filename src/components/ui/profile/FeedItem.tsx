@@ -1,6 +1,4 @@
-import sample from "@/assets/Images/hmson.png";
 import { useState } from "react";
-// import { AvatarDemo } from "../common/AvatarDemo";
 import { Heart } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { FeedMoreMenu } from "./FeedMoreMenu";
@@ -10,6 +8,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleFeedLike } from "@/apis/feed";
 import { useUserStore } from "@/stores/useUserStore";
 import { useNavigate } from "react-router-dom";
+import { formatYMDdot } from "@/utils/formatDate";
 interface FeedItemProps {
   feed: Feed;
   isUser?: boolean;
@@ -22,6 +21,7 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
     title,
     description,
     imageFiles,
+    createdAt,
     creatorId,
     creatorNickname,
     creatorProfileImageUrl,
@@ -59,8 +59,6 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
     }
   };
 
-  console.log("imagefiles", imageFiles);
-
   return (
     <div className="w-full p-3 flex flex-col gap-[15px] rounded-[15px] bg-[#111] mb-5">
       <div className="flex flex-col gap-2">
@@ -75,25 +73,22 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
             <span className="cursor-pointer" onClick={handleUserClick}>
               {creatorNickname}
             </span>
-            <span className="text-[#777777]">3일전</span>
+            <span className="text-[#777777]"> {formatYMDdot(createdAt)}</span>
           </span>
           <div className="flex items-start">
-            {isUser ? (
-              <UserFeedMoreMenu />
-            ) : (
-              // <UserFeedMoreMenu feedId={id} />
-              <FeedMoreMenu feedId={id} />
-            )}
+            {isUser ? <UserFeedMoreMenu /> : <FeedMoreMenu feedId={id} />}
           </div>
         </div>
 
-        <div className="flex justify-center">
-          <img
-            src={imageFiles[0]?.url || sample}
-            alt="포스트 썸네일"
-            className="w-[225px] h-[225px] object-cover"
-          />
-        </div>
+        {imageFiles?.length > 0 && (
+          <div className="flex justify-center">
+            <img
+              src={imageFiles[0]?.url}
+              alt="포스트 썸네일"
+              className="w-[225px] h-[225px] object-cover"
+            />
+          </div>
+        )}
 
         <div className="flex flex-row justify-between">
           <span

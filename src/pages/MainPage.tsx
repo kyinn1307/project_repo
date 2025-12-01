@@ -36,14 +36,14 @@ export default function MainPage() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center text-white">
+    <div className="flex flex-col items-center text-white overflow-x-hidden">
       {!isLoggedIn && (
         <div className="w-full pt-[37.5px] shrink-0">
           <IntroductionBanner />
         </div>
       )}
 
-      <div className="w-full ml-[10%]">
+      <div className="w-full ml-[10%] overflow-x-hidden">
         <ContentSection title="뮤지션">
           <div className="max-w-[540px]">
             <SearchBar placeholder="뮤지션 찾기" value="musician" />

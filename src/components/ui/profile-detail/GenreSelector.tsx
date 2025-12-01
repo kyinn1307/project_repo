@@ -18,11 +18,16 @@ export const GenreSelector = ({
   isRequired,
 }: GenreSelectorProps) => {
   const handleGenreClick = (genre: Genre) => {
-    setValue(
-      value.includes(genre)
-        ? value.filter((g) => g !== genre)
-        : [...value, genre]
-    );
+    if (value.includes(genre)) {
+      setValue(value.filter((g) => g !== genre));
+      return;
+    }
+
+    if (value.length >= 3) {
+      return;
+    }
+
+    setValue([...value, genre]);
   };
 
   return (

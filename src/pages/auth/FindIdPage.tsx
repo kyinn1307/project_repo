@@ -23,7 +23,7 @@ export default function FindIdPage() {
     try {
       const res = await postFindId(phoneNumber);
       const email = res.data?.match(/[\w.-]+@[\w.-]+\.\w+/)?.[0] ?? "";
-      console.log(email); // "shruddls1307@gmail.com"
+      console.log(email);
       setFoundEmail(email);
       setSubmitted(true);
     } catch (error) {
@@ -33,12 +33,12 @@ export default function FindIdPage() {
   };
 
   return (
-    <div className="flex flex-col items-center w-[400px] gap-10">
-      <div className="w-[89.66px] h-[80px]" onClick={() => navigate("/")}>
+    <div className="flex flex-col items-center w-[300px] gap-[30px]">
+      <div className="w-[67.24px] h-[60px]" onClick={() => navigate("/")}>
         <SetaLogo />
       </div>
 
-      <div className="w-[400px] rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
+      <div className="w-[300px] rounded-[7.5px] bg-[#222222] py-[30px] px-[18.75px] box-border">
         {submitted ? (
           <div className="flex flex-col gap-[3px]">
             <span className="text-[15px] font-medium text-white">
@@ -52,7 +52,7 @@ export default function FindIdPage() {
               <span className="text-[#777777] text-sm font-medium">입니다</span>
             </div>
             <Button
-              className="bg-[#0050ef] text-white text-[15px] mt-[15px] cursor-pointer"
+              className="bg-[#0050ef] text-white font-normal text-[15px] mt-[15px] cursor-pointer rounded-[3.75px]"
               onClick={() => navigate("/auth")}
             >
               로그인하기

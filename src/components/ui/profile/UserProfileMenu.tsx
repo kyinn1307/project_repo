@@ -93,6 +93,7 @@ export function UserProfileMenu() {
           <SubscribeBusinessContent
             list={businessRes || []}
             isOtherUser={userId !== loggedInUserId}
+            userId={userId}
           />
         ) : (
           <UnsubscribeBusinessContent />

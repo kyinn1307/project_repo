@@ -2,8 +2,10 @@ import { useRef, useState } from "react";
 
 export default function VerificationCodeInput({
   onComplete,
+  onChange,
 }: {
   onComplete?: (code: string) => void;
+  onChange?: (values: string[]) => void;
 }) {
   const [values, setValues] = useState(Array(6).fill(""));
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
@@ -13,6 +15,7 @@ export default function VerificationCodeInput({
     const newValues = [...values];
     newValues[index] = value;
     setValues(newValues);
+    onChange?.(newValues);
 
     if (value && index < 5) {
       inputsRef.current[index + 1]?.focus();
@@ -30,7 +33,7 @@ export default function VerificationCodeInput({
   };
 
   return (
-    <div className="flex gap-2 justify-center">
+    <div className="flex gap-[7.5px] justify-center">
       {values.map((val, index) => (
         <input
           key={index}

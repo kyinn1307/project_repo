@@ -23,11 +23,17 @@ export const FieldSelector = ({
   isRequired,
 }: FieldSelectorProps) => {
   const handleClick = (label: string) => {
-    setValue((prev) =>
-      prev.includes(label)
-        ? prev.filter((item) => item !== label)
-        : [...prev, label]
-    );
+    setValue((prev) => {
+      if (prev.includes(label)) {
+        return prev.filter((item) => item !== label);
+      }
+
+      if (prev.length >= 3) {
+        return prev;
+      }
+
+      return [...prev, label];
+    });
   };
 
   return (

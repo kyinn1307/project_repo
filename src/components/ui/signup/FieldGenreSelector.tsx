@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { getFieldsGenres } from "@/apis/signup";
 import { postComplete } from "@/apis/signup";
+
 function SelectableTag({
   label,
   selected,
@@ -15,7 +15,7 @@ function SelectableTag({
   return (
     <button
       onClick={onClick}
-      className={`my-[3px] px-[10px] py-[7px] h-8 rounded-[5px] text-sm font-medium transition-colors duration-150 cursor-pointer
+      className={`my-[3px] px-[9.5px] py-[7px] h-8 rounded-[5px] text-sm transition-colors duration-150 cursor-pointer
         ${
           selected ? "bg-[#0050ef] text-white" : "bg-[#111111] text-[#777777]"
         }`}
@@ -27,24 +27,41 @@ function SelectableTag({
 
 export default function FieldGenreSelector() {
   const navigate = useNavigate();
+
+  const FIELD_ORDER = [
+    "작사",
+    "믹싱",
+    "비트메이커",
+    "프로듀서",
+    "작곡/편곡",
+    "마스터링",
+    "앨범아트",
+    "세션",
+    "보컬",
+    "영상",
+    "그 외",
+  ];
+
+  const GENRE_ORDER = [
+    "팝",
+    "힙합",
+    "록",
+    "재즈",
+    "인디",
+    "R&B",
+    "클래식",
+    "트로트",
+    "컨트리",
+    "일렉트로닉",
+    "발라드",
+    "그 외",
+  ];
+
+  const [fieldOptions] = useState<string[]>(FIELD_ORDER);
+  const [genreOptions] = useState<string[]>(GENRE_ORDER);
+
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [fieldOptions, setFieldOptions] = useState<string[]>([]);
-  const [genreOptions, setGenreOptions] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const res = await getFieldsGenres(); // ✅ API 요청
-        setFieldOptions(res.data.fields);
-        setGenreOptions(res.data.genres);
-      } catch (error) {
-        console.error("분야/장르 가져오기 실패:", error);
-      }
-    };
-
-    fetchOptions();
-  }, []);
 
   const toggleSelection = (
     item: string,
@@ -78,9 +95,9 @@ export default function FieldGenreSelector() {
   return (
     <div className="flex flex-col gap-10">
       <div>
-        <p className="text-base font-semibold text-white">
-          분야 및 장르를 선택해주세요.{" "}
-          <span className="text-sm">(최대 3개)</span>
+        <p className="text-base font-medium text-white">
+          분야 및 장르를 선택해주세요.
+          <span className="text-xs">(최대 3개)</span>
         </p>
       </div>
 
@@ -103,7 +120,7 @@ export default function FieldGenreSelector() {
 
         <div>
           <p className="text-xs font-medium mb-[3px] text-white">장르</p>
-          <div className="flex flex-wrap gap-[5px]">
+          <div className="flex flex-wrap gap-x-[5px]">
             {genreOptions.map((genre) => (
               <SelectableTag
                 key={genre}
@@ -117,9 +134,10 @@ export default function FieldGenreSelector() {
           </div>
         </div>
       </div>
+
       <Button
         disabled={!isNextEnabled}
-        className={`w-full h-10 text-sm transition-colors duration-200
+        className={`w-full h-10 text-sm font-normal rounded-[5px] transition-colors duration-200 cursor-pointer
           ${
             isNextEnabled
               ? "bg-[#0050ef] text-white"

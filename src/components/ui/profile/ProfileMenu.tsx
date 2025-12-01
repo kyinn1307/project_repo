@@ -24,8 +24,6 @@ export function ProfileMenu() {
   const userId = useUserStore((s) => s.userId);
   const { isSubscribed } = useUserStore();
 
-  // URL <-> 탭 값 매핑
-  // 요구: /my-profile/track, /my-profile/project ...
   const PATH_TO_TAB: Record<
     string,
     "music" | "feed" | "project" | "history" | "business"
@@ -40,7 +38,7 @@ export function ProfileMenu() {
   // 현재 경로에서 마지막 세그먼트 추출
   const currentPathSegment = useMemo(() => {
     const segs = pathname.split("/").filter(Boolean);
-    return segs[segs.length - 1]; // 'track' | 'feed' | ...
+    return segs[segs.length - 1];
   }, [pathname]);
 
   useEffect(() => {
@@ -58,11 +56,10 @@ export function ProfileMenu() {
     history: "history",
     business: "business",
   };
-  // 2) 현재 탭 계산 (string이어도 OK, 우리가 TabValue로 관리)
+
   const currentTab: TabValue =
     PATH_TO_TAB[currentPathSegment as keyof typeof PATH_TO_TAB] ?? "music";
 
-  // 3) onValueChange는 string 시그니처로!
   const handleChange = (val: string) => {
     if (TABS.includes(val as TabValue)) {
       const next = TAB_TO_PATH[val as TabValue];
@@ -70,7 +67,6 @@ export function ProfileMenu() {
     }
   };
 
-  // 데이터
   const { data: tracksRes } = useQuery({
     queryKey: ["myTracks"],
     queryFn: getMyTracks,
@@ -145,7 +141,10 @@ export function ProfileMenu() {
 
       <TabsContent value="business">
         {isSubscribed ? (
-          <SubscribeBusinessContent list={businessRes || []} />
+          <SubscribeBusinessContent
+            list={businessRes || []}
+            userId={userId || 0}
+          />
         ) : (
           <UnsubscribeBusinessContent />
         )}

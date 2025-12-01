@@ -11,25 +11,19 @@ export const FeedPage = () => {
   const { userId } = useUserStore();
   const size = 2;
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading,
-    isError,
-  } = useInfiniteQuery<
-    FeedResponse,
-    Error,
-    InfiniteData<FeedResponse>,
-    [string],
-    number | undefined
-  >({
-    queryKey: ["feeds"],
-    queryFn: ({ pageParam }) => getAllFeeds(pageParam, size),
-    initialPageParam: undefined,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery<
+      FeedResponse,
+      Error,
+      InfiniteData<FeedResponse>,
+      [string],
+      number | undefined
+    >({
+      queryKey: ["feeds"],
+      queryFn: ({ pageParam }) => getAllFeeds(pageParam, size),
+      initialPageParam: undefined,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    });
 
   const allFeeds: Feed[] = data?.pages.flatMap((page) => page.feeds) ?? [];
 
@@ -43,8 +37,9 @@ export const FeedPage = () => {
 
   return (
     <div className="flex flex-col pl-[25%] pt-[30px] gap-[13.5px]">
-      {isLoading && <div className="text-white">로딩 중...</div>}
-      {isError && <div className="text-red-500">에러가 발생했습니다.</div>}
+      {isLoading && (
+        <div className="w-fit flex-1 justify-center text-white">로딩 중...</div>
+      )}
 
       {allFeeds.map((feed) => (
         <section key={feed.id} className="w-135 text-white">
@@ -52,13 +47,7 @@ export const FeedPage = () => {
         </section>
       ))}
 
-      <div ref={ref} className="h-12 mt-6 text-center text-white">
-        {isFetchingNextPage
-          ? "피드 불러오는 중..."
-          : hasNextPage
-          ? "더 불러오는 중..."
-          : ""}
-      </div>
+      <div ref={ref} className="h-12 mt-6 text-center text-white"></div>
     </div>
   );
 };

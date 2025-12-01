@@ -5,10 +5,10 @@ import { MusicTagSelector } from "@/components/ui/profile-detail/MusicTagSelecto
 import { Button } from "@/components/ui/button";
 import { ImageUploadSection } from "./ImageUploadSection";
 import { MusicUploadSection } from "./MusicUploadSection";
-import { LyricsInput } from "./LyricsInput";
 import type { EmotionTag } from "@/types/music";
 import { uploadFeed } from "@/apis/feed";
 import { buildUploadActions } from "@/utils/buildUploadActions";
+import { FeedDescriptionInput } from "./FeedDescriptionInput";
 
 export const FeedUploadContent = () => {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ export const FeedUploadContent = () => {
         <TitleInput value={title} setValue={setTitle} />
       </div>
       <div>
-        <LyricsInput value={description} setValue={setDescription} />
+        <FeedDescriptionInput value={description} setValue={setDescription} />
       </div>
       <div className="flex flex-row gap-[7.5px]">
         <MusicUploadSection

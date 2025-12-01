@@ -38,8 +38,9 @@ export const PasswordStep = ({ onNext }: { onNext: () => void }) => {
       <div className="text-white text-base font-medium">
         비밀번호를 입력해주세요.
       </div>
+
       <div className="flex flex-col">
-        {/* 비밀번호 */}
+        {/* 비밀번호 입력파트 */}
         <div className="flex flex-col">
           <div className="text-xs text-white">비밀번호</div>
           <div className="relative">
@@ -47,16 +48,18 @@ export const PasswordStep = ({ onNext }: { onNext: () => void }) => {
               id="password"
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value.replace(/\s+/g, ""))}
               placeholder="8자리 이상, 특수문자 포함"
               className={cn(
-                "mt-1 h-9 w-[350px] bg-[#111111] text-white text-sm pr-10 border",
+                "mt-[3px] h-9 w-full bg-[#111111] text-white text-sm pl-2 pr-9 border rounded-[5px]",
                 !isPasswordValid && password !== ""
                   ? "border-red-500"
                   : "border-[#555555]",
                 "focus:outline-none"
               )}
             />
+
+            {/* 비밀번호 입력값 확인 버튼 */}
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
@@ -65,31 +68,37 @@ export const PasswordStep = ({ onNext }: { onNext: () => void }) => {
               <PasswordBtn />
             </button>
           </div>
+
+          {/* 비밀번호 입력 조건 처리 */}
           {!isPasswordValid && password !== "" && (
-            <div className="text-red-500 text-xs ml-1 mt-[2px]">
+            <div className="text-[#e33629] text-xs mt-[3px]">
               8자리 이상, 특수문자를 포함해야 합니다.
             </div>
           )}
         </div>
 
         {/* 비밀번호 확인 */}
-        <div className="flex flex-col mt-4">
+        <div className="flex flex-col mt-3">
           <div className="text-xs text-white">비밀번호 확인</div>
           <div className="relative">
             <Input
               id="confirm-password"
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) =>
+                setConfirmPassword(e.target.value.replace(/\s+/g, ""))
+              }
               placeholder="비밀번호를 다시 입력하세요"
               className={cn(
-                "mt-1 h-9 w-[350px] bg-[#111111] text-white text-sm pr-10 border",
+                "mt-[3px] h-9 w-full bg-[#111111] text-white text-sm pl-2 pr-9 border rounded-[5px]",
                 confirmPassword !== "" && !doPasswordsMatch
                   ? "border-red-500"
                   : "border-[#555555]",
                 "focus:outline-none"
               )}
             />
+
+            {/* 비밀번호 확인 입력값 확인 버튼 */}
             <button
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
@@ -98,17 +107,19 @@ export const PasswordStep = ({ onNext }: { onNext: () => void }) => {
               <PasswordBtn />
             </button>
           </div>
+
+          {/* 비밀번호와 비밀번호 확인 일치 x인 상황 처리 */}
           {confirmPassword !== "" && !doPasswordsMatch && (
-            <div className="text-red-500 text-xs ml-1 mt-[2px]">
+            <div className="text-[#e33629] text-xs mt-[3px]">
               비밀번호가 일치하지 않습니다.
             </div>
           )}
         </div>
 
-        {/* 다음 버튼 */}
+        {/* 비밀번호 일치 여부 확인 및 다음 단계 버튼 */}
         <Button
           className={cn(
-            "mt-5 w-[350px] h-10 text-sm cursor-pointer",
+            "mt-[30px] w-full h-10 text-sm cursor-pointer rounded-[5px]",
             isPasswordStepValid
               ? "bg-[#0050ef] text-white"
               : "bg-[#555555] text-[#777777]"

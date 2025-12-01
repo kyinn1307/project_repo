@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import hmson from "@/assets/Images/hmson.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
-import junseo from "@/assets/Images/junseo_lee.png";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
 import {
@@ -35,11 +34,12 @@ export function UserProfileSidebar() {
 
   const [followerList, setFollowerList] = useState<Follower[]>([]);
   const [followingList, setFollowingList] = useState<Follower[]>([]);
+
   // 마이 프로필 정보 조회
   const { data: info } = useQuery({
     queryKey: ["userProfile", userId],
     queryFn: () => getUserProfile(userId),
-    select: (res) => res.data.data as Profile, // 기존 setInfo(res.data.data)와 동일
+    select: (res) => res.data.data as Profile,
     enabled: Number.isFinite(userId),
   });
 
@@ -52,10 +52,13 @@ export function UserProfileSidebar() {
           ? await getFollowerList(userId)
           : await getFollowingList(userId);
 
+      console.log(res.data);
+
       const list = res.data.data.map((user: Follower) => ({
         userId: user.userId,
         nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl ?? junseo,
+        profileImageUrl: user.profileImageUrl ?? hmson,
+        relationship: user.relationship,
       }));
 
       if (type === "follower") setFollowerList(list);
@@ -70,7 +73,7 @@ export function UserProfileSidebar() {
   const handleOpenModal = (type: "follower" | "following") => {
     setModalType(type);
     setOpen(true);
-    fetchFollowList(type); // 모달 열 때 API 호출
+    fetchFollowList(type);
   };
 
   const getCountValue = (item: string): number => {
@@ -95,6 +98,56 @@ export function UserProfileSidebar() {
     setOpen(false);
   };
 
+  const renderFollowButton = (user: Follower) => {
+    switch (user.relationship) {
+      case 0:
+        return null;
+
+      case 1:
+        return (
+          <button
+            className="h-[17.5px] px-[7.25px] text-[10.5px] bg-[#0050EF] rounded-full cursor-pointer"
+            onClick={() => followMutate(user.userId)}
+          >
+            팔로우
+          </button>
+        );
+
+      case 2:
+        return (
+          <button
+            className="h-[17.5px] px-[7.25px] text-[10.5px] bg-[#333333] rounded-full cursor-pointer"
+            onClick={() => unfollowMutate(user.userId)}
+          >
+            취소
+          </button>
+        );
+
+      case 3:
+        return (
+          <button
+            className="h-[17.5px] px-[7.25px] text-[10.5px] bg-[#0050EF] rounded-full cursor-pointer"
+            onClick={() => followMutate(user.userId)}
+          >
+            팔로우
+          </button>
+        );
+
+      case 4:
+        return (
+          <button
+            className="h-[17.5px] px-[7.25px] text-[10.5px] bg-[#333333] rounded-full cursor-pointer"
+            onClick={() => unfollowMutate(user.userId)}
+          >
+            취소
+          </button>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   const refetchFollowRelated = async () => {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ["userProfile", userId] }),
@@ -108,15 +161,13 @@ export function UserProfileSidebar() {
   };
 
   const { mutate: followMutate } = useMutation({
-    mutationFn: () => followUser(userId),
+    mutationFn: (targetId: number) => followUser(targetId),
     onSuccess: refetchFollowRelated,
   });
 
   const { mutate: unfollowMutate } = useMutation({
-    mutationFn: () => unfollowUser(userId),
-    onSuccess: () => {
-      refetchFollowRelated();
-    },
+    mutationFn: (targetId: number) => unfollowUser(targetId),
+    onSuccess: refetchFollowRelated,
   });
 
   return (
@@ -146,7 +197,7 @@ export function UserProfileSidebar() {
                 <>
                   <Button
                     className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
-                    onClick={() => followMutate()}
+                    onClick={() => followMutate(userId)}
                   >
                     팔로우
                   </Button>
@@ -163,7 +214,7 @@ export function UserProfileSidebar() {
                 <>
                   <Button
                     className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
-                    onClick={() => unfollowMutate()}
+                    onClick={() => unfollowMutate(userId)}
                   >
                     언팔로우
                   </Button>
@@ -180,7 +231,7 @@ export function UserProfileSidebar() {
                 <>
                   <Button
                     className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
-                    onClick={() => followMutate()}
+                    onClick={() => followMutate(userId)}
                   >
                     맞팔로우
                   </Button>
@@ -197,7 +248,7 @@ export function UserProfileSidebar() {
                 <>
                   <Button
                     className="flex items-center w-15 h-[22.5px] bg-[#0050EF] text-white text-xs rounded-[3.75px] cursor-pointer"
-                    onClick={() => unfollowMutate()}
+                    onClick={() => unfollowMutate(userId)}
                   >
                     언팔로우
                   </Button>
@@ -318,9 +369,8 @@ export function UserProfileSidebar() {
                       {user.nickname}
                     </span>
                   </div>
-                  <button className="h-[17.5px] px-[7.25px] text-[10.5px] bg-[#333333] rounded-full cursor-pointer">
-                    삭제
-                  </button>
+
+                  {renderFollowButton(user)}
                 </div>
               ))
             )}

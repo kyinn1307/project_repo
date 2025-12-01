@@ -60,16 +60,12 @@ export const ProjectDetailPage = () => {
     try {
       let objectUrl: string | null = null;
       let createdHere = false;
-
-      // 🔹 먼저 지역 변수로 빼서 분기 (이렇게 해야 TS가 제대로 좁혀줍니다)
       const urlVal = file.url;
 
       if (typeof urlVal === "string") {
-        // 2) blob:/data: 인라인 URL
         if (urlVal.startsWith("blob:") || urlVal.startsWith("data:")) {
           objectUrl = urlVal;
         } else {
-          // 3) 일반 HTTPS(S3 등)
           const res = await fetch(urlVal, { credentials: "omit" });
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           const blob = await res.blob();
@@ -77,7 +73,6 @@ export const ProjectDetailPage = () => {
           createdHere = true;
         }
       } else if (urlVal) {
-        // 1) Blob 객체
         objectUrl = URL.createObjectURL(urlVal);
         createdHere = true;
       } else {
@@ -190,9 +185,9 @@ export const ProjectDetailPage = () => {
               <span className="flex flex-col gap-[7.5px] items-center whitespace-nowrap">
                 <Heart
                   size={18}
-                  fill={project.liked ? "red" : "none"} // 빨간색 채우기 여부
-                  stroke={project.liked ? "none" : "currentColor"} // 테두리 제거 또는 유지
-                  className={project.liked ? "" : "text-white"} // liked=false면 흰색 테두리
+                  fill={project.liked ? "red" : "none"}
+                  stroke={project.liked ? "none" : "currentColor"}
+                  className={project.liked ? "" : "text-white"}
                 />
 
                 {project.likeCount}
@@ -207,10 +202,13 @@ export const ProjectDetailPage = () => {
               <Button
                 className="flex-2 bg-[#0050ef] rounded-[3.75px] cursor-pointer"
                 onClick={() => {
-                  navigate(`/upload/project-edit/${project.id}`);
+                  if (userId === project.creatorId) {
+                    navigate(`/upload/project-edit/${project.id}`);
+                  } else {
+                    navigate(`/chat/?userId=${project.creatorId}`);
+                  }
                 }}
               >
-                {/* upload/project-edit/project.id */}
                 {userId === project.creatorId ? "수정하기" : "문의하기"}
               </Button>
             </div>

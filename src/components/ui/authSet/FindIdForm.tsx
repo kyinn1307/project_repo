@@ -19,10 +19,10 @@ export const FindIdForm = ({
 }: FindIdFormProps) => {
   return (
     <>
-      <div className="text-white text-base font-medium">
+      <div className="text-white text-xs font-medium">
         전화번호를 입력해주세요.
       </div>
-      <div className="text-white text-xs font-medium mt-10">
+      <div className="text-white text-[9px] font-medium mt-[30px]">
         전화번호 (숫자만 입력)
       </div>
       <Input
@@ -35,7 +35,7 @@ export const FindIdForm = ({
         }
         placeholder="여기에 입력"
         className={cn(
-          "mt-1 h-9 w-[350px] bg-[#111111] text-white text-sm border",
+          "mt-[2.5px] h-[27px] w-full bg-[#111111] px-[6px] text-white !text-[10.5px] border rounded-[3.75px]",
           phoneNumber !== "" && !isPhoneNumberValid
             ? "border-red-500"
             : "border-[#555555]",
@@ -44,11 +44,12 @@ export const FindIdForm = ({
       />
 
       {errorMessage && (
-        <div className="text-red-500 text-xs mt-1 ml-1">{errorMessage}</div>
+        <div className="text-red-500 text-[9px] mt-1 ml-1">{errorMessage}</div>
       )}
       <Button
-        className="mt-3 w-[350px] h-10 bg-[#0050ef] text-white text-sm cursor-pointer"
+        className="mt-[7.5px] w-full h-[30px] bg-[#0050ef] text-white text-[10.5px] cursor-pointer rounded-[3.75px] disabled:bg-[#555555] disabled:font-normal"
         onClick={onSubmit}
+        disabled={!isPhoneNumberValid}
       >
         다음
       </Button>

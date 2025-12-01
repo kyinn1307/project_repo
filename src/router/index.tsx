@@ -31,6 +31,7 @@ import { ChatPage } from "@/pages/chat/ChatPage";
 import { ProjectDetailPage } from "@/pages/serve-pages/ProjectDetailPage";
 import { BusinessPage } from "@/pages/serve-pages/BusinessPage";
 import { BusinessEditPage } from "@/pages/edit-pages/BusinessEditPage";
+import PwResetPage from "@/pages/auth/PwResetPage";
 
 export const router = createBrowserRouter([
   {
@@ -137,6 +138,7 @@ export const router = createBrowserRouter([
     element: <MusicVideoLayout />,
     children: [{ path: ":id", element: <MusicVideoPage /> }],
   },
+
   {
     path: "/auth",
     element: <AuthLayout />,
@@ -146,6 +148,11 @@ export const router = createBrowserRouter([
       { path: "id", element: <FindIdPage /> },
       { path: "pw", element: <PwSetPage /> },
     ],
+  },
+  {
+    path: "/password-reset",
+    element: <AuthLayout />,
+    children: [{ path: ":token", element: <PwResetPage /> }],
   },
   {
     path: "/terms",

@@ -18,3 +18,18 @@ export function daysLeftFrom(createdAt: string, limitDays = 14) {
   // '며칠 남았는지'이므로 올림(오늘 남은 몇 시간도 1일로 친다)
   return Math.max(0, Math.ceil(diff / MS_PER_DAY));
 }
+
+// createdAt 기준으로 며칠 전에 생성되었는지 날짜 계산 util 함수
+export function timeAgo(dateString: string) {
+  const now = new Date();
+  const created = new Date(dateString);
+  const diff = (now.getTime() - created.getTime()) / 1000; // 초 단위 차이
+
+  if (diff < 60) return `${Math.floor(diff)}초 전`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+  if (diff < 2592000) return `${Math.floor(diff / 86400)}일 전`;
+  if (diff < 31104000) return `${Math.floor(diff / 2592000)}개월 전`;
+
+  return `${Math.floor(diff / 31104000)}년 전`;
+}

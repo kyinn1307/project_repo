@@ -7,6 +7,7 @@ export interface Feed {
   creatorProfileImageUrl: string;
   liked: boolean;
   likeCount: number;
+  createdAt: string;
   creatorId: number;
   creatorNickname: string;
   tags: string[];

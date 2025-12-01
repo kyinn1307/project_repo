@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProfileEditModal } from "./ProfileEditModal";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
-import junseo from "@/assets/Images/junseo_lee.png";
+import hmson from "@/assets/Images/hmson.png";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
 import {
@@ -17,9 +17,13 @@ import type { Profile } from "@/types/my-profile";
 import { useUserStore } from "@/stores/useUserStore";
 import { getFollowerList, getFollowingList } from "@/apis/follower";
 import type { Follower } from "@/types/follower";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { unfollowUser } from "@/apis/user";
 
 export function ProfileSideBar() {
   const userId = useUserStore.getState().userId;
+  const queryClient = useQueryClient();
+
   const [open, setOpen] = useState(false);
   const [modalType, setModalType] = useState<"follower" | "following" | null>(
     null
@@ -58,12 +62,11 @@ export function ProfileSideBar() {
         type === "follower"
           ? await getFollowerList(userId)
           : await getFollowingList(userId);
-      console.log("팔로우 데이터:", res.data.data); // ✅ 여기에 콘솔 출력
 
       const list = res.data.data.map((user: Follower) => ({
         userId: user.userId,
         nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl ?? junseo, // 기본 이미지 대체
+        profileImageUrl: user.profileImageUrl ?? hmson, // 기본 이미지
       }));
 
       if (type === "follower") setFollowerList(list);
@@ -78,7 +81,7 @@ export function ProfileSideBar() {
   const handleOpenModal = (type: "follower" | "following") => {
     setModalType(type);
     setOpen(true);
-    fetchFollowList(type); // 모달 열 때 API 호출
+    fetchFollowList(type);
   };
 
   const getCountValue = (item: string): number => {
@@ -102,6 +105,27 @@ export function ProfileSideBar() {
     setModalType(null);
     setOpen(false);
   };
+
+  const refetchFollowRelated = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["userProfile", userId] }),
+      queryClient.invalidateQueries({ queryKey: ["followers", userId] }),
+      queryClient.invalidateQueries({ queryKey: ["followings", userId] }),
+    ]);
+    if (modalType) {
+      if (modalType === "follower") fetchFollowList("follower");
+      else fetchFollowList("following");
+    }
+  };
+
+  // 팔로잉 목록에서 언팔로우 api
+  const { mutate: unfollowMutate } = useMutation({
+    mutationFn: (targetUserId: number) => unfollowUser(targetUserId),
+    onSuccess: async () => {
+      await refetchFollowRelated();
+      await handleMyProfile(); // tanstack query로 refetch 로직 개선 필요
+    },
+  });
 
   return (
     <>
@@ -233,8 +257,15 @@ export function ProfileSideBar() {
                       {user.nickname}
                     </span>
                   </div>
-                  <button className="h-[17.5px] px-[7.25px] text-[10.5px] bg-[#333333] rounded-full cursor-pointer">
-                    삭제
+                  <button
+                    className="h-[17.5px] px-[7.25px] text-[10.5px] bg-[#333333] rounded-full cursor-pointer"
+                    onClick={() => {
+                      if (modalType === "following") {
+                        unfollowMutate(user.userId);
+                      }
+                    }}
+                  >
+                    {modalType === "follower" ? "삭제" : "취소"}
                   </button>
                 </div>
               ))

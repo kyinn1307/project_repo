@@ -18,19 +18,15 @@ type Props = {
   setEditTime: (v: number) => void;
 };
 
-const WORK_DAYS = [
-  { label: "1", value: "1" },
-  { label: "3", value: "3" },
-  { label: "7", value: "7" },
-  { label: "14", value: "14" },
-];
+const WORK_DAYS = Array.from({ length: 99 }, (_, i) => {
+  const n = i + 1;
+  return { label: String(n), value: String(n) };
+});
 
-const REVISION_OPTIONS = [
-  { label: "0", value: "0" },
-  { label: "1", value: "1" },
-  { label: "2", value: "2" },
-  { label: "3", value: "3" },
-];
+const REVISION_OPTIONS = Array.from({ length: 11 }, (_, i) => ({
+  label: String(i),
+  value: String(i),
+}));
 
 export const BusinessDetail = ({
   price,
@@ -68,7 +64,9 @@ export const BusinessDetail = ({
             </SelectTrigger>
             <SelectContent
               className="flex flex-col w-[60px] !min-w-[60px] bg-[#1a1a1a] text-white border-[#333333] py-[7.5px] text-[10.5px] gap-[7.5px]
-               [&_[data-radix-select-viewport]]:p-0"
+               [&_[data-radix-select-viewport]]:p-0              
+               [&_[data-radix-select-viewport]]:max-h-[100px]
+"
             >
               {WORK_DAYS.map((opt) => (
                 <SelectItem
@@ -116,7 +114,11 @@ export const BusinessDetail = ({
             </SelectTrigger>
             <SelectContent
               className="flex flex-col w-[60px] !min-w-[60px] bg-[#1a1a1a] text-white border-[#333333] py-[7.5px] text-[10.5px] gap-[7.5px]
-               [&_[data-radix-select-viewport]]:p-0"
+               [&_[data-radix-select-viewport]]:p-0
+                   [&_[data-radix-select-viewport]]:max-h-[100px]
+             [&_[data-radix-select-viewport]]:overflow-y-auto
+             &_[data-radix-select-scroll-up-button]:hidden
+&_[data-radix-select-scroll-down-button]:hidden"
             >
               {REVISION_OPTIONS.map((opt) => (
                 <SelectItem

@@ -19,79 +19,96 @@ export const PwResetForm = ({ onSubmit }: Props) => {
   const doPasswordsMatch = password === confirmPassword;
   const isValid = isPasswordValid && doPasswordsMatch;
 
+  const handleSubmit = () => {
+    if (!isValid) return;
+    onSubmit(password, confirmPassword);
+  };
+
   return (
-    <div className="flex flex-col gap-[30px]">
-      <div className="text-white text-[15px] font-medium">
+    <>
+      <div className="text-white text-xs font-medium">
         비밀번호를 입력해주세요.
       </div>
 
-      <div className="flex flex-col">
-        <div>
+      <div className="flex flex-col mt-[30px]">
+        {/* 비밀번호 */}
+        <div className="flex flex-col">
           <div className="text-[9px] text-white">비밀번호</div>
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value.replace(/\s+/g, ""))}
               placeholder="8자리 이상, 특수문자 포함"
               className={cn(
-                "mt-[2.5px] px-[6px] h-[27px] w-full bg-[#111111] text-white !text-[10.5px] pr-10 border rounded-[3.75px]",
+                "mt-[2.5px] h-[27px] w-full bg-[#111111] text-white text-[10.5px] pl-[6px] pr-[30px] border rounded-[3.75px]",
                 password !== "" && !isPasswordValid
                   ? "border-red-500"
-                  : "border-[#555555]",
-                "focus:outline-none"
+                  : "border-[#555555]"
               )}
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
             >
               <PasswordBtn />
             </button>
           </div>
+
+          {!isPasswordValid && password !== "" && (
+            <div className="text-red-500 text-[9px] mt-[2.25px]">
+              8자리 이상, 특수문자를 포함해야 합니다.
+            </div>
+          )}
         </div>
 
-        <div className="mt-3">
+        {/* 비밀번호 확인 */}
+        <div className="flex flex-col mt-[9px]">
           <div className="text-[9px] text-white">비밀번호 확인</div>
           <div className="relative">
             <Input
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) =>
+                setConfirmPassword(e.target.value.replace(/\s+/g, ""))
+              }
               placeholder="비밀번호를 다시 입력하세요"
               className={cn(
-                "mt-[2.5px] px-[6px] h-[27px] w-full bg-[#111111] text-white !text-[10.5px] pr-10 border rounded-[3.75px]",
+                "mt-[2.5px] h-[27px] w-full bg-[#111111] text-white text-[10.5px] pl-[6px] pr-[30px] border rounded-[3.75px]",
                 confirmPassword !== "" && !doPasswordsMatch
                   ? "border-red-500"
-                  : "border-[#555555]",
-                "focus:outline-none"
+                  : "border-[#555555]"
               )}
             />
             <button
               type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
             >
               <PasswordBtn />
             </button>
           </div>
+
           {confirmPassword !== "" && !doPasswordsMatch && (
-            <div className="text-red-500 text-xs mt-1 ">다시 입력해주세요.</div>
+            <div className="text-red-500 text-[9px] mt-[2.25px]">
+              비밀번호가 일치하지 않습니다.
+            </div>
           )}
         </div>
 
+        {/* 다음 버튼 */}
         <Button
           className={cn(
-            "mt-5 w-full h-[30px] text-[15px] cursor-pointer rounded-[3.75px]",
+            "mt-[15px] w-full h-[30px] text-[10.5px] cursor-pointer rounded-[3.75px]",
             isValid ? "bg-[#0050ef] text-white" : "bg-[#555555] text-[#777777]"
           )}
           disabled={!isValid}
-          onClick={() => onSubmit(password, confirmPassword)}
+          onClick={handleSubmit}
         >
           다음
         </Button>
       </div>
-    </div>
+    </>
   );
 };

@@ -11,9 +11,16 @@ export const MusicTagSelector = ({
   setValue,
 }: MusicTagSelectorProps) => {
   const toggleTag = (tag: EmotionTag) => {
-    setValue(
-      value.includes(tag) ? value.filter((t) => t !== tag) : [...value, tag]
-    );
+    if (value.includes(tag)) {
+      setValue(value.filter((t) => t !== tag));
+      return;
+    }
+
+    if (value.length >= 3) {
+      return;
+    }
+
+    setValue([...value, tag]);
   };
 
   return (

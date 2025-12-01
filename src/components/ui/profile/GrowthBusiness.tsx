@@ -1,5 +1,4 @@
 import { Button } from "../button";
-import hmson from "@/assets/Images/hmson.png";
 import GiftIcon from "@/assets/Icons/business/gift-icon.svg?react";
 import { BusinessUploadIcon } from "@/assets/Icons/BusinessUploadIcon";
 import { useNavigate } from "react-router-dom";
@@ -10,11 +9,13 @@ export const GrowthBusiness = ({
   isEmpty,
   business,
   onDelete,
+  profileImageUrl,
 }: {
   isOtherUser?: boolean;
   isEmpty?: boolean;
   business?: Business;
   onDelete?: (id: number) => void;
+  profileImageUrl?: string;
 }) => {
   const navigate = useNavigate();
 
@@ -43,7 +44,6 @@ export const GrowthBusiness = ({
     return "작업일 -일 | 수정횟수 -회";
   })();
 
-  const profileSrc = business?.profileImageUrl || hmson;
   const descLines =
     business?.businessDescription?.split("\n").filter(Boolean) ?? [];
 
@@ -58,7 +58,7 @@ export const GrowthBusiness = ({
                   Growth
                 </span>
                 <img
-                  src={profileSrc}
+                  src={profileImageUrl}
                   className="w-[21px] h-[21px] rounded-full object-cover"
                 />
               </div>
@@ -81,7 +81,7 @@ export const GrowthBusiness = ({
                     Growth
                   </span>
                   <img
-                    src={profileSrc}
+                    src={profileImageUrl}
                     className="w-[21px] h-[21px] rounded-full object-cover"
                   />
                 </div>
@@ -125,7 +125,7 @@ export const GrowthBusiness = ({
                 Growth
               </span>
               <img
-                src={profileSrc}
+                src={profileImageUrl}
                 className="w-[21px] h-[21px] rounded-full object-cover"
               />
             </div>
@@ -151,7 +151,7 @@ export const GrowthBusiness = ({
                   Growth
                 </span>
                 <img
-                  src={profileSrc}
+                  src={profileImageUrl}
                   className="w-[21px] h-[21px] rounded-full object-cover"
                 />
               </div>
