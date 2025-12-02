@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Heart } from "lucide-react";
 import { ChevronDown } from "lucide-react";
 import { FeedMoreMenu } from "./FeedMoreMenu";
@@ -9,6 +9,8 @@ import { toggleFeedLike } from "@/apis/feed";
 import { useUserStore } from "@/stores/useUserStore";
 import { useNavigate } from "react-router-dom";
 import { formatYMDdot } from "@/utils/formatDate";
+import sample from "@/assets/Images/sample-musician.png";
+
 interface FeedItemProps {
   feed: Feed;
   isUser?: boolean;
@@ -35,6 +37,8 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
   const navigate = useNavigate();
 
   const [isExpanded, setIsExpanded] = useState(true);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [cardWidth, setCardWidth] = useState(720);
 
   const { mutate } = useMutation({
     mutationFn: () => toggleFeedLike(id),
@@ -59,14 +63,45 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
     }
   };
 
+  const updateWidth = () => {
+    if (cardRef.current) {
+      setCardWidth(cardRef.current.offsetWidth);
+    }
+  };
+
+  useEffect(() => {
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  const calcMinHeight = (w: number) => {
+    const baseWidth = 720;
+    const baseHeight = isExpanded
+      ? imageFiles?.length > 0
+        ? 450
+        : 100
+      : imageFiles?.length > 0
+      ? 400
+      : 98;
+
+    return (w / baseWidth) * baseHeight;
+  };
+
+  const minHeight = calcMinHeight(cardWidth);
+
   return (
-    <div className="w-full p-3 flex flex-col gap-[15px] rounded-[15px] bg-[#111] mb-5">
-      <div className="flex flex-col gap-2">
+    <div
+      ref={cardRef}
+      className="w-full p-3 flex flex-col rounded-[15px] bg-[#111] mb-[30px]"
+      style={{ minHeight }}
+    >
+      <div className="h-full flex flex-col gap-2">
         <div className="flex justify-between">
           <span className="flex flex-row gap-[15px] items-center text-[15px]">
             <span className="cursor-pointer" onClick={handleUserClick}>
               <img
-                src={creatorProfileImageUrl}
+                src={creatorProfileImageUrl || sample}
                 className="w-[30px] h-[30px] rounded-full object-cover"
               />
             </span>
@@ -81,57 +116,62 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
         </div>
 
         {imageFiles?.length > 0 && (
-          <div className="flex justify-center">
+          <div className="flex-1 flex justify-center">
             <img
               src={imageFiles[0]?.url}
               alt="포스트 썸네일"
-              className="w-[225px] h-[225px] object-cover"
+              className="w-[41.6%] h-full object-cover aspect-square"
             />
           </div>
         )}
 
-        <div className="flex flex-row justify-between">
-          <span
-            className="flex flex-row gap-2 items-center text-[13.5px] text-[#777777] cursor-pointer"
-            onClick={() => mutate()}
-          >
-            <Heart
-              size={13.5}
-              className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
-              fill={liked ? "#ff2b2b" : "none"}
-              onClick={(e) => {
-                e.stopPropagation();
-                mutate();
-              }}
-            />
-            {likeCount}
-          </span>
-          <div className="flex flex-row gap-2 items-center text-[#ffffff]">
-            {tags?.map((tag) => (
-              <span
-                key={tag}
-                className="flex items-center h-[13px] px-[7.5px] text-[10.5px] bg-[#555555] rounded-[7.5px]"
-              >
-                {tag}
-              </span>
-            ))}
-            <button onClick={handleToggle} className="text-[#777777]">
-              <ChevronDown
-                className={`transition-transform cursor-pointer ${
-                  isExpanded ? "rotate-180" : ""
-                }`}
+        <div className="mt-auto pt-[10px]">
+          <div className="flex justify-between">
+            <span
+              className="flex flex-row gap-2 items-center text-[13.5px] text-[#777777] cursor-pointer"
+              onClick={() => mutate()}
+            >
+              <Heart
+                size={13.5}
+                className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
+                fill={liked ? "#ff2b2b" : "none"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  mutate();
+                }}
               />
-            </button>
+              {likeCount}
+            </span>
+            <div className="flex flex-row gap-2 items-center text-[#ffffff]">
+              {tags?.map((tag) => (
+                <span
+                  key={tag}
+                  className="flex items-center h-[13px] px-[7.5px] text-[10.5px] bg-[#555555] rounded-[7.5px]"
+                >
+                  {tag}
+                </span>
+              ))}
+              <button onClick={handleToggle} className="text-[#777777]">
+                <ChevronDown
+                  className={`transition-transform cursor-pointer ${
+                    isExpanded ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            </div>
           </div>
+
+          {/* 제목 + 내용 (확장 영역) */}
+          {isExpanded && (
+            <div className="flex flex-col gap-1 text-[10.5px] text-[#ffffff] mt-[10px]">
+              <div className="font-bold">{title}</div>
+              <div className="font-regular whitespace-pre-line">
+                {description}
+              </div>
+            </div>
+          )}
         </div>
       </div>
-
-      {isExpanded && (
-        <div className="flex flex-col gap-1 text-[10.5px] text-[#ffffff]">
-          <div className="font-bold">{title}</div>
-          <div className="font-regular whitespace-pre-line">{description}</div>
-        </div>
-      )}
     </div>
   );
 };

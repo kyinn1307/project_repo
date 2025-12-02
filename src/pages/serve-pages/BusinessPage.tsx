@@ -76,7 +76,7 @@ export const BusinessPage = () => {
         <div className="text-2xl text-white font-bold">비즈니스</div>
 
         <div className="relative flex flex-row mt-[22.5px] mb-[22.5px]">
-          <div className="w-[540px]">
+          <div className="w-[50%]">
             <SearchBar
               placeholder="비즈니스 찾기"
               value="business"

@@ -5,14 +5,14 @@ import { ArrowRight } from "lucide-react";
 
 export const IntroductionBanner = () => {
   return (
-    <div className="relative w-full h-[262.5px] flex flex-row">
+    <div className="relative flex-1 h-[262.5px] flex flex-row min-w-230">
       {/* seta 소개 */}
-      <div className="flex flex-col gap-15 pl-[10%] z-10">
+      <div className="flex flex-col gap-15 pl-[5.2%] z-10">
         <div className="flex flex-col gap-[30px] pt-[25.75px]">
           <div className="w-[243.21px] h-[45pxw]">
             <SetaLetterLogo />
           </div>
-          <div className="flex flex-col font-medium text-lg gap-[7.5px]">
+          <div className="flex flex-col font-medium text-lg gap-[10px]">
             <span className="flex items-center h-[23px]">
               콜라보가 일상이 되는 플랫폼 SETA
             </span>

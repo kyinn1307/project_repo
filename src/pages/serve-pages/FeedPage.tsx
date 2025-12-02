@@ -36,17 +36,20 @@ export const FeedPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex flex-col pl-[25%] pt-[30px] gap-[13.5px]">
+    <div className="flex flex-col pt-[38px] px-[10%]">
+      <div className="h-[30px] flex items-center text-2xl text-white font-bold mb-[30px]">
+        피드
+      </div>
       {isLoading && (
-        <div className="w-fit flex-1 justify-center text-white">로딩 중...</div>
+        <div className="w-fit flex-1 justify-center text-white">로딩중...</div>
       )}
-
-      {allFeeds.map((feed) => (
-        <section key={feed.id} className="w-135 text-white">
-          <FeedItem feed={feed} isUser={userId !== feed.creatorId} />
-        </section>
-      ))}
-
+      <div className="w-full flex flex-col items-center">
+        {allFeeds.map((feed) => (
+          <section key={feed.id} className="w-[37.5vw] min-w-135 text-white">
+            <FeedItem feed={feed} isUser={userId !== feed.creatorId} />
+          </section>
+        ))}
+      </div>
       <div ref={ref} className="h-12 mt-6 text-center text-white"></div>
     </div>
   );

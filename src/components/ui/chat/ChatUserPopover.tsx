@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/popover";
 import { getFollowingList } from "@/apis/follower";
 import { Follower } from "@/types/follower";
-import sample from "@/assets/Images/hmson.png";
+import sample from "@/assets/Images/sample-musician.png";
 import { ChatUserCheckIcon } from "@/assets/Icons/chat/ChatUserCheckIcon";
 import { Search, X } from "lucide-react";
 import { Button } from "../button";

@@ -29,9 +29,9 @@ export function MoreMenu({ collapsed }: { collapsed: boolean }) {
         onClick={() => setOpen((prev) => !prev)}
         className={`${
           collapsed
-            ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
-            : "flex items-center gap-3 px-4 py-2"
-        } text-white w-full hover:bg-[#222] transition-colors duration-200 cursor-pointer rounded-md`}
+            ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px] cursor-pointer"
+            : "flex items-center gap-3 px-4 py-2 cursor-pointer"
+        } text-white w-full hover:bg-[#222] transition-colors duration-200 rounded-md`}
       >
         <div className={`${collapsed ? "w-[18px] h-[18px]" : "w-4 h-4"}`}>
           <EtcIcon />

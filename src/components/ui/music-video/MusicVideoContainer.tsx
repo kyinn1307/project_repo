@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import MusicDefault from "@/assets/Images/MusicPlayDefault.png";
 import { MusicActionBar } from "./MusicActionBar";
 import { ArrowRight } from "lucide-react";
 import { MusicPlayIcon } from "@/assets/Icons/music-video/MusicPlayIcon";
@@ -176,6 +177,9 @@ export const MusicVideoContainer = ({ track }: { track: Music }) => {
               {/* 실제 이미지 or 배경 */}
               <img
                 src={coverUrl}
+                onError={(e) => {
+                  e.currentTarget.src = MusicDefault;
+                }}
                 className="w-full h-full object-cover rounded-[3.75px]"
               />
 

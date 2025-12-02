@@ -14,6 +14,7 @@ import {
 import { useUserStore } from "@/stores/useUserStore";
 import { RemoteFile } from "@/types/feed";
 import { daysLeftFrom, formatYMDdot } from "@/utils/formatDate";
+import sample from "@/assets/Images/sample-musician.png";
 
 export const ProjectDetailPage = () => {
   const { id } = useParams();
@@ -121,7 +122,7 @@ export const ProjectDetailPage = () => {
           <div className="flex flex-row p-[11.25px] justify-between items-center rounded-[15px] bg-[#111111]">
             <div className="flex flex-row gap-[18px]">
               <img
-                src={project.creatorProfileImageUrl}
+                src={project.creatorProfileImageUrl || sample}
                 alt="프로필"
                 className="w-[52.5px] h-[52.5px] rounded-full object-cover"
               />
@@ -214,46 +215,56 @@ export const ProjectDetailPage = () => {
             </div>
           </div>
 
-          <div className="flex flex-col p-[11.25px] rounded-[15px] bg-[#111111] gap-[9px]">
-            {project.audioFiles.map((f: RemoteFile) => (
-              <span className="flex flex-row justify-between px-[7.5px] py-[6px] text-xs text-white bg-[#222222] rounded-[3.75px] gap-[9px]">
-                <span className="flex flex-row items-center gap-[9px] whitespace-nowrap">
-                  <Music size={18} />
-                  <div className="truncate max-w-51 overflow-hidden">
-                    {f.originalFileName}
-                  </div>
-                </span>
+          {(project.audioFiles?.length > 0 ||
+            project.imageFiles?.length > 0) && (
+            <div className="flex flex-col p-[11.25px] rounded-[15px] bg-[#111111] gap-[9px]">
+              {project.audioFiles?.map((f: RemoteFile) => (
                 <span
-                  className="flex flex-row items-center gap-[7.5px]"
-                  onClick={() => handleDownload(f)}
+                  key={f.fileId}
+                  className="flex flex-row justify-between px-[7.5px] py-[6px] text-xs text-white bg-[#222222] rounded-[3.75px] gap-[9px]"
                 >
-                  <span className="text-xs text-[#888888] whitespace-nowrap">
-                    {formatFileSizeMB(f.fileSize)} MB
+                  <span className="flex flex-row items-center gap-[9px] whitespace-nowrap">
+                    <Music size={18} />
+                    <div className="truncate max-w-51 overflow-hidden">
+                      {f.originalFileName}
+                    </div>
                   </span>
-                  <Download size={18} />
+                  <span
+                    className="flex flex-row items-center gap-[7.5px]"
+                    onClick={() => handleDownload(f)}
+                  >
+                    <span className="text-xs text-[#888888] whitespace-nowrap">
+                      {formatFileSizeMB(f.fileSize)} MB
+                    </span>
+                    <Download size={18} />
+                  </span>
                 </span>
-              </span>
-            ))}
-            {project.imageFiles.map((f: RemoteFile) => (
-              <span className="flex flex-row justify-between px-[7.5px] py-[6px] text-xs text-white bg-[#222222] rounded-[3.75px] gap-[9px]">
-                <span className="flex flex-row items-center gap-[9px] whitespace-nowrap">
-                  <Image size={18} />
-                  <div className="truncate max-w-51 overflow-hidden">
-                    {f.originalFileName}
-                  </div>
-                </span>
+              ))}
+
+              {project.imageFiles?.map((f: RemoteFile) => (
                 <span
-                  className="flex flex-row items-center gap-[7.5px]"
-                  onClick={() => handleDownload(f)}
+                  key={f.fileId}
+                  className="flex flex-row justify-between px-[7.5px] py-[6px] text-xs text-white bg-[#222222] rounded-[3.75px] gap-[9px]"
                 >
-                  <span className="text-xs text-[#888888] whitespace-nowrap">
-                    {formatFileSizeMB(f.fileSize)} MB
+                  <span className="flex flex-row items-center gap-[9px] whitespace-nowrap">
+                    <Image size={18} />
+                    <div className="truncate max-w-51 overflow-hidden">
+                      {f.originalFileName}
+                    </div>
                   </span>
-                  <Download size={18} />
+                  <span
+                    className="flex flex-row items-center gap-[7.5px]"
+                    onClick={() => handleDownload(f)}
+                  >
+                    <span className="text-xs text-[#888888] whitespace-nowrap">
+                      {formatFileSizeMB(f.fileSize)} MB
+                    </span>
+                    <Download size={18} />
+                  </span>
                 </span>
-              </span>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

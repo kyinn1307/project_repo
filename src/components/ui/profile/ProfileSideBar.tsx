@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProfileEditModal } from "./ProfileEditModal";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
-import hmson from "@/assets/Images/hmson.png";
+import sample from "@/assets/Images/sample-musician.png";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
 import {
@@ -66,7 +66,7 @@ export function ProfileSideBar() {
       const list = res.data.data.map((user: Follower) => ({
         userId: user.userId,
         nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl ?? hmson, // 기본 이미지
+        profileImageUrl: user.profileImageUrl ?? sample, // 기본 이미지
       }));
 
       if (type === "follower") setFollowerList(list);

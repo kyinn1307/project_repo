@@ -1,4 +1,3 @@
-// MainProjectList.tsx
 import { useEffect, useState } from "react";
 import { ProjectList } from "../profile/ProejctList";
 import { getAllProjects } from "@/apis/project";
@@ -11,7 +10,6 @@ export const MainProjectList = () => {
     const fetchProjects = async () => {
       try {
         const res = await getAllProjects(undefined, 6);
-        console.log(res);
         setProjects(res.projects);
       } catch (err) {
         console.error(err);
@@ -21,7 +19,7 @@ export const MainProjectList = () => {
   }, []);
 
   return (
-    <div className="flex flex-wrap gap-x-[15px] gap-y-[10px]">
+    <div className="w-full">
       <ProjectList list={projects} />
     </div>
   );

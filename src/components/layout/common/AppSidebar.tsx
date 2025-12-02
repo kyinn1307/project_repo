@@ -32,7 +32,6 @@ const items = [
   { title: "음원", url: "/music", icon: Music },
   { title: "피드", url: "/feed", icon: LayoutGrid },
   { title: "프로젝트", url: "/project", icon: Inbox },
-  // url은 무시하고 아이콘/타이틀만 쓸 예정
   { title: "비즈니스", url: "/business", icon: ShoppingCart },
   { title: "업로드", url: "/upload/track", icon: CirclePlus },
 ] as const;
@@ -41,10 +40,10 @@ export function AppSidebar() {
   const [userId, setUserId] = useState<number | null>(null);
   const { state } = useSidebar();
 
-  const { pathname } = useLocation(); // ✅ 현재 경로
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  // ✅ 현재 페이지에 따라 업로드 이동 경로 결정
+  // 현재 페이지 url에 따라 업로드 이동 경로 결정
   const uploadUrl = useMemo(() => {
     if (pathname.startsWith("/feed")) return "/upload/feed";
     if (pathname.startsWith("/project")) return "/upload/project";
@@ -59,7 +58,7 @@ export function AppSidebar() {
     check();
   }, []);
 
-  // 스타일 공통 클래스 (중복 제거 가볍게)
+  // 스타일 공통 클래스
   const itemClass =
     state === "collapsed"
       ? "flex flex-col items-center justify-center py-3 !gap-[7.5px] w-full min-w-15 min-h-[56px]"
@@ -82,11 +81,10 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       {isUpload ? (
-                        // ✅ 업로드 항목만 현재 경로 기반으로 navigate
                         <button
                           type="button"
                           onClick={() => navigate(uploadUrl)}
-                          className={`${itemClass} hover:bg-[#222] transition-colors duration-200`}
+                          className={`${itemClass} hover:bg-[#222] transition-colors duration-200 cursor-pointer`}
                         >
                           <item.icon size={18} />
                           <span

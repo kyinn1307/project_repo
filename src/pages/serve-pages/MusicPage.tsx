@@ -48,11 +48,11 @@ export const MusicPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex flex-col pt-[38px] pl-[10%]">
+    <div className="flex flex-col pt-[38px] px-[10%]">
       <div className="h-[30px] flex items-center text-2xl text-white font-bold">
         음원
       </div>
-      <div className="w-[540px] mt-[22.5px]">
+      <div className="w-[50%] mt-[22.5px] min-w-[540px]">
         <SearchBar
           placeholder="음원 찾기"
           value="track"
@@ -60,7 +60,15 @@ export const MusicPage = () => {
           onInputChange={setQ}
         />
       </div>
-      <section className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px] mt-[22.5px]">
+      <section
+        className="
+    grid 
+    grid-cols-4 
+    gap-x-[22.5px] 
+    gap-y-[18.75px] 
+    mt-[22.5px]
+    min-w-[1080px]"
+      >
         {isLoading && <div className="text-white">로딩 중...</div>}
 
         {allTracks.map((track) => (

@@ -12,12 +12,10 @@ export const MainMusicianCardList = () => {
   const musicians: Musician[] = data?.users ?? [];
 
   return (
-    <div>
-      <div className="flex gap-[15px]">
-        {musicians.map((musician) => (
-          <MusicianCardItem key={musician.id} musician={musician} />
-        ))}
-      </div>
+    <div className="grid grid-cols-4 gap-6 w-full">
+      {musicians.map((musician) => (
+        <MusicianCardItem key={musician.id} musician={musician} />
+      ))}
     </div>
   );
 };

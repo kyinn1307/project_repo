@@ -14,7 +14,7 @@ export const MusicianPage = () => {
 
   return (
     <div className="flex flex-col">
-      <section className="flex flex-col mt-[52px] pl-[10%]">
+      <section className="flex flex-col mt-[52px] px-[5.2%] min-w-[1080px]">
         <div className="h-[30px] flex items-center text-2xl text-white font-bold">
           뮤지션
         </div>
@@ -23,7 +23,7 @@ export const MusicianPage = () => {
             <SearchIcon />
           </span>
         </div>
-        <div className="max-w-[540px]">
+        <div className="w-[50%]">
           <SearchBar
             placeholder="뮤지션 찾기"
             value="musician"

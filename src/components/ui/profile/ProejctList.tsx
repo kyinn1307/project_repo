@@ -5,12 +5,11 @@ interface ProjectListProps {
   list: Project[];
   isUser?: boolean;
 }
-
 export const ProjectList = ({ list, isUser }: ProjectListProps) => {
   if (!Array.isArray(list) || list.length === 0) return null;
 
   return (
-    <div className="flex flex-wrap gap-x-[15px] gap-y-[10px]">
+    <div className="grid grid-cols-4 gap-6 w-full">
       {list.map((project) => (
         <ProjectContentItem
           key={project.id}

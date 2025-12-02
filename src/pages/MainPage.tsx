@@ -38,26 +38,29 @@ export default function MainPage() {
   return (
     <div className="flex flex-col items-center text-white overflow-x-hidden">
       {!isLoggedIn && (
-        <div className="w-full pt-[37.5px] shrink-0">
+        <div className="w-full pt-10 shrink-0">
           <IntroductionBanner />
         </div>
       )}
 
-      <div className="w-full ml-[10%] overflow-x-hidden">
+      <div className="w-full pl-[5.2%] mb-[50px]">
+        {/* 메인 페이지 뮤지션 썸네일 파트 */}
         <ContentSection title="뮤지션">
-          <div className="max-w-[540px]">
+          <div className="w-[50%]">
             <SearchBar placeholder="뮤지션 찾기" value="musician" />
           </div>
           <MusicianCardList />
         </ContentSection>
+
+        {/* 메인 페이지 음원 썸네일 파트 */}
         <ContentSection title="음원">
-          <div className="max-w-[540px]">
+          <div className="w-[50%]">
             <SearchBar placeholder="음원 찾기" value="track" />
           </div>
           <MusicCardList />
         </ContentSection>
         <ContentSection title="프로젝트">
-          <div className="max-w-[540px]">
+          <div className="w-[50%]">
             <SearchBar placeholder="프로젝트 찾기" value="project" />
           </div>
           <MainProjectList />

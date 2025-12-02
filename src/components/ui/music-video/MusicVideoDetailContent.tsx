@@ -1,7 +1,7 @@
 import { getTrackDetail } from "@/apis/music";
 import { Participant } from "@/types/musician";
 import { useQuery } from "@tanstack/react-query";
-import ProfileDefault from "@/assets/Images/hmson.png";
+import sample from "@/assets/Images/sample-musician.png";
 
 interface MusicVideoDetailContentProps {
   tab: "LYRICS" | "COMMENT" | "CREDIT";
@@ -42,7 +42,7 @@ export const MusicVideoDetailContent = ({
             {participants.map((p: Participant, idx: number) => (
               <div key={idx} className="flex flex-col items-center">
                 <img
-                  src={p.profileImageUrl || ProfileDefault}
+                  src={p.profileImageUrl || sample}
                   alt={p.nickname}
                   className="w-[60px] h-[60px] rounded-full object-cover"
                 />

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import hmson from "@/assets/Images/hmson.png";
+import sample from "@/assets/Images/sample-musician.png";
 import { Card, CardContent } from "@/components/ui/card";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
@@ -57,7 +57,7 @@ export function UserProfileSidebar() {
       const list = res.data.data.map((user: Follower) => ({
         userId: user.userId,
         nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl ?? hmson,
+        profileImageUrl: user.profileImageUrl ?? sample,
         relationship: user.relationship,
       }));
 

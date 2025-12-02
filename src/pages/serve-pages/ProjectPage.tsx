@@ -55,12 +55,12 @@ export const ProjectPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex flex-col pt-[38px] px-[15%]">
+    <div className="flex flex-col pt-[38px] px-[5.2%] min-w-[1080px]">
       <section className="flex flex-col mb-[37.5px]">
         <div className="text-2xl text-white font-bold">프로젝트</div>
 
         <div className="relative flex flex-row mt-[22.5px] mb-[22.5px]">
-          <div className="w-[540px]">
+          <div className="w-[50%]">
             <SearchBar
               placeholder="프로젝트 찾기"
               value="project"
@@ -73,14 +73,18 @@ export const ProjectPage = () => {
         {isLoading && <div className="text-white">로딩 중...</div>}
         {isError && <div className="text-red-500">프로젝트 불러오기 실패</div>}
         {allProjects && (
-          <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px]">
-            {allProjects.map((project) => (
-              <ProjectContentItem
-                key={project.id}
-                project={project}
-                isUser={userId !== project.creatorId}
-              />
-            ))}
+          <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px] min-w-[1080px] max-w-[1490px]">
+            {allProjects && (
+              <div className="grid grid-cols-4 gap-x-[22.5px] gap-y-[18.75px] w-full">
+                {allProjects.map((project) => (
+                  <ProjectContentItem
+                    key={project.id}
+                    project={project}
+                    isUser={userId !== project.creatorId}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 

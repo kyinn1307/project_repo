@@ -1,5 +1,5 @@
 import { MoreInfoIcon } from "@/assets/Icons/my-profile/MoreInfoIcon";
-import sample from "@/assets/Images/hmson.png";
+import sample from "@/assets/Images/sample-musician.png";
 import { useUserStore } from "@/stores/useUserStore";
 import { ChatRoomPreview } from "@/types/chat";
 

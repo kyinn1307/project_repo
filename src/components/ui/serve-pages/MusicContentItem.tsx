@@ -1,4 +1,4 @@
-import MusicDefault from "@/assets/Images/MusicPlayDefault.png";
+import SetaLogo from "@/assets/Images/logo_blue.png";
 import { Music } from "@/types/music";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +8,7 @@ interface MusicContentItemProps {
 
 export const MusicContentItem = ({ track }: MusicContentItemProps) => {
   const navigate = useNavigate();
+  const thumbnail = track.imageFiles?.[0]?.url ?? SetaLogo;
 
   return (
     <div
@@ -16,8 +17,11 @@ export const MusicContentItem = ({ track }: MusicContentItemProps) => {
     >
       <div className="flex flex-row gap-[22.5px]">
         <img
-          src={track.imageFiles[0].url || MusicDefault}
+          src={thumbnail}
           alt="음악 재생"
+          onError={(e) => {
+            e.currentTarget.src = SetaLogo;
+          }}
           className="w-[75px] h-[75px] rounded-[15px] object-cover"
         />
         <div className="flex flex-col gap-[7.5px] mt-[7.5px]">

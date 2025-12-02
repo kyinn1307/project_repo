@@ -4,7 +4,7 @@ import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { AppSidebar } from "./common/AppSidebar";
 
 function LayoutBody() {
-  const { state } = useSidebar(); // "collapsed" | "expanded"
+  const { state } = useSidebar();
   const sidebarWidth = state === "collapsed" ? 64 : 160;
 
   return (

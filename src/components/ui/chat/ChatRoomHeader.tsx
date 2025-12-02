@@ -1,5 +1,5 @@
 import { useState } from "react";
-import sample from "@/assets/Images/hmson.png";
+import sample from "@/assets/Images/sample-musician.png";
 import { useUserStore } from "@/stores/useUserStore";
 import { ExternalLink } from "lucide-react";
 import { getUserProfile } from "@/apis/user";

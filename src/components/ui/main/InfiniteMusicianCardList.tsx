@@ -33,7 +33,7 @@ export const InfiniteMusicianCardList = ({ searchTerm = "" }: Props) => {
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  // IntersectionObserver 등록
+  // 무한 스크롤 Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -48,15 +48,18 @@ export const InfiniteMusicianCardList = ({ searchTerm = "" }: Props) => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const musicians: Musician[] = data?.pages.flatMap((page) => page.users) ?? [];
+  const musicians: Musician[] = data?.pages.flatMap((p) => p.users) ?? [];
+
   return (
-    <div>
-      <div className="flex flex-wrap gap-[15px]">
+    <div className="w-full">
+      {/* ✔ Flex → Grid 4개 고정 변경 */}
+      <div className="grid grid-cols-4 gap-[15px]">
         {musicians.map((musician) => (
           <MusicianCardItem key={musician.id} musician={musician} />
         ))}
       </div>
 
+      {/* 무한 스크롤 트리거 */}
       <div ref={observerRef} className="h-6" />
 
       {isLoading && <p>검색 중...</p>}
