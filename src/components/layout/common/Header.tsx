@@ -1,4 +1,3 @@
-// import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/ui/main/SearchBar";
 import { AlarmIcon } from "@/assets/Icons/AlarmIcon";
 import { SetaLetterLogo } from "@/assets/SetaLetterLogo";
@@ -14,11 +13,7 @@ export const Header = () => {
   const { toggle } = useSidebarStore();
 
   const handleBtnClick = (route: string) => {
-    if (isLoggedIn) {
-      navigate(`/${route}`);
-    } else {
-      navigate("/auth");
-    }
+    navigate(`/${route}`);
   };
 
   return (

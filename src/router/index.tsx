@@ -92,7 +92,14 @@ export const router = createBrowserRouter([
           </RequireAuth>
         ),
       },
-      { path: "user-profile/:id", element: <UserProfilePage /> },
+      {
+        path: "user-profile/:id",
+        element: (
+          <RequireAuth>
+            <UserProfilePage />
+          </RequireAuth>
+        ),
+      },
       {
         path: "business-setting",
         element: <Navigate to="business-setting/1" replace />,
@@ -150,7 +157,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/password-reset",
+    path: "/reset-password",
     element: <AuthLayout />,
     children: [{ path: ":token", element: <PwResetPage /> }],
   },

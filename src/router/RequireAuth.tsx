@@ -16,7 +16,7 @@ export const RequireAuth = ({ children }: RequireAuthProps) => {
       const userId = await checkLogin();
       setUserState(userId);
       if (userId === null) {
-        navigate("/auth");
+        navigate("/auth", { replace: true });
       } else {
         setIsChecked(true);
       }
