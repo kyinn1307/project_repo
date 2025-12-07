@@ -8,6 +8,7 @@ import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -19,6 +20,7 @@ import { getFollowerList, getFollowingList } from "@/apis/follower";
 import type { Follower } from "@/types/follower";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { unfollowUser } from "@/apis/user";
+import { X } from "lucide-react";
 
 export function ProfileSideBar() {
   const userId = useUserStore.getState().userId;
@@ -34,7 +36,6 @@ export function ProfileSideBar() {
   const [followerList, setFollowerList] = useState<Follower[]>([]);
   const [followingList, setFollowingList] = useState<Follower[]>([]);
 
-  // 마이 프로필 정보 조회
   const handleMyProfile = async () => {
     if (userId === null) {
       console.log("userId가 없습니다.");
@@ -102,7 +103,6 @@ export function ProfileSideBar() {
   };
 
   const handleCloseModal = () => {
-    setModalType(null);
     setOpen(false);
   };
 
@@ -226,10 +226,17 @@ export function ProfileSideBar() {
         open={open}
         onOpenChange={(o) => {
           setOpen(o);
-          if (!o) handleCloseModal();
         }}
       >
         <DialogContent className="flex flex-col max-w-[540px] max-h-[363px] border-none bg-[#222222] text-white p-[11.25px] gap-0 overflow-hidden">
+          <DialogClose asChild>
+            <button
+              onClick={handleCloseModal}
+              className="absolute right-[12px] top-[12px] text-white hover:text-gray-300 cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+          </DialogClose>
           <DialogHeader className="mb-[7.5px]">
             <DialogTitle className="text-[10.5px] font-medium">
               {modalType === "follower" ? "팔로워" : "팔로잉"}

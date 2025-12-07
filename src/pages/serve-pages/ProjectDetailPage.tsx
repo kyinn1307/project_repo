@@ -100,7 +100,7 @@ export const ProjectDetailPage = () => {
 
   const formatFileSizeMB = (bytes: number) => {
     if (!bytes || isNaN(bytes)) return "0 MB";
-    return (bytes / (1024 * 1024)).toFixed(2); // MB 단위, 소수점 2자리
+    return (bytes / (1024 * 1024)).toFixed(2);
   };
 
   const leftDays = daysLeftFrom(project.createdAt, 14);

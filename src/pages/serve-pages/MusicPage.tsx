@@ -7,31 +7,40 @@ import { getAllTracks, getTrackSearch } from "@/apis/music";
 import type { Music, TrackResponse } from "@/types/music";
 import { SearchBar } from "@/components/ui/main/SearchBar";
 import { Loader2 } from "lucide-react";
+import { useSearchParams } from "react-router-dom"; // ✅ navigate 제거
 
 export const MusicPage = () => {
-  const [q, setQ] = useState("");
-  const [debouncedQ, setDebouncedQ] = useState("");
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const id = setTimeout(() => setDebouncedQ(q.trim()), 300);
-    return () => clearTimeout(id);
-  }, [q]);
+  // ✅ "실제 검색 기준"은 오직 URL 에서만 가져옴
+  const keywordFromUrl = searchParams.get("keyword") ?? "";
 
-  const k = debouncedQ; // 실제 쿼리는 디바운스된 값 사용
+  // ✅ SearchBar에 보여줄 "입력 중 값" (URL과 분리)
+  const [q, setQ] = useState(keywordFromUrl);
+
   const pageSize = 15;
+
+  // ✅ URL이 바뀌었을 때만 input 값 동기화
+  useEffect(() => {
+    setQ(keywordFromUrl);
+  }, [keywordFromUrl]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery<
       TrackResponse,
       Error,
       InfiniteData<TrackResponse>,
-      [string, string], // ⬅️ queryKey 타입에 검색어 포함
+      [string, string],
       number | undefined
     >({
-      queryKey: ["tracks", k], // ⬅️ 검색어 포함 → 검색 변경 시 페이지네이션 초기화
+      queryKey: ["tracks", keywordFromUrl], // ✅ Enter로 바뀐 keyword만 반영
       queryFn: ({ pageParam }) =>
-        k
-          ? getTrackSearch({ k, cursorId: pageParam, size: pageSize })
+        keywordFromUrl
+          ? getTrackSearch({
+              k: keywordFromUrl,
+              cursorId: pageParam,
+              size: pageSize,
+            })
           : getAllTracks(pageParam, pageSize),
       initialPageParam: undefined,
       getNextPageParam: (lastPage: TrackResponse) => lastPage.nextCursor,
@@ -48,26 +57,28 @@ export const MusicPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex flex-col pt-[38px] px-[10%]">
+    <div className="flex flex-col pt-[38px] px-[5.2%]">
       <div className="h-[30px] flex items-center text-2xl text-white font-bold">
         음원
       </div>
+
       <div className="w-[50%] mt-[22.5px] min-w-[540px]">
         <SearchBar
           placeholder="음원 찾기"
-          value="track"
+          value="music"
           inputValue={q}
           onInputChange={setQ}
         />
       </div>
+
       <section
         className="
-    grid 
-    grid-cols-4 
-    gap-x-[22.5px] 
-    gap-y-[18.75px] 
-    mt-[22.5px]
-    min-w-[1080px]"
+          grid 
+          grid-cols-4 
+          gap-x-[22.5px] 
+          gap-y-[18.75px] 
+          mt-[22.5px]
+          min-w-[1080px]"
       >
         {isLoading && <div className="text-white">로딩 중...</div>}
 

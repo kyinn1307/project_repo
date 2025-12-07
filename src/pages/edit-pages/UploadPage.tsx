@@ -1,4 +1,3 @@
-// pages/edit-pages/UploadPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -50,7 +49,7 @@ export const UploadPage = ({ tab }: { tab?: UploadTabKey }) => {
             <button
               key={menu}
               onClick={() => handleClick(menu)}
-              className={`px-[7.5px] py-[3px] rounded-[15px] ${
+              className={`px-[7.5px] py-[3px] rounded-[15px] cursor-pointer ${
                 activeTab === menu
                   ? "text-[#ffffff] font-bold"
                   : "text-[#777777]"

@@ -6,20 +6,24 @@ import { getProjectSearch } from "@/apis/project";
 import { useInView } from "react-intersection-observer";
 import { useUserStore } from "@/stores/useUserStore";
 import { SearchBar } from "@/components/ui/main/SearchBar";
+import { useSearchParams } from "react-router-dom";
 
 export const ProjectPage = () => {
   const { userId } = useUserStore();
   const size = 5;
-  const [q, setQ] = useState("");
-  const [debouncedQ, setDebouncedQ] = useState("");
 
-  // 입력 디바운스
+  const [searchParams] = useSearchParams();
+
+  // ✅ 실제 검색 기준은 URL만 사용
+  const keywordFromUrl = searchParams.get("keyword") ?? "";
+
+  // ✅ SearchBar에 표시될 입력 중 텍스트
+  const [q, setQ] = useState(keywordFromUrl);
+
+  // ✅ URL이 바뀌면 input도 동기화
   useEffect(() => {
-    const id = setTimeout(() => setDebouncedQ(q.trim()), 300);
-    return () => clearTimeout(id);
-  }, [q]);
-
-  const k = debouncedQ; // ⬅️ 실제 쿼리는 디바운스된 값 사용
+    setQ(keywordFromUrl);
+  }, [keywordFromUrl]);
 
   const {
     data,
@@ -35,9 +39,16 @@ export const ProjectPage = () => {
     [string, string],
     number | undefined
   >({
-    queryKey: ["projects", k], // 키에 keyword 포함 → 검색어 변경 시 페이지네이션 초기화
+    // ✅ keyword가 바뀔 때만 전체 페이지네이션 초기화
+    queryKey: ["projects", keywordFromUrl],
+
     queryFn: ({ pageParam }) =>
-      getProjectSearch({ k, cursorId: pageParam, size }),
+      getProjectSearch({
+        k: keywordFromUrl,
+        cursorId: pageParam,
+        size,
+      }),
+
     initialPageParam: undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
@@ -47,7 +58,7 @@ export const ProjectPage = () => {
 
   const { ref, inView } = useInView();
 
-  // 무한스크롤 트리거
+  // ✅ 무한스크롤 트리거
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -64,31 +75,31 @@ export const ProjectPage = () => {
             <SearchBar
               placeholder="프로젝트 찾기"
               value="project"
-              inputValue={q}
-              onInputChange={setQ}
+              inputValue={q} // ✅ 입력 중 텍스트만 관리
+              onInputChange={setQ} // ✅ 타이핑은 로컬 상태만 변경
+              // ✅ Enter는 SearchBar 내부에서 navigate 처리
             />
           </div>
         </div>
 
         {isLoading && <div className="text-white">로딩 중...</div>}
         {isError && <div className="text-red-500">프로젝트 불러오기 실패</div>}
-        {allProjects && (
+
+        {allProjects.length > 0 && (
           <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px] min-w-[1080px] max-w-[1490px]">
-            {allProjects && (
-              <div className="grid grid-cols-4 gap-x-[22.5px] gap-y-[18.75px] w-full">
-                {allProjects.map((project) => (
-                  <ProjectContentItem
-                    key={project.id}
-                    project={project}
-                    isUser={userId !== project.creatorId}
-                  />
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-4 gap-x-[22.5px] gap-y-[18.75px] w-full">
+              {allProjects.map((project) => (
+                <ProjectContentItem
+                  key={project.id}
+                  project={project}
+                  isUser={userId !== project.creatorId}
+                />
+              ))}
+            </div>
           </div>
         )}
 
-        {/* 👇 관찰 대상 */}
+        {/* ✅ 무한스크롤 관찰 대상 */}
         <div ref={ref} className="h-12 mt-6 text-center text-white">
           {isFetchingNextPage
             ? "다음 프로젝트 불러오는 중..."

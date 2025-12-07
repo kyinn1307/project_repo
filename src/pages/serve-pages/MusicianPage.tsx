@@ -2,15 +2,18 @@ import { useState, useEffect } from "react";
 import { InfiniteMusicianCardList } from "@/components/ui/main/InfiniteMusicianCardList";
 import { SearchIcon } from "@/assets/Icons/SearchIcon";
 import { SearchBar } from "@/components/ui/main/SearchBar";
+import { useSearchParams } from "react-router-dom";
 
 export const MusicianPage = () => {
-  const [q, setQ] = useState("");
-  const [debouncedQ, setDebouncedQ] = useState("");
+  const [searchParams] = useSearchParams();
+
+  const keywordFromUrl = searchParams.get("keyword") ?? "";
+
+  const [q, setQ] = useState(keywordFromUrl);
 
   useEffect(() => {
-    const id = setTimeout(() => setDebouncedQ(q.trim()), 300);
-    return () => clearTimeout(id);
-  }, [q]);
+    setQ(keywordFromUrl);
+  }, [keywordFromUrl]);
 
   return (
     <div className="flex flex-col">
@@ -18,21 +21,24 @@ export const MusicianPage = () => {
         <div className="h-[30px] flex items-center text-2xl text-white font-bold">
           뮤지션
         </div>
+
         <div className="relative flex flex-row mt-[22.5px]">
           <span className="absolute left-[15px] top-[5.25px]">
             <SearchIcon />
           </span>
         </div>
+
         <div className="w-[50%]">
           <SearchBar
             placeholder="뮤지션 찾기"
             value="musician"
-            inputValue={q} // 입력값을 상태와 연결
+            inputValue={q}
             onInputChange={setQ}
           />
         </div>
+
         <div className="mt-[22.5px] text-white">
-          <InfiniteMusicianCardList searchTerm={debouncedQ} />
+          <InfiniteMusicianCardList searchTerm={keywordFromUrl} />
         </div>
       </section>
     </div>
