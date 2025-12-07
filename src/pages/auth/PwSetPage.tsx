@@ -26,6 +26,7 @@ export default function PwSetPage() {
     }
 
     try {
+      setStep("sent");
       const res = await postSendPwLink(email);
       console.log(res.data);
     } catch (err) {
@@ -41,7 +42,7 @@ export default function PwSetPage() {
       <div className="w-[89.66px] h-[80px]" onClick={() => navigate("/")}>
         <SetaLogo />
       </div>
-      <div className="w-[300px] rounded-[7.5px] bg-[#222222] py-[30px] px-[18.75px] box-border">
+      <div className="w-100 rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
         {step === "email" && (
           <FindPwForm
             email={email}
@@ -53,7 +54,10 @@ export default function PwSetPage() {
           />
         )}
         {step === "sent" && (
-          <SendEmailLinkForm email={email} onConfirm={() => setStep("reset")} />
+          <SendEmailLinkForm
+            email={email}
+            onConfirm={() => alert("이메일 확인해주세요")}
+          />
         )}
       </div>
     </div>

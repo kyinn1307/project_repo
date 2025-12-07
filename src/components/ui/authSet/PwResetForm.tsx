@@ -26,14 +26,14 @@ export const PwResetForm = ({ onSubmit }: Props) => {
 
   return (
     <>
-      <div className="text-white text-xs font-medium">
+      <div className="text-white text-base font-medium">
         비밀번호를 입력해주세요.
       </div>
 
-      <div className="flex flex-col mt-[30px]">
+      <div className="flex flex-col mt-10">
         {/* 비밀번호 */}
         <div className="flex flex-col">
-          <div className="text-[9px] text-white">비밀번호</div>
+          <div className="text-xs text-white">비밀번호</div>
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
@@ -41,7 +41,7 @@ export const PwResetForm = ({ onSubmit }: Props) => {
               onChange={(e) => setPassword(e.target.value.replace(/\s+/g, ""))}
               placeholder="8자리 이상, 특수문자 포함"
               className={cn(
-                "mt-[2.5px] h-[27px] w-full bg-[#111111] text-white text-[10.5px] pl-[6px] pr-[30px] border rounded-[3.75px]",
+                "mt-[3px] h-9 w-full bg-[#111111] text-white text-sm pl-2 pr-[30px] border rounded-[5px]",
                 password !== "" && !isPasswordValid
                   ? "border-red-500"
                   : "border-[#555555]"
@@ -57,15 +57,15 @@ export const PwResetForm = ({ onSubmit }: Props) => {
           </div>
 
           {!isPasswordValid && password !== "" && (
-            <div className="text-red-500 text-[9px] mt-[2.25px]">
+            <div className="text-[#e33629] text-xs mt-[3px]">
               8자리 이상, 특수문자를 포함해야 합니다.
             </div>
           )}
         </div>
 
         {/* 비밀번호 확인 */}
-        <div className="flex flex-col mt-[9px]">
-          <div className="text-[9px] text-white">비밀번호 확인</div>
+        <div className="flex flex-col mt-3">
+          <div className="text-xs text-white">비밀번호 확인</div>
           <div className="relative">
             <Input
               type={showConfirmPassword ? "text" : "password"}
@@ -73,11 +73,11 @@ export const PwResetForm = ({ onSubmit }: Props) => {
               onChange={(e) =>
                 setConfirmPassword(e.target.value.replace(/\s+/g, ""))
               }
-              placeholder="비밀번호를 다시 입력하세요"
+              placeholder="8자리 이상, 특수문자 포함"
               className={cn(
-                "mt-[2.5px] h-[27px] w-full bg-[#111111] text-white text-[10.5px] pl-[6px] pr-[30px] border rounded-[3.75px]",
+                "mt-[3px] h-9 w-full bg-[#111111] text-white text-sm pl-2 pr-9 border rounded-[5px]",
                 confirmPassword !== "" && !doPasswordsMatch
-                  ? "border-red-500"
+                  ? "border-[#e33629]"
                   : "border-[#555555]"
               )}
             />
@@ -91,7 +91,7 @@ export const PwResetForm = ({ onSubmit }: Props) => {
           </div>
 
           {confirmPassword !== "" && !doPasswordsMatch && (
-            <div className="text-red-500 text-[9px] mt-[2.25px]">
+            <div className="text-[#e33629] text-xs mt-[3px]">
               비밀번호가 일치하지 않습니다.
             </div>
           )}
@@ -100,7 +100,7 @@ export const PwResetForm = ({ onSubmit }: Props) => {
         {/* 다음 버튼 */}
         <Button
           className={cn(
-            "mt-[15px] w-full h-[30px] text-[10.5px] cursor-pointer rounded-[3.75px]",
+            "mt-5 w-full h-10 text-sm cursor-pointer rounded-[5px]",
             isValid ? "bg-[#0050ef] text-white" : "bg-[#555555] text-[#777777]"
           )}
           disabled={!isValid}

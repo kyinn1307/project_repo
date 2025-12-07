@@ -15,11 +15,18 @@ export default function PasswordResetPage() {
     confirmPassword: string
   ) => {
     try {
-      const res = await axiosInstance.post("/auth/password-reset/confirm", {
-        token,
-        password,
-        confirmPassword,
-      });
+      const res = await axiosInstance.post(
+        `/reset/updatePassword`,
+        {
+          password,
+          confirmPassword,
+        },
+        {
+          params: {
+            token: token,
+          },
+        }
+      );
 
       if (res.status === 200) {
         setStep("complete");
@@ -35,7 +42,7 @@ export default function PasswordResetPage() {
         <SetaLogo />
       </div>
 
-      <div className="w-[300px] rounded-[7.5px] bg-[#222222] py-[30px] px-[18.75px] box-border">
+      <div className="w-100 rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
         {step === "reset" && (
           <PwResetForm onSubmit={(pw, cpw) => handlePasswordReset(pw, cpw)} />
         )}

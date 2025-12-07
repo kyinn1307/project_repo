@@ -33,26 +33,30 @@ export default function FindIdPage() {
   };
 
   return (
-    <div className="flex flex-col items-center w-[300px] gap-[30px]">
-      <div className="w-[67.24px] h-[60px]" onClick={() => navigate("/")}>
+    <div className="flex flex-col items-center w-100 gap-10">
+      <div className="w-[89.66px] h-20" onClick={() => navigate("/")}>
         <SetaLogo />
       </div>
 
-      <div className="w-[300px] rounded-[7.5px] bg-[#222222] py-[30px] px-[18.75px] box-border">
+      <div className="w-100 rounded-[10px] bg-[#222222] py-10 px-[25px] box-border">
         {submitted ? (
-          <div className="flex flex-col gap-[3px]">
-            <span className="text-[15px] font-medium text-white">
+          <div className="flex flex-col gap-1">
+            <span className="text-xl font-medium text-white">
               이메일 찾기 완료
             </span>
-            <span className="text-xs text-[#777777]">회원님의 이메일은</span>
-            <div className="flex flex-row text-xs">
-              <span className="text-white text-xs font-medium">
+            <span className="text-base font-medium text-[#777777]">
+              회원님의 이메일은
+            </span>
+            <div className="flex flex-row">
+              <span className="text-white text-base font-medium">
                 {foundEmail}
               </span>
-              <span className="text-[#777777] text-sm font-medium">입니다</span>
+              <span className="text-[#777777] text-base font-medium">
+                입니다
+              </span>
             </div>
             <Button
-              className="bg-[#0050ef] text-white font-normal text-[15px] mt-[15px] cursor-pointer rounded-[3.75px]"
+              className="h-10 bg-[#0050ef] text-white font-normal text-xl mt-5 cursor-pointer rounded-[5px]"
               onClick={() => navigate("/auth")}
             >
               로그인하기

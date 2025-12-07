@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { PasswordBtn } from "@/assets/PasswordBtn";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 interface PasswordFormProps {
   password: string;
@@ -25,6 +26,7 @@ export const PasswordForm = ({
   showPasswordError,
   handleLogin,
 }: PasswordFormProps) => {
+  const navigate = useNavigate();
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -84,7 +86,14 @@ export const PasswordForm = ({
 
       {/* 비밀번호 재설정 버튼 */}
       <div className="flex flex-row justify-center mt-[3px] text-white text-xs">
-        <span className="cursor-pointer">비밀번호를 잊으셨나요?</span>
+        <span
+          className="cursor-pointer"
+          onClick={() => {
+            navigate("/auth/pw");
+          }}
+        >
+          비밀번호를 잊으셨나요?
+        </span>
       </div>
     </motion.div>
   );
