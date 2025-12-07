@@ -1,9 +1,30 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { SetaLetterLogo } from "@/assets/SetaLetterLogo";
 import sampleImg from "@/assets/Images/sample-musician.png";
 import { SearchBar } from "./SearchBar";
 import { ArrowRight } from "lucide-react";
 
 export const IntroductionBanner = () => {
+  const navigate = useNavigate();
+
+  // ✅ 검색어 상태를 여기서 직접 관리
+  const [q, setQ] = useState("");
+
+  // ✅ "탐색하기" 버튼 클릭 시 이동 로직
+  const handleExplore = () => {
+    const keyword = q.trim();
+
+    // 검색어 없으면 그냥 musician 메인으로
+    if (!keyword) {
+      navigate("/musician");
+      return;
+    }
+
+    // ✅ 검색어 있으면 검색 결과로 이동
+    navigate(`/musician?keyword=${encodeURIComponent(keyword)}`);
+  };
+
   return (
     <div className="relative flex-1 h-[262.5px] flex flex-row min-w-230">
       {/* seta 소개 */}
@@ -12,6 +33,7 @@ export const IntroductionBanner = () => {
           <div className="w-[243.21px] h-[45pxw]">
             <SetaLetterLogo />
           </div>
+
           <div className="flex flex-col font-medium text-lg gap-[10px]">
             <span className="flex items-center h-[23px]">
               콜라보가 일상이 되는 플랫폼 SETA
@@ -21,14 +43,27 @@ export const IntroductionBanner = () => {
             </span>
           </div>
         </div>
-        {/* 뮤지션 탐색 search bar section */}
+
+        {/* ✅ 뮤지션 탐색 search bar section */}
         <div className="h-[22.5px] flex flex-row items-center gap-[21.46px]">
-          <SearchBar placeholder="뮤지션 찾기" />
-          <div className="flex flex-row text-[15px] font-medium text-[#0050EF] whitespace-nowrap gap-[3px] cursor-pointer">
+          <SearchBar
+            placeholder="뮤지션 찾기"
+            value="musician"
+            isCategoryFixed={true}
+            inputValue={q} // ✅ 외부 상태 연결
+            onInputChange={setQ} // ✅ 타이핑 상태 상위로 끌어올림
+          />
+
+          {/* ✅ 탐색하기 버튼 */}
+          <div
+            onClick={handleExplore}
+            className="flex flex-row text-[15px] font-medium text-[#0050EF] whitespace-nowrap gap-[3px] cursor-pointer"
+          >
             탐색하기 <ArrowRight size={18.75} />
           </div>
         </div>
       </div>
+
       <div className="absolute right-0 h-full">
         <img src={sampleImg} className="h-full object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#000000_0%,#000000_42%,transparent_100%)]"></div>

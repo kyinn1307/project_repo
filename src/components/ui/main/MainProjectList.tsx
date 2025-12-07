@@ -1,26 +1,16 @@
-import { useEffect, useState } from "react";
 import { ProjectList } from "../profile/ProejctList";
 import { getAllProjects } from "@/apis/project";
-import type { Project } from "@/types/project";
+import { useQuery } from "@tanstack/react-query";
 
 export const MainProjectList = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const res = await getAllProjects(undefined, 6);
-        setProjects(res.projects);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchProjects();
-  }, []);
+  const { data } = useQuery({
+    queryKey: ["projects", 6],
+    queryFn: () => getAllProjects(undefined, 6),
+  });
 
   return (
     <div className="w-full">
-      <ProjectList list={projects} />
+      {data && <ProjectList list={data?.projects} />}
     </div>
   );
 };

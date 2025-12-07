@@ -52,14 +52,12 @@ export const InfiniteMusicianCardList = ({ searchTerm = "" }: Props) => {
 
   return (
     <div className="w-full">
-      {/* ✔ Flex → Grid 4개 고정 변경 */}
       <div className="grid grid-cols-4 gap-[15px]">
         {musicians.map((musician) => (
           <MusicianCardItem key={musician.id} musician={musician} />
         ))}
       </div>
 
-      {/* 무한 스크롤 트리거 */}
       <div ref={observerRef} className="h-6" />
 
       {isLoading && <p>검색 중...</p>}

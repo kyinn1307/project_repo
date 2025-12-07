@@ -1,4 +1,3 @@
-// import { AdBanner } from "@/components/ui/main/AdBanner";
 import { ContentSection } from "@/components/ui/ContentSection";
 import { MusicianCardList } from "@/components/ui/main/MusicianCardList";
 import { loginCheck } from "@/apis/login";
@@ -47,7 +46,11 @@ export default function MainPage() {
         {/* 메인 페이지 뮤지션 썸네일 파트 */}
         <ContentSection title="뮤지션">
           <div className="w-[50%]">
-            <SearchBar placeholder="뮤지션 찾기" value="musician" />
+            <SearchBar
+              placeholder="뮤지션 찾기"
+              value="musician"
+              isCategoryFixed={true}
+            />
           </div>
           <MusicianCardList />
         </ContentSection>
@@ -55,13 +58,21 @@ export default function MainPage() {
         {/* 메인 페이지 음원 썸네일 파트 */}
         <ContentSection title="음원">
           <div className="w-[50%]">
-            <SearchBar placeholder="음원 찾기" value="track" />
+            <SearchBar
+              placeholder="음원 찾기"
+              value="music"
+              isCategoryFixed={true}
+            />
           </div>
           <MusicCardList />
         </ContentSection>
         <ContentSection title="프로젝트">
           <div className="w-[50%]">
-            <SearchBar placeholder="프로젝트 찾기" value="project" />
+            <SearchBar
+              placeholder="프로젝트 찾기"
+              value="project"
+              isCategoryFixed={true}
+            />
           </div>
           <MainProjectList />
         </ContentSection>
