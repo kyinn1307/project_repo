@@ -1,4 +1,5 @@
 import sample from "@/assets/Images/sample-musician.png";
+import { useUserStore } from "@/stores/useUserStore";
 import { Musician } from "@/types/musician";
 import { useNavigate } from "react-router-dom";
 
@@ -7,15 +8,22 @@ interface MusicianCardItemProps {
 }
 
 export const MusicianCardItem = ({ musician }: MusicianCardItemProps) => {
+  const { userId } = useUserStore();
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (userId && userId === musician.id) {
+      navigate("/my-profile/track");
+    } else {
+      navigate(`/user-profile/${musician.id}`);
+    }
+  };
 
   return (
     <div
       className="relative w-full aspect-square rounded-[15px] border cursor-pointer"
-      style={{
-        border: "0.75px solid #333333",
-      }}
-      onClick={() => navigate(`/user-profile/${musician.id}`)}
+      style={{ border: "0.75px solid #333333" }}
+      onClick={handleClick}
     >
       {/* 배경 이미지 */}
       <img

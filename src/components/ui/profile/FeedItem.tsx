@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { Heart } from "lucide-react";
-import { ChevronDown } from "lucide-react";
+import { Heart, ChevronDown } from "lucide-react";
 import { FeedMoreMenu } from "./FeedMoreMenu";
 import { UserFeedMoreMenu } from "./UserFeedMoreMenu";
-import type { Feed } from "@/types/feed";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { Feed, FeedResponse } from "@/types/feed";
+import {
+  useMutation,
+  useQueryClient,
+  InfiniteData,
+} from "@tanstack/react-query";
 import { toggleFeedLike } from "@/apis/feed";
 import { useUserStore } from "@/stores/useUserStore";
 import { useNavigate } from "react-router-dom";
@@ -20,53 +23,83 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
   const { userId } = useUserStore();
   const {
     id,
-    title,
-    description,
     imageFiles,
     createdAt,
     creatorId,
     creatorNickname,
     creatorProfileImageUrl,
-    likeCount,
-    liked,
     tags,
   } = feed;
 
   const queryClient = useQueryClient();
-
   const navigate = useNavigate();
 
   const [isExpanded, setIsExpanded] = useState(true);
   const cardRef = useRef<HTMLDivElement>(null);
   const [cardWidth, setCardWidth] = useState(720);
 
+  // ✅ ✅ ✅ InfiniteQuery에서 최신 feed 상태 가져오기
+  const cachedFeeds = queryClient.getQueryData<InfiniteData<FeedResponse>>([
+    "feeds",
+  ]);
+
+  const liveFeed =
+    cachedFeeds?.pages.flatMap((page) => page.feeds).find((f) => f.id === id) ??
+    feed;
+
+  const { liked, likeCount, title, description } = liveFeed;
+
+  // ✅ ✅ ✅ 낙관적 업데이트
   const { mutate } = useMutation({
     mutationFn: () => toggleFeedLike(id),
-    onSuccess: () => {
-      console.log("좋아요 성공");
-      queryClient.invalidateQueries({ queryKey: ["myFeeds"] });
-      queryClient.invalidateQueries({ queryKey: ["feeds"] });
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["feeds"] });
+
+      const previous = queryClient.getQueryData<InfiniteData<FeedResponse>>([
+        "feeds",
+      ]);
+
+      if (!previous) return { previous };
+
+      queryClient.setQueryData<InfiniteData<FeedResponse>>(["feeds"], {
+        ...previous,
+        pages: previous.pages.map((page) => ({
+          ...page,
+          feeds: page.feeds.map((f) =>
+            f.id === id
+              ? {
+                  ...f,
+                  liked: !f.liked,
+                  likeCount: f.liked ? f.likeCount - 1 : f.likeCount + 1,
+                }
+              : f
+          ),
+        })),
+      });
+
+      return { previous };
     },
-    onError: (err) => {
-      console.error("좋아요 실패", err);
-      alert("좋아요 처리에 실패했습니다.");
+
+    onError: (_err, _vars, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(["feeds"], context.previous);
+      }
+      alert("좋아요 처리 실패");
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["feeds"] });
     },
   });
 
-  const handleToggle = () => setIsExpanded((prev) => !prev);
-
   const handleUserClick = () => {
-    if (userId === creatorId) {
-      navigate("/my-profile");
-    } else {
-      navigate(`/user-profile/${creatorId}`);
-    }
+    if (userId === creatorId) navigate("/my-profile");
+    else navigate(`/user-profile/${creatorId}`);
   };
 
   const updateWidth = () => {
-    if (cardRef.current) {
-      setCardWidth(cardRef.current.offsetWidth);
-    }
+    if (cardRef.current) setCardWidth(cardRef.current.offsetWidth);
   };
 
   useEffect(() => {
@@ -84,93 +117,79 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
       : imageFiles?.length > 0
       ? 400
       : 98;
-
     return (w / baseWidth) * baseHeight;
   };
-
-  const minHeight = calcMinHeight(cardWidth);
 
   return (
     <div
       ref={cardRef}
       className="w-full p-3 flex flex-col rounded-[15px] bg-[#111] mb-[30px]"
-      style={{ minHeight }}
+      style={{ minHeight: calcMinHeight(cardWidth) }}
     >
-      <div className="h-full flex flex-col gap-2">
-        <div className="flex justify-between">
-          <span className="flex flex-row gap-[15px] items-center text-[15px]">
-            <span className="cursor-pointer" onClick={handleUserClick}>
-              <img
-                src={creatorProfileImageUrl || sample}
-                className="w-[30px] h-[30px] rounded-full object-cover"
-              />
-            </span>
-            <span className="cursor-pointer" onClick={handleUserClick}>
-              {creatorNickname}
-            </span>
-            <span className="text-[#777777]"> {formatYMDdot(createdAt)}</span>
+      <div className="flex justify-between">
+        <span className="flex gap-[15px] items-center text-[15px]">
+          <img
+            onClick={handleUserClick}
+            src={creatorProfileImageUrl || sample}
+            className="w-[30px] h-[30px] rounded-full object-cover cursor-pointer"
+          />
+          <span className="cursor-pointer" onClick={handleUserClick}>
+            {creatorNickname}
           </span>
-          <div className="flex items-start">
-            {isUser ? <UserFeedMoreMenu /> : <FeedMoreMenu feedId={id} />}
+          <span className="text-[#777777]">{formatYMDdot(createdAt)}</span>
+        </span>
+        {isUser ? <UserFeedMoreMenu /> : <FeedMoreMenu feedId={id} />}
+      </div>
+
+      {imageFiles?.length > 0 && (
+        <div className="flex justify-center my-4">
+          <img
+            src={imageFiles[0]?.url}
+            className="w-[41.6%] object-cover aspect-square"
+          />
+        </div>
+      )}
+
+      <div className="mt-auto">
+        <div className="flex justify-between items-center">
+          <span
+            className="flex gap-2 items-center text-[13.5px] text-[#777777] cursor-pointer"
+            onClick={() => mutate()}
+          >
+            <Heart
+              size={13.5}
+              className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
+              fill={liked ? "#ff2b2b" : "none"}
+            />
+            {likeCount}
+          </span>
+
+          <div className="flex gap-2 items-center">
+            {tags?.map((tag) => (
+              <span
+                key={tag}
+                className="px-[7.5px] text-[10.5px] bg-[#555555] rounded-[7.5px]"
+              >
+                {tag}
+              </span>
+            ))}
+
+            <button onClick={() => setIsExpanded((p) => !p)}>
+              <ChevronDown
+                className={`transition-transform ${
+                  isExpanded ? "rotate-180" : ""
+                }`}
+              />
+            </button>
           </div>
         </div>
 
-        {imageFiles?.length > 0 && (
-          <div className="flex-1 flex justify-center">
-            <img
-              src={imageFiles[0]?.url}
-              alt="포스트 썸네일"
-              className="w-[41.6%] h-full object-cover aspect-square"
-            />
+        {isExpanded && (
+          <div className="mt-[10px] text-[10.5px] text-white">
+            <div className="font-bold">{title}</div>
+            <div className="whitespace-pre-line">{description}</div>
           </div>
         )}
-
-        <div className="mt-auto pt-[10px]">
-          <div className="flex justify-between">
-            <span
-              className="flex flex-row gap-2 items-center text-[13.5px] text-[#777777] cursor-pointer"
-              onClick={() => mutate()}
-            >
-              <Heart
-                size={13.5}
-                className={liked ? "text-[#ff2b2b]" : "text-[#777777]"}
-                fill={liked ? "#ff2b2b" : "none"}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  mutate();
-                }}
-              />
-              {likeCount}
-            </span>
-            <div className="flex flex-row gap-2 items-center text-[#ffffff]">
-              {tags?.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center h-[13px] px-[7.5px] text-[10.5px] bg-[#555555] rounded-[7.5px]"
-                >
-                  {tag}
-                </span>
-              ))}
-              <button onClick={handleToggle} className="text-[#777777]">
-                <ChevronDown
-                  className={`transition-transform cursor-pointer ${
-                    isExpanded ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-            </div>
-          </div>
-
-          {/* 제목 + 내용 (확장 영역) */}
-          {isExpanded && (
-            <div className="flex flex-col gap-1 text-[10.5px] text-[#ffffff] mt-[10px]">
-              <div className="font-bold">{title}</div>
-              <div className="font-regular whitespace-pre-line">
-                {description}
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
