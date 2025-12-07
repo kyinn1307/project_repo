@@ -22,6 +22,7 @@ export interface TrackResponse {
   tracks: Music[];
   nextCursor?: number;
   last: boolean;
+  previousTrack: number;
 }
 
 export type Genre =

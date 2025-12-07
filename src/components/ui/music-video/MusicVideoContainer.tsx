@@ -12,7 +12,13 @@ import { useUserStore } from "@/stores/useUserStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { playTrack } from "@/apis/music";
 
-export const MusicVideoContainer = ({ track }: { track: Music }) => {
+export const MusicVideoContainer = ({
+  track,
+  cursorId,
+}: {
+  track: Music;
+  cursorId?: number;
+}) => {
   const { userId } = useUserStore();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -35,9 +41,7 @@ export const MusicVideoContainer = ({ track }: { track: Music }) => {
   const { mutate: playMutate } = useMutation({
     mutationFn: () => playTrack(track.id),
     onSuccess: () => {
-      // 재생 이후 track-detail 캐시 초기화
-      console.log("트랙 횟수 증가");
-      queryClient.invalidateQueries({ queryKey: ["track-detail", track.id] });
+      queryClient.invalidateQueries({ queryKey: ["track", track.id] });
     },
   });
 
@@ -275,6 +279,7 @@ export const MusicVideoContainer = ({ track }: { track: Music }) => {
             currentTab={activeTab}
             onTabChange={handleTabToggle}
             track={track}
+            cursorId={cursorId!}
           />
         </div>
         {activeTab && (

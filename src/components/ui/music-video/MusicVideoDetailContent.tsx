@@ -18,9 +18,9 @@ export const MusicVideoDetailContent = ({
     enabled: Number.isFinite(trackId),
   });
 
-  const lyrics = data.lyrics?.trim();
-  const description = data.description?.trim();
-  const participants = data.participants ?? [];
+  const lyrics = data?.lyrics?.trim();
+  const description = data?.description?.trim();
+  const participants = data?.participants ?? [];
 
   const renderContent = () => {
     switch (tab) {

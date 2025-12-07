@@ -1,25 +1,25 @@
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface Props {
+  onPrev: () => void; // 위 방향
+  onNext: () => void; // 아래 방향
   currentIndex: number;
-  scrollToIndex: (index: number) => void;
-  total?: number; // 지금은 안 씀
 }
 
-export const VideoControlBtn = ({ currentIndex, scrollToIndex }: Props) => {
+export const VideoControlBtn = ({ onPrev, onNext, currentIndex }: Props) => {
   return (
     <div className="fixed top-[358px] right-5 flex flex-col gap-[18.75px]">
-      {/* 위 버튼: +1 */}
+      {/* 위 버튼 */}
       <button
-        onClick={() => scrollToIndex(currentIndex + 1)}
+        onClick={onNext}
         className="w-[37.5px] h-[37.5px] flex items-center justify-center rounded-full bg-[#777777] cursor-pointer"
       >
         <ArrowUp className="text-white" />
       </button>
 
-      {/* 아래 버튼: -1, 단 currentIndex === 1 이면 숨김 */}
+      {/* 아래 버튼 */}
       <button
-        onClick={() => scrollToIndex(currentIndex - 1)}
+        onClick={onPrev}
         className={`w-[37.5px] h-[37.5px] flex items-center justify-center rounded-full bg-[#777777] cursor-pointer ${
           currentIndex === 1 ? "opacity-0 pointer-events-none" : "opacity-100"
         }`}
