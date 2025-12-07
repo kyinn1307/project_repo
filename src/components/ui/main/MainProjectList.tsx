@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const MainProjectList = () => {
   const { data } = useQuery({
-    queryKey: ["projects", 6],
+    queryKey: ["main-projects", 6],
     queryFn: () => getAllProjects(undefined, 6),
   });
 
