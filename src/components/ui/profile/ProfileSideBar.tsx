@@ -129,7 +129,7 @@ export function ProfileSideBar() {
 
   return (
     <>
-      <Card className="min-w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
+      <Card className="w-[20%] min-w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
         <CardContent className="p-6 flex flex-col items-center">
           <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden mb-[30px] bg-[#222222]">
             {info?.profileImageUrl && (

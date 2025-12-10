@@ -18,7 +18,6 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const bgFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -28,13 +27,15 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
   const [introduction, setIntroduction] = useState("");
   const [link, setLink] = useState("");
 
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     if (info) {
       setNickname(info.nickname || "");
       setIntroduction(info.introduction || "");
       setLink(info.link || "");
-      setProfileImage(info.profileImageUrl); // null도 허용
-      setSelectedGenres(info.genres ?? []); // 값이 없으면 빈 배열
+      setProfileImage(info.profileImageUrl);
+      setSelectedGenres(info.genres ?? []);
       setSelectedFields(info.fields ?? []);
     }
   }, [info]);
@@ -56,9 +57,7 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = () => {
-      // setBackgroundImage(reader.result as string);
-    };
+    reader.onload = () => {};
     reader.readAsDataURL(file);
   };
 
@@ -96,14 +95,17 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
         selectedFields,
         selectedGenres,
       });
+      setOpen(false);
+      alert("프로필 수정 성공");
       console.log("프로필 수정 성공");
     } catch (error) {
+      alert("프로필 수정 실패");
       console.error("프로필 수정 실패", error);
     }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           variant="secondary"
