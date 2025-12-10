@@ -10,7 +10,7 @@ import { useSearchParams } from "react-router-dom";
 
 export const ProjectPage = () => {
   const { userId } = useUserStore();
-  const size = 5;
+  const size = 8;
 
   const [searchParams] = useSearchParams();
 
@@ -75,9 +75,8 @@ export const ProjectPage = () => {
             <SearchBar
               placeholder="프로젝트 찾기"
               value="project"
-              inputValue={q} // ✅ 입력 중 텍스트만 관리
-              onInputChange={setQ} // ✅ 타이핑은 로컬 상태만 변경
-              // ✅ Enter는 SearchBar 내부에서 navigate 처리
+              inputValue={q}
+              onInputChange={setQ}
             />
           </div>
         </div>

@@ -25,53 +25,97 @@ export const ProjectContentItem = ({
 
   const queryClient = useQueryClient();
 
-  // ✅ ✅ 핵심 1: 현재 활성화된 projects 쿼리 전부 가져오기 (검색 포함)
-  const projectQueries = queryClient
-    .getQueryCache()
-    .findAll({ queryKey: ["projects"] });
+  const projectQueries = queryClient.getQueryCache().findAll({
+    predicate: (query) => {
+      const key = query.queryKey[0];
+      return key === "projects" || key === "main-projects";
+    },
+  });
 
-  // ✅ ✅ 핵심 2: 화면에 쓰이는 실시간 프로젝트 찾기
   let liveProject: Project | undefined;
 
   for (const q of projectQueries) {
-    const data = q.state.data as InfiniteData<ProjectResponse> | undefined;
-    const found = data?.pages
-      .flatMap((p) => p.projects)
-      .find((p) => p.id === id);
+    const data = q.state.data as
+      | InfiniteData<ProjectResponse>
+      | ProjectResponse
+      | undefined;
 
-    if (found) {
-      liveProject = found;
-      break;
+    if (!data) continue;
+
+    // ✅ Infinite Query인 경우
+    if ("pages" in data) {
+      const found = data.pages
+        .flatMap((p) => p.projects)
+        .find((p) => p.id === id);
+
+      if (found) {
+        liveProject = found;
+        break;
+      }
+    }
+
+    // ✅ 일반 Query (main-projects)
+    if ("projects" in data) {
+      const found = data.projects.find((p) => p.id === id);
+
+      if (found) {
+        liveProject = found;
+        break;
+      }
     }
   }
 
   // ✅ fallback
   const { liked, likeCount, createdAt } = liveProject ?? project;
 
-  // ✅ ✅ 낙관적 업데이트
+  // ✅ ✅ 낙관적 업데이트 (완전체)
   const { mutate } = useMutation({
     mutationFn: () => toggleProjectLike(id),
 
     onMutate: async () => {
-      // ✅ 모든 projects 쿼리 중단
+      // ✅ 관련 쿼리 전부 중단
       for (const q of projectQueries) {
         await queryClient.cancelQueries({ queryKey: q.queryKey });
       }
-
       await queryClient.cancelQueries({ queryKey: ["myProjects"] });
 
+      // ✅ 이전 값 스냅샷 저장 (Infinite + 일반 혼합)
       const previousProjectsList = projectQueries.map((q) => ({
         key: q.queryKey,
-        data: q.state.data as InfiniteData<ProjectResponse>,
+        data: q.state.data as
+          | InfiniteData<ProjectResponse>
+          | ProjectResponse
+          | undefined,
       }));
 
       const previousMyProjects = queryClient.getQueryData<Project[]>([
         "myProjects",
       ]);
 
-      // ✅ ✅ projects (검색 포함 전부 반영)
+      const previousMain = queryClient.getQueryData<ProjectResponse>([
+        "main-projects",
+        6,
+      ]);
+
+      // ✅ ✅ 1️⃣ main-projects (일반 Query) 낙관적 업데이트
+      if (previousMain) {
+        queryClient.setQueryData<ProjectResponse>(["main-projects", 6], {
+          ...previousMain,
+          projects: previousMain.projects.map((p) =>
+            p.id === id
+              ? {
+                  ...p,
+                  liked: !p.liked,
+                  likeCount: p.liked ? p.likeCount - 1 : p.likeCount + 1,
+                }
+              : p
+          ),
+        });
+      }
+
+      // ✅ ✅ 2️⃣ projects (Infinite Query 전부)
       for (const { key, data } of previousProjectsList) {
-        if (!data) continue;
+        if (!data || !("pages" in data)) continue;
 
         queryClient.setQueryData<InfiniteData<ProjectResponse>>(key, {
           ...data,
@@ -90,7 +134,7 @@ export const ProjectContentItem = ({
         });
       }
 
-      // ✅ ✅ myProjects 반영
+      // ✅ ✅ 3️⃣ myProjects 낙관적 업데이트
       if (previousMyProjects) {
         queryClient.setQueryData<Project[]>(
           ["myProjects"],
@@ -106,9 +150,15 @@ export const ProjectContentItem = ({
         );
       }
 
-      return { previousProjectsList, previousMyProjects };
+      // ✅ ✅ 롤백 데이터 반환
+      return {
+        previousProjectsList,
+        previousMyProjects,
+        previousMain,
+      };
     },
 
+    // ✅ ✅ 에러 발생 시 전부 롤백
     onError: (_err, _vars, context) => {
       if (context?.previousProjectsList) {
         for (const { key, data } of context.previousProjectsList) {
@@ -120,14 +170,16 @@ export const ProjectContentItem = ({
         queryClient.setQueryData(["myProjects"], context.previousMyProjects);
       }
 
-      alert("좋아요 처리에 실패했습니다.");
+      if (context?.previousMain) {
+        queryClient.setQueryData(["main-projects", 6], context.previousMain);
+      }
     },
 
+    // ✅ ✅ 서버 동기화
     onSettled: () => {
       for (const q of projectQueries) {
         queryClient.invalidateQueries({ queryKey: q.queryKey });
       }
-
       queryClient.invalidateQueries({ queryKey: ["myProjects"] });
     },
   });
