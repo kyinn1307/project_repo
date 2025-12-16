@@ -33,7 +33,7 @@ export const ChatContainer = ({
     staleTime: 60_000,
   });
 
-  // ✅ 소켓: 수신 메시지를 로컬 상태 + Query 캐시에 함께 반영
+  // 소켓: 수신 메시지를 로컬 상태 + Query 캐시에 함께 반영
   const { sendMessage } = useChatSocket(roomId!, (newMsg: ChatMessage) => {
     setChats((prev) => [...prev, newMsg]);
     if (roomId) {

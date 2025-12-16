@@ -15,12 +15,9 @@ export const useChatSocket = (
     const client = new Client({
       brokerURL: SOCKET_URL,
 
-      debug: (str) => console.log(str),
+      // debug: (str) => console.log(str),
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("✅ STOMP connected");
-
-        // 구독 (RabbitMQ에서는 topic 기반으로 pub/sub 수행)
         subscriptionRef.current = client.subscribe(
           `/topic/chat.room.${roomId}`,
           (message: IMessage) => {
@@ -30,7 +27,6 @@ export const useChatSocket = (
         );
       },
       onStompError: (frame) => {
-        console.error("❌ STOMP error:", frame.headers["message"]);
         console.error("Details:", frame.body);
       },
     });
@@ -46,14 +42,12 @@ export const useChatSocket = (
 
   const sendMessage = (message: ChatMessage) => {
     if (clientRef.current?.connected) {
-      console.log("🚀 보낸 메시지:", message); // ✅ 이 줄 추가
-
       clientRef.current.publish({
         destination: "/pub/api/chat/message",
         body: JSON.stringify(message),
       });
     } else {
-      console.warn("❗ STOMP client not connected");
+      console.warn("STOMP client not connected");
     }
   };
 
