@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../button";
 
-import { followUser, getUserProfile, unfollowUser } from "@/apis/user";
+import { getUserProfile } from "@/apis/user";
+import { followUser, unfollowUser } from "@/apis/follower";
 import { getFollowerList } from "@/apis/follower";
 import { getFollowingList } from "@/apis/follower";
 import type { Profile } from "@/types/my-profile";

@@ -4,21 +4,26 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import type { Profile } from "@/types/my-profile";
 import { updateProfile, uploadProfileImage } from "@/apis/my-profile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUserStore } from "@/stores/useUserStore";
 
 export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
+  const queryClient = useQueryClient();
+  const userId = useUserStore((s) => s.userId);
+
+  const [open, setOpen] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const bgFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
@@ -27,7 +32,32 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
   const [introduction, setIntroduction] = useState("");
   const [link, setLink] = useState("");
 
-  const [open, setOpen] = useState(false);
+  const mutation = useMutation({
+    mutationFn: async () => {
+      // 1️⃣ 이미지 업로드
+      if (profileImageFile) {
+        await uploadProfileImage(profileImageFile);
+      }
+
+      // 2️⃣ 프로필 수정
+      return updateProfile({
+        nickname,
+        link,
+        introduction,
+        selectedFields,
+        selectedGenres,
+      });
+    },
+
+    onSuccess: async () => {
+      alert("프로필 수정이 완료되었습니다");
+      await queryClient.invalidateQueries({
+        queryKey: ["myProfile", userId],
+      });
+
+      setOpen(false);
+    },
+  });
 
   useEffect(() => {
     if (info) {
@@ -52,15 +82,6 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleBackgroundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {};
-    reader.readAsDataURL(file);
-  };
-
   const toggleSelection = (
     value: string,
 
@@ -71,37 +92,6 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
         ? prev.filter((item) => item !== value)
         : [...prev, value]
     );
-  };
-
-  const handleSave = async () => {
-    try {
-      // 1. 프로필 이미지 업로드
-      if (profileImageFile) {
-        try {
-          const res = await uploadProfileImage(profileImageFile);
-          console.log("✅ 프로필 이미지 업로드 성공", res.data);
-        } catch (err) {
-          console.error("❌ 프로필 이미지 업로드 실패", err);
-        }
-      } else {
-        console.log("ℹ️ 프로필 이미지 파일이 선택되지 않음 (업로드 생략)");
-      }
-
-      // 2. 프로필 정보 업데이트
-      await updateProfile({
-        nickname,
-        link,
-        introduction,
-        selectedFields,
-        selectedGenres,
-      });
-      setOpen(false);
-      alert("프로필 수정 성공");
-      console.log("프로필 수정 성공");
-    } catch (error) {
-      alert("프로필 수정 실패");
-      console.error("프로필 수정 실패", error);
-    }
   };
 
   return (
@@ -115,12 +105,20 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="min-w-[540px] bg-[#222222] text-white rounded-lg py-[14.5px] px-[11.25px] border-none">
+        <DialogClose asChild>
+          <button
+            className="absolute right-[12px] top-[12px] rounded-sm p-[4px] cursor-pointer
+                 text-white"
+            aria-label="닫기"
+          >
+            <X className="w-[16px] h-[16px]" />
+          </button>
+        </DialogClose>{" "}
         <DialogHeader className="mb-[10px]">
           <DialogTitle className="text-[15px] font-medium">
             프로필편집
           </DialogTitle>
         </DialogHeader>
-
         <div className="flex flex-col gap-[15px]">
           {/* 프로필 이미지 선택 */}
           <div className="flex justify-center mb-[15px] relative">
@@ -178,29 +176,6 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
                 onChange={(e) => setLink(e.target.value)}
                 placeholder="텍스트를 입력해주세요"
                 className="w-[300px] h-[19px] p-[3px] !text-[10.5px] bg-black rounded-[3.75px] text-white border border-gray-700 placeholder:text-[10.5px]"
-              />
-            </div>
-          </div>
-
-          {/* 프로필 배경사진 */}
-          <div className="flex flex-col justify-between items-center bg-[#111111] p-[7.5px] rounded-[3.75px]">
-            <label className="w-full text-[10.5px] mb-[11.5px] text-[#ffffff]">
-              프로필 배경사진
-            </label>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                className="w-[85px] h-[22px] px-4 py-[2px] text-[10.5px] text-white rounded-[7.5px] bg-[#222222] cursor-pointer border border-[#999999]"
-                onClick={() => bgFileInputRef.current?.click()}
-              >
-                배경사진 변경
-              </Button>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleBackgroundChange}
-                ref={bgFileInputRef}
-                className="hidden"
               />
             </div>
           </div>
@@ -270,11 +245,10 @@ export const ProfileEditModal = ({ info }: { info: Profile | null }) => {
             </div>
           </div>
         </div>
-
         <div className="flex justify-center">
           <Button
             className="w-15 h-[22.5px] text-xs bg-[#0050ef] text-white items-center cursor-pointer"
-            onClick={handleSave}
+            onClick={() => mutation.mutate()}
           >
             저장
           </Button>

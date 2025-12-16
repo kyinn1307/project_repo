@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProfileEditModal } from "./ProfileEditModal";
 import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
-import sample from "@/assets/Images/sample-musician.png";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
 import {
@@ -14,13 +12,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getMyProfile } from "@/apis/my-profile";
-import type { Profile } from "@/types/my-profile";
 import { useUserStore } from "@/stores/useUserStore";
-import { getFollowerList, getFollowingList } from "@/apis/follower";
-import type { Follower } from "@/types/follower";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { unfollowUser } from "@/apis/user";
+import {
+  deleteFollowerUser,
+  getFollowerList,
+  getFollowingList,
+} from "@/apis/follower";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { unfollowUser } from "@/apis/follower";
 import { X } from "lucide-react";
+import { Follower } from "@/types/follower";
 
 export function ProfileSideBar() {
   const userId = useUserStore.getState().userId;
@@ -30,59 +31,35 @@ export function ProfileSideBar() {
   const [modalType, setModalType] = useState<"follower" | "following" | null>(
     null
   );
-  const [info, setInfo] = useState<Profile | null>(null);
+
   const [profileImageLoaded, setProfileImageLoaded] = useState(false);
 
-  const [followerList, setFollowerList] = useState<Follower[]>([]);
-  const [followingList, setFollowingList] = useState<Follower[]>([]);
+  const { data: info } = useQuery({
+    queryKey: ["myProfile", userId],
+    queryFn: () => getMyProfile(userId!).then((res) => res.data.data),
+    enabled: !!userId,
+  });
 
-  const handleMyProfile = async () => {
-    if (userId === null) {
-      console.log("userId가 없습니다.");
-      return;
-    }
+  const followerQuery = useQuery({
+    queryKey: ["followers", userId],
+    queryFn: () => getFollowerList(userId!).then((res) => res.data.data),
+    enabled: open && modalType === "follower" && !!userId,
+  });
 
-    try {
-      const res = await getMyProfile(userId);
-      console.log(res.data);
-      setInfo(res.data.data);
-    } catch (err) {
-      console.log("조회 실패.", err);
-    }
-  };
+  const followingQuery = useQuery({
+    queryKey: ["followings", userId],
+    queryFn: () => getFollowingList(userId!).then((res) => res.data.data),
+    enabled: open && modalType === "following" && !!userId,
+  });
 
-  useEffect(() => {
-    handleMyProfile();
-  }, []);
-
-  const fetchFollowList = async (type: "follower" | "following") => {
-    if (!userId) return;
-
-    try {
-      const res =
-        type === "follower"
-          ? await getFollowerList(userId)
-          : await getFollowingList(userId);
-
-      const list = res.data.data.map((user: Follower) => ({
-        userId: user.userId,
-        nickname: user.nickname,
-        profileImageUrl: user.profileImageUrl ?? sample, // 기본 이미지
-      }));
-
-      if (type === "follower") setFollowerList(list);
-      else setFollowingList(list);
-    } catch (err) {
-      console.error("팔로우 리스트 조회 실패:", err);
-    }
-  };
-
-  const currentList = modalType === "follower" ? followerList : followingList;
+  const currentList =
+    modalType === "follower"
+      ? followerQuery.data ?? []
+      : followingQuery.data ?? [];
 
   const handleOpenModal = (type: "follower" | "following") => {
     setModalType(type);
     setOpen(true);
-    fetchFollowList(type);
   };
 
   const getCountValue = (item: string): number => {
@@ -106,24 +83,27 @@ export function ProfileSideBar() {
     setOpen(false);
   };
 
-  const refetchFollowRelated = async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["userProfile", userId] }),
-      queryClient.invalidateQueries({ queryKey: ["followers", userId] }),
-      queryClient.invalidateQueries({ queryKey: ["followings", userId] }),
-    ]);
-    if (modalType) {
-      if (modalType === "follower") fetchFollowList("follower");
-      else fetchFollowList("following");
-    }
-  };
-
   // 팔로잉 목록에서 언팔로우 api
   const { mutate: unfollowMutate } = useMutation({
-    mutationFn: (targetUserId: number) => unfollowUser(targetUserId),
+    mutationFn: unfollowUser,
     onSuccess: async () => {
-      await refetchFollowRelated();
-      await handleMyProfile(); // tanstack query로 refetch 로직 개선 필요
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["myProfile", userId] }),
+        queryClient.invalidateQueries({ queryKey: ["followers", userId] }),
+        queryClient.invalidateQueries({ queryKey: ["followings", userId] }),
+      ]);
+    },
+  });
+
+  // 팔로워 목록에서 언팔로우 api
+  const { mutate: deleteFollowerMutate } = useMutation({
+    mutationFn: deleteFollowerUser,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["myProfile", userId] }),
+        queryClient.invalidateQueries({ queryKey: ["followers", userId] }),
+        queryClient.invalidateQueries({ queryKey: ["followings", userId] }),
+      ]);
     },
   });
 
@@ -249,7 +229,7 @@ export function ProfileSideBar() {
                 아직 목록이 없습니다.
               </p>
             ) : (
-              currentList.map((user) => (
+              currentList.map((user: Follower) => (
                 <div
                   key={user.userId}
                   className="w-full h-[37.5px] flex flex-row justify-between items-center rounded-md hover:bg-[#333333] transition-colors"
@@ -269,6 +249,8 @@ export function ProfileSideBar() {
                     onClick={() => {
                       if (modalType === "following") {
                         unfollowMutate(user.userId);
+                      } else {
+                        deleteFollowerMutate(user.userId);
                       }
                     }}
                   >

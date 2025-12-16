@@ -100,11 +100,7 @@ export function ProfileMenu() {
   ];
 
   return (
-    <Tabs
-      value={currentTab}
-      onValueChange={handleChange}
-      className="relative mr-auto w-[540px]"
-    >
+    <Tabs value={currentTab} onValueChange={handleChange} className="flex-1">
       <TabsList className="w-full justify-start rounded-none border-b border-gray-700 bg-transparent p-0 flex">
         {tabList.map((tab) => (
           <TabsTrigger

@@ -19,11 +19,3 @@ export const getUserFeeds = (userId: number) => {
 export const getUserProjects = (userId: number) => {
   return axiosInstance.get(`/project/user/${userId}`);
 };
-
-// 유저 팔로우 요청
-export const followUser = (targetUserId: number) =>
-  axiosInstance.post(`/follow/${targetUserId}`);
-
-// 유저 언팔로우 요청
-export const unfollowUser = (targetUserId: number) =>
-  axiosInstance.delete(`/follow/${targetUserId}`);

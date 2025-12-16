@@ -57,7 +57,7 @@ export function UserProfileMenu() {
   ];
 
   return (
-    <Tabs defaultValue="music" className="relative mr-auto w-[540px]">
+    <Tabs defaultValue="music" className="flex-1">
       <TabsList className="w-full justify-start rounded-none border-b border-gray-700 bg-transparent p-0 flex">
         {tabList.map((tab) => (
           <TabsTrigger
