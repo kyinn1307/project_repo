@@ -110,7 +110,12 @@ export const StarterBusiness = ({
               )}
             </div>
             <div className="flex flex-row gap-[7.5px] h-6 text-white">
-              <Button className="w-full h-full bg-white text-black text-[10.5px] rounded-[7.5px]">
+              <Button
+                className="w-full h-full bg-white text-black text-[10.5px] rounded-[7.5px] cursor-pointer"
+                onClick={() => {
+                  navigate(`/chat/?userId=${business?.userId}`);
+                }}
+              >
                 문의하기
               </Button>
             </div>

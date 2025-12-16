@@ -28,13 +28,13 @@ export const BusinessPage = () => {
 
   const [searchParams] = useSearchParams();
 
-  // ✅ 실제 검색 기준은 URL만 사용
+  // 실제 검색 기준은 URL만 사용
   const keywordFromUrl = searchParams.get("keyword") ?? "";
 
-  // ✅ SearchBar에 표시될 입력 중 텍스트
+  // SearchBar에 표시될 입력 중 텍스트
   const [q, setQ] = useState(keywordFromUrl);
 
-  // ✅ URL이 바뀌면 input도 동기화
+  // URL이 바뀌면 input도 동기화
   useEffect(() => {
     setQ(keywordFromUrl);
   }, [keywordFromUrl]);
@@ -89,9 +89,8 @@ export const BusinessPage = () => {
             <SearchBar
               placeholder="비즈니스 찾기"
               value="business"
-              inputValue={q} // ✅ 입력 중 텍스트만 관리
-              onInputChange={setQ} // ✅ 타이핑은 로컬 상태만 변경
-              // ✅ Enter는 SearchBar 내부에서 navigate 처리
+              inputValue={q}
+              onInputChange={setQ}
             />
           </div>
         </div>
