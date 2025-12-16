@@ -191,7 +191,7 @@ export const ProjectContentItem = ({
   return (
     <div
       onClick={handleCardClick}
-      className="w-full aspect-[5/3] flex flex-col bg-[#111111] rounded-[22.5px] py-[13.5px] px-[16.5px] cursor-pointer"
+      className="w-full min-w-[262.5px] aspect-[5/3] flex flex-col bg-[#111111] rounded-[22.5px] py-[13.5px] px-[16.5px] cursor-pointer"
     >
       <div className="flex flex-col justify-between h-full">
         {/* 🔹 상단 */}

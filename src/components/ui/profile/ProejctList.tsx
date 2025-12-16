@@ -9,7 +9,7 @@ export const ProjectList = ({ list, isUser }: ProjectListProps) => {
   if (!Array.isArray(list) || list.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-4 gap-6 w-full">
+    <div className="grid grid-cols-2 gap-[2%] w-full">
       {list.map((project) => (
         <ProjectContentItem
           key={project.id}

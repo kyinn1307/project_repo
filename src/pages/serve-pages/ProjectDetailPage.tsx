@@ -16,10 +16,16 @@ import { RemoteFile } from "@/types/feed";
 import { daysLeftFrom, formatYMDdot } from "@/utils/formatDate";
 import sample from "@/assets/Images/sample-musician.png";
 
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toggleProjectLike } from "@/apis/project";
+import type { Project } from "@/types/project";
+
 export const ProjectDetailPage = () => {
   const { id } = useParams();
   const { userId } = useUserStore();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const {
     data: project,
     isLoading,
@@ -30,7 +36,59 @@ export const ProjectDetailPage = () => {
     queryFn: () => getProjectDetail(Number(id)),
   });
 
-  if (isLoading) return <div className="text-white">로딩 중...</div>;
+  const projectQueries = queryClient.getQueryCache().findAll({
+    predicate: (query) => {
+      const key = query.queryKey[0];
+      return (
+        key === "projects" ||
+        key === "main-projects" ||
+        (key === "project" && query.queryKey[1] === id)
+      );
+    },
+  });
+
+  const { mutate: toggleLike } = useMutation({
+    mutationFn: () => toggleProjectLike(project.id),
+
+    onMutate: async () => {
+      for (const q of projectQueries) {
+        await queryClient.cancelQueries({ queryKey: q.queryKey });
+      }
+
+      const previousData = projectQueries.map((q) => ({
+        key: q.queryKey,
+        data: q.state.data,
+      }));
+
+      queryClient.setQueryData(["project", id], (old: Project) =>
+        old
+          ? {
+              ...old,
+              liked: !old.liked,
+              likeCount: old.liked ? old.likeCount - 1 : old.likeCount + 1,
+            }
+          : old
+      );
+
+      return { previousData };
+    },
+
+    onError: (_err, _vars, context) => {
+      context?.previousData.forEach(({ key, data }) => {
+        queryClient.setQueryData(key, data);
+      });
+    },
+
+    onSettled: () => {
+      // 🔄 서버 동기화
+      for (const q of projectQueries) {
+        queryClient.invalidateQueries({ queryKey: q.queryKey });
+      }
+    },
+  });
+
+  if (isLoading)
+    return <div className="w-full flex justify-center text-white">로딩 중</div>;
   if (isError)
     return (
       <div className="text-white">에러 발생: {(error as Error).message}</div>
@@ -146,7 +204,12 @@ export const ProjectDetailPage = () => {
                 <Button className="w-15 h-[22.5px] text-xs font-medium bg-[#0050ef] cursor-pointer rounded-[3.75px]">
                   팔로우
                 </Button>
-                <Button className="w-15 h-[22.5px] text-xs font-medium bg-[#555555] cursor-pointer rounded-[3.75px]">
+                <Button
+                  className="w-15 h-[22.5px] text-xs font-medium bg-[#555555] cursor-pointer rounded-[3.75px]"
+                  onClick={() => {
+                    navigate(`/chat/?userId=${project.creatorId}`);
+                  }}
+                >
                   메시지
                 </Button>
               </div>
@@ -174,7 +237,7 @@ export const ProjectDetailPage = () => {
               </div>
             </div>
 
-            <div className="flex flex-row px-[24.5px] gap-15 text-[10.5px]">
+            <div className="flex flex-row px-[24.5px] justify-between text-[10.5px]">
               <span className="flex flex-col gap-[7.5px] items-center whitespace-nowrap">
                 <Clock size={18} />
                 {`${leftDays}일 전`}
@@ -188,7 +251,15 @@ export const ProjectDetailPage = () => {
                   size={18}
                   fill={project.liked ? "red" : "none"}
                   stroke={project.liked ? "none" : "currentColor"}
-                  className={project.liked ? "" : "text-white"}
+                  className={
+                    project.liked
+                      ? "cursor-pointer"
+                      : "text-white cursor-pointer"
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleLike();
+                  }}
                 />
 
                 {project.likeCount}
