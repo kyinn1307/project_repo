@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/shadcn/input";
 import { SearchIcon } from "@/assets/Icons/SearchIcon";
 import { ChevronDown } from "@/assets/Icons/header/ChevronDown";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/shadcn/popover";
 import { useNavigate } from "react-router-dom";
 
 type Category = "musician" | "music" | "project" | "business";

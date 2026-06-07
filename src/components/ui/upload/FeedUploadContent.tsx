@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TitleInput } from "../profile-detail/TitleInput";
 import { MusicTagSelector } from "@/components/ui/profile-detail/MusicTagSelector";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { ImageUploadSection } from "./ImageUploadSection";
 import { MusicUploadSection } from "./MusicUploadSection";
 import type { EmotionTag } from "@/types/music";

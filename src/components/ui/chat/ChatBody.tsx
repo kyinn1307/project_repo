@@ -11,10 +11,9 @@ interface ChatBodyProps {
 
 export const ChatBody = ({ chats, profile }: ChatBodyProps) => {
   const myUserId = useUserStore((state) => state.userId);
-  const scrollRef = useRef<HTMLDivElement>(null); // ✅ 스크롤 위치 제어용 ref
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // ✅ 채팅이 렌더링된 후, 항상 맨 아래로 스크롤 이동
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
@@ -28,6 +27,11 @@ export const ChatBody = ({ chats, profile }: ChatBodyProps) => {
         const isSameUserAsPrevious = prevChat?.sender === chat.sender;
         const isMe = chat.sender === myUserId;
         const isLast = !next || next.sender !== chat.sender;
+        const lastOpponentIndex = [...chats]
+          .map((c, i) => ({ c, i }))
+          .filter(({ c }) => c.sender !== myUserId)
+          .pop()?.i;
+        const isLastOpponentMessage = idx === lastOpponentIndex;
 
         return (
           <ChatBox
@@ -35,7 +39,8 @@ export const ChatBody = ({ chats, profile }: ChatBodyProps) => {
             content={chat.message}
             isMe={isMe}
             isContinuous={isSameUserAsPrevious}
-            isLast={isLast} // ✅ 전달
+            isLast={isLast}
+            isLastOpponentMessage={isLastOpponentMessage}
             profile={profile}
           />
         );

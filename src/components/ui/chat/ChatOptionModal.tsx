@@ -5,10 +5,10 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "@/components/ui/dialog";
+} from "@/components/ui/shadcn/dialog";
 import { ChatOptionBtn } from "@/assets/Icons/chat/ChatOptionBtn";
 import { Calendar, Check, Clock, List } from "lucide-react";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 
 export const ChatOptionModal = () => {
   return (

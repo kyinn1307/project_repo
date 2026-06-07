@@ -1,55 +1,79 @@
-import { Client, IMessage, StompSubscription } from "@stomp/stompjs";
-import { useEffect, useRef } from "react";
+import { Client, StompSubscription } from "@stomp/stompjs";
+import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "@/types/chat";
 
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL;
 
 export const useChatSocket = (
   roomId: number,
-  onMessageReceive: (message: ChatMessage) => void
+  myUserId: number,
+  onMessageReceive: (message: ChatMessage) => void,
+  onRoomUpdate: (update: {
+    roomId: number;
+    lastMessage: string;
+    unreadCount: number;
+    lastMessageTime: string;
+    senderId: number;
+  }) => void
 ) => {
   const clientRef = useRef<Client | null>(null);
-  const subscriptionRef = useRef<StompSubscription | null>(null);
+  const chatSubRef = useRef<StompSubscription | null>(null);
+  const roomSubRef = useRef<StompSubscription | null>(null);
+  const [connected, setConnected] = useState(false);
 
   useEffect(() => {
+    if (!roomId || !myUserId) return;
+
     const client = new Client({
       brokerURL: SOCKET_URL,
-
-      // debug: (str) => console.log(str),
       reconnectDelay: 5000,
+
       onConnect: () => {
-        subscriptionRef.current = client.subscribe(
+        setConnected(true);
+
+        chatSubRef.current = client.subscribe(
           `/topic/chat.room.${roomId}`,
-          (message: IMessage) => {
-            const body: ChatMessage = JSON.parse(message.body);
-            onMessageReceive(body);
-          }
+          (msg) => onMessageReceive(JSON.parse(msg.body))
+        );
+
+        roomSubRef.current = client.subscribe(
+          `/topic/user.${myUserId}.chatroom-update`,
+          (msg) => onRoomUpdate(JSON.parse(msg.body))
         );
       },
-      onStompError: (frame) => {
-        console.error("Details:", frame.body);
-      },
+
+      onWebSocketClose: () => setConnected(false),
+      onStompError: console.error,
     });
 
     client.activate();
     clientRef.current = client;
 
     return () => {
-      subscriptionRef.current?.unsubscribe();
-      clientRef.current?.deactivate();
+      setConnected(false);
+      chatSubRef.current?.unsubscribe();
+      roomSubRef.current?.unsubscribe();
+      client.deactivate();
     };
-  }, [roomId]);
+  }, [roomId, myUserId]);
 
   const sendMessage = (message: ChatMessage) => {
-    if (clientRef.current?.connected) {
-      clientRef.current.publish({
-        destination: "/pub/api/chat/message",
-        body: JSON.stringify(message),
-      });
-    } else {
-      console.warn("STOMP client not connected");
-    }
+    if (!connected || !clientRef.current) return;
+
+    clientRef.current.publish({
+      destination: "/pub/api/chat/message",
+      body: JSON.stringify(message),
+    });
   };
 
-  return { sendMessage };
+  const sendRead = (roomId: number) => {
+    if (!connected || !clientRef.current) return;
+
+    clientRef.current.publish({
+      destination: "/pub/api/chat/rooms/read",
+      body: JSON.stringify({ roomId }),
+    });
+  };
+
+  return { sendMessage, sendRead, connected };
 };

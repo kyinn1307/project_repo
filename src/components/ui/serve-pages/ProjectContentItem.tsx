@@ -28,7 +28,12 @@ export const ProjectContentItem = ({
   const projectQueries = queryClient.getQueryCache().findAll({
     predicate: (query) => {
       const key = query.queryKey[0];
-      return key === "projects" || key === "main-projects";
+      return (
+        key === "projects" ||
+        key === "main-projects" ||
+        key === "myProjects" ||
+        key === "userProjects"
+      );
     },
   });
 
@@ -77,7 +82,6 @@ export const ProjectContentItem = ({
       for (const q of projectQueries) {
         await queryClient.cancelQueries({ queryKey: q.queryKey });
       }
-      await queryClient.cancelQueries({ queryKey: ["myProjects"] });
 
       // ✅ 이전 값 스냅샷 저장 (Infinite + 일반 혼합)
       const previousProjectsList = projectQueries.map((q) => ({
@@ -191,7 +195,7 @@ export const ProjectContentItem = ({
   return (
     <div
       onClick={handleCardClick}
-      className="w-full min-w-[262.5px] aspect-[5/3] flex flex-col bg-[#111111] rounded-[22.5px] py-[13.5px] px-[16.5px] cursor-pointer"
+      className="w-full aspect-[5/3] flex flex-col bg-[#111111] rounded-[22.5px] py-[13.5px] px-[16.5px] cursor-pointer"
     >
       <div className="flex flex-col justify-between h-full">
         {/* 🔹 상단 */}

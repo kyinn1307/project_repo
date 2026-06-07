@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { postComplete } from "@/apis/signup";
 
 function SelectableTag({

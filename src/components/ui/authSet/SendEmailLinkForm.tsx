@@ -1,4 +1,4 @@
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 
 interface Props {
   email: string;

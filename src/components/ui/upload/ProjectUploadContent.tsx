@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { TitleInput } from "../profile-detail/TitleInput";
 import { CollaborationTypeSelector } from "./CollaborationTypeSelector";
 import { GenreSelector } from "../profile-detail/GenreSelector";

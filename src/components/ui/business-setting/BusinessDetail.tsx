@@ -4,8 +4,8 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "../input";
+} from "@/components/ui/shadcn/select";
+import { Input } from "../shadcn/input";
 
 type Props = {
   price: number;
@@ -51,7 +51,7 @@ export const BusinessDetail = ({
           <Select value={periodStr} onValueChange={(v) => setPeriod(Number(v))}>
             <SelectTrigger
               className="
-      flex p-0 !h-[15px] w-[60px] min-w-[60px] text-[10.5px]
+      flex p-0 !h-[15px] w-[60px] min-w-[60px] text-[10.5px] cursor-pointer
       border-0 border-b rounded-none text-white [&_[data-placeholder]]:text-white
       [&>span:last-child]:text-white [&>span:last-child]:opacity-100
       [&>span:last-child>svg]:h-[10.5px] [&>span:last-child>svg]:w-[10.5px]
@@ -73,7 +73,7 @@ export const BusinessDetail = ({
                   key={opt.value}
                   value={opt.value}
                   className="
-                 w-[60px] !h-[13px] !py-0 !pl-0 px-0
+                 w-[60px] !h-[13px] !py-0 !pl-0 px-0 cursor-pointer
                  text-[10.5px] leading-[13px] text-center justify-center rounded-none
                  [&>span]:hidden
                "
@@ -101,7 +101,7 @@ export const BusinessDetail = ({
           >
             <SelectTrigger
               className="
-      flex p-0 !h-[15px] w-[60px] min-w-[60px] text-[10.5px]
+      flex p-0 !h-[15px] w-[60px] min-w-[60px] text-[10.5px] cursor-pointer
       border-0 border-b rounded-none text-white [&_[data-placeholder]]:text-white
       [&>span:last-child]:text-white [&>span:last-child]:opacity-100
       [&>span:last-child>svg]:h-[10.5px] [&>span:last-child>svg]:w-[10.5px] [&>svg]:size-[10.5px] [&>svg]:!text-white [&>svg]:opacity-100
@@ -125,7 +125,7 @@ export const BusinessDetail = ({
                   key={opt.value}
                   value={opt.value}
                   className="
-                  w-[60px] !h-[13px] !py-0 !pl-0 px-0
+                  w-[60px] !h-[13px] !py-0 !pl-0 px-0 cursor-pointer
                   text-[10.5px] leading-[13px] text-center justify-center rounded-none
                   [&>span]:hidden
                 "

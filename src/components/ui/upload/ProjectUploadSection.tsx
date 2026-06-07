@@ -1,6 +1,6 @@
 import { useMemo, useRef } from "react";
 import clsx from "clsx";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 import { FileItem } from "../profile-detail/FileItem";
 import { FileUploadIcon } from "@/assets/Icons/FileUploadIcon";
 import { RemoteFile } from "@/types/feed";

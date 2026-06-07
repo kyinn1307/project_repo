@@ -5,9 +5,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogClose,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/shadcn/dialog";
+import { Button } from "@/components/ui/shadcn/button";
+import { Input } from "@/components/ui/shadcn/input";
 import { Plus, X } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import type { Profile } from "@/types/my-profile";

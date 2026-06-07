@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Header } from "./common/Header";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/shadcn/sidebar";
 import { AppSidebar } from "./common/AppSidebar";
 
 export default function MusicVideoLayout() {

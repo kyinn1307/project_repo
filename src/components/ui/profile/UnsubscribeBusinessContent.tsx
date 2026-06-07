@@ -1,5 +1,5 @@
 import SetaLogo from "@/assets/SetaLogo";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 
 export const UnsubscribeBusinessContent = () => {
   return (

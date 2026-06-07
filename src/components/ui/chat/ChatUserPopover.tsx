@@ -3,13 +3,13 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/shadcn/popover";
 import { getFollowingList } from "@/apis/follower";
 import { Follower } from "@/types/follower";
 import sample from "@/assets/Images/sample-musician.png";
 import { ChatUserCheckIcon } from "@/assets/Icons/chat/ChatUserCheckIcon";
 import { Search, X } from "lucide-react";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 import { useQuery } from "@tanstack/react-query";
 
 interface UserListPopoverProps {

@@ -4,7 +4,12 @@ import {
   getLikedProjects,
   getLikedTracks,
 } from "@/apis/my-profile";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/shadcn/tabs";
 import { MusicList } from "./MusicList";
 import { FeedList } from "./FeedLIst";
 import { ProjectList } from "./ProejctList";

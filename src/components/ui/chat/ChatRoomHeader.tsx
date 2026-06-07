@@ -30,7 +30,7 @@ export const ChatRoomHeader = ({ onSelectUser }: ChatRoomHeaderProps) => {
       <div className="flex flex-row items-center h-[30px] gap-[7.5px] object-cover">
         <img
           src={profile?.profileImageUrl || sample}
-          className="w-[30px] h-[30px] rounded-full"
+          className="w-[30px] h-[30px] rounded-full object-cover"
         />
         <span>{profile?.nickname}</span>
       </div>

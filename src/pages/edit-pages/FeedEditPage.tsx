@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MusicTagSelector } from "@/components/ui/profile-detail/MusicTagSelector";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { TitleInput } from "@/components/ui/profile-detail/TitleInput";
 import { LyricsInput } from "@/components/ui/upload/LyricsInput";
 import { MusicUploadSection } from "@/components/ui/upload/MusicUploadSection";

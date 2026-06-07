@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import PlusBtn from "@/assets/Icons/upload/plus-button.svg?react";
 import DeleteBtn from "@/assets/Icons/upload/delete-button.svg?react";
+import sample from "@/assets/Images/sample-musician.png";
 interface MemberInputProps {
   value: Musician[];
   setValue: React.Dispatch<React.SetStateAction<Musician[]>>;
@@ -21,7 +22,6 @@ export const AssignMemberSection = ({ value, setValue }: MemberInputProps) => {
       if (prev.some((m) => m.id === u.id)) return prev;
       return [...prev, u];
     });
-    setOpen(false);
   };
 
   const removeMember = (id: number) => {
@@ -74,7 +74,7 @@ export const AssignMemberSection = ({ value, setValue }: MemberInputProps) => {
             placeholder="검색"
           />
 
-          <div className="absolute left-0 top-5 z-10 mt-[13.5px] w-full min-h-20 max-h-[90px] overflow-auto border-r border-[#444444]">
+          <div className="absolute left-0 top-5 z-10 mt-[13.5px] w-full min-h-20 max-h-[90px] overflow-auto border-r border-[#444444] no-scrollbar">
             {open && (
               <>
                 {loading ? (
@@ -88,17 +88,21 @@ export const AssignMemberSection = ({ value, setValue }: MemberInputProps) => {
                     <div className="flex flex-row justify-between items-center p-[7.5px] hover:bg-[#222]">
                       <button
                         key={u.id}
-                        onClick={() => addMember(u)}
                         className="w-full flex items-center gap-[7.5px]"
                       >
                         <img
-                          src={u.profileImageUrl || ""}
+                          src={u.profileImageUrl || sample}
                           alt={u.nickname}
                           className="w-[25.5px] h-[25.5px] rounded-full object-cover"
                         />
                         <span className="text-[10.5px]">{u.nickname}</span>
                       </button>
-                      <PlusBtn />
+                      <div
+                        onClick={() => addMember(u)}
+                        className="cursor-pointer"
+                      >
+                        <PlusBtn />
+                      </div>
                     </div>
                   ))
                 )}
@@ -113,17 +117,19 @@ export const AssignMemberSection = ({ value, setValue }: MemberInputProps) => {
             <div className="flex flex-row justify-between items-center p-[7.5px] ">
               <button
                 key={u.id}
-                onClick={() => addMember(u)}
                 className="w-full flex items-center gap-[7.5px]"
               >
                 <img
-                  src={u.profileImageUrl || ""}
+                  src={u.profileImageUrl || sample}
                   alt={u.nickname}
                   className="w-[25.5px] h-[25.5px] rounded-full object-cover"
                 />
                 <span className="text-[10.5px]">{u.nickname}</span>
               </button>
-              <div onClick={() => removeMember(u.id)}>
+              <div
+                onClick={() => removeMember(u.id)}
+                className="cursor-pointer"
+              >
                 <DeleteBtn />
               </div>
             </div>

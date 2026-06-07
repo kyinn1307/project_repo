@@ -16,7 +16,7 @@ export const MusicianPage = () => {
   }, [keywordFromUrl]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col overflow-x-hidden">
       <section className="flex flex-col mt-[52px] px-[5.2%] min-w-[1080px]">
         <div className="h-[30px] flex items-center text-2xl text-white font-bold">
           뮤지션

@@ -191,3 +191,12 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: none;
   opacity: 0;
 }
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

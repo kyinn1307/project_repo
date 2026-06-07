@@ -38,28 +38,31 @@ export const MusicVideoDetailContent = ({
         );
       case "CREDIT":
         return (
-          <div className="grid grid-cols-3 gap-2">
-            {participants.map((p: Participant, idx: number) => (
-              <div key={idx} className="flex flex-col items-center">
-                <img
-                  src={p.profileImageUrl || sample}
-                  alt={p.nickname}
-                  className="w-[60px] h-[60px] rounded-full object-cover"
-                />
-                <span className="mt-1 text-[13px] text-white font-medium">
-                  {p.nickname}
-                </span>
-              </div>
-            ))}
+          <div className="mx-auto">
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-3">
+              {participants.map((p: Participant, idx: number) => (
+                <div key={idx} className="w-[60px] flex flex-col items-center">
+                  <img
+                    src={p.profileImageUrl || sample}
+                    alt={p.nickname}
+                    className="w-[60px] h-[60px] rounded-full object-cover"
+                  />
+                  <span className="mt-1 text-[13px] text-white font-medium text-center truncate">
+                    {p.nickname}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         );
+
       default:
         return null;
     }
   };
 
   return (
-    <div className="flex justify-center px-[50px] mt-[50.5px] text-center text-white leading-relaxed overflow-y-auto max-h-[600px] lyrics-scrollbar">
+    <div className="flex justify-center px-[15px] mt-[50.5px] text-center text-white leading-relaxed overflow-y-auto max-h-[600px] lyrics-scrollbar">
       {renderContent()}
     </div>
   );

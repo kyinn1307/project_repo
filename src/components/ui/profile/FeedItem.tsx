@@ -29,6 +29,8 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
     creatorNickname,
     creatorProfileImageUrl,
     tags,
+    description,
+    title,
   } = feed;
 
   const queryClient = useQueryClient();
@@ -38,58 +40,81 @@ export const FeedItem = ({ feed, isUser }: FeedItemProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [cardWidth, setCardWidth] = useState(720);
 
-  // ✅ ✅ ✅ InfiniteQuery에서 최신 feed 상태 가져오기
-  const cachedFeeds = queryClient.getQueryData<InfiniteData<FeedResponse>>([
-    "feeds",
-  ]);
+  // InfiniteQuery에서 최신 feed 상태 가져오기
+  const feedQueries = queryClient.getQueryCache().findAll({
+    predicate: (query) => {
+      const key = query.queryKey[0];
+      return key === "feeds" || key === "myFeeds" || key === "userFeeds";
+    },
+  });
 
-  const liveFeed =
-    cachedFeeds?.pages.flatMap((page) => page.feeds).find((f) => f.id === id) ??
-    feed;
+  let liveFeed: Feed | undefined;
 
-  const { liked, likeCount, title, description } = liveFeed;
+  for (const q of feedQueries) {
+    const data = q.state.data as InfiniteData<FeedResponse> | undefined;
+    if (!data || !("pages" in data)) continue;
+
+    const found = data.pages
+      .flatMap((p) => p.feeds)
+      .find((f) => f.id === feed.id);
+
+    if (found) {
+      liveFeed = found;
+      break;
+    }
+  }
+
+  const { liked, likeCount } = liveFeed ?? feed;
 
   // ✅ ✅ ✅ 낙관적 업데이트
   const { mutate } = useMutation({
     mutationFn: () => toggleFeedLike(id),
 
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["feeds"] });
+      for (const q of feedQueries) {
+        await queryClient.cancelQueries({ queryKey: q.queryKey });
+      }
 
-      const previous = queryClient.getQueryData<InfiniteData<FeedResponse>>([
-        "feeds",
-      ]);
+      const previousFeedsList = feedQueries.map((q) => ({
+        key: q.queryKey,
+        data: q.state.data as InfiniteData<FeedResponse> | undefined,
+      }));
 
-      if (!previous) return { previous };
+      for (const { key, data } of previousFeedsList) {
+        if (!data) continue;
 
-      queryClient.setQueryData<InfiniteData<FeedResponse>>(["feeds"], {
-        ...previous,
-        pages: previous.pages.map((page) => ({
-          ...page,
-          feeds: page.feeds.map((f) =>
-            f.id === id
-              ? {
-                  ...f,
-                  liked: !f.liked,
-                  likeCount: f.liked ? f.likeCount - 1 : f.likeCount + 1,
-                }
-              : f
-          ),
-        })),
-      });
+        queryClient.setQueryData<InfiniteData<FeedResponse>>(key, {
+          ...data,
+          pages: data.pages.map((page) => ({
+            ...page,
+            feeds: page.feeds.map((f) =>
+              f.id === id
+                ? {
+                    ...f,
+                    liked: !f.liked,
+                    likeCount: f.liked ? f.likeCount - 1 : f.likeCount + 1,
+                  }
+                : f
+            ),
+          })),
+        });
+      }
 
-      return { previous };
+      return { previousFeedsList };
     },
 
-    onError: (_err, _vars, context) => {
-      if (context?.previous) {
-        queryClient.setQueryData(["feeds"], context.previous);
+    onError: (_e, _v, ctx) => {
+      if (ctx?.previousFeedsList) {
+        for (const { key, data } of ctx.previousFeedsList) {
+          queryClient.setQueryData(key, data);
+        }
       }
-      alert("좋아요 처리 실패");
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["feeds"] });
+      for (const q of feedQueries) {
+        queryClient.invalidateQueries({ queryKey: q.queryKey });
+      }
     },
   });
 

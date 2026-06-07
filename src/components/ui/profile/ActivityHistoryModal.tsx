@@ -5,9 +5,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+} from "@/components/ui/shadcn/dialog";
+import { Button } from "@/components/ui/shadcn/button";
+import { Input } from "@/components/ui/shadcn/input";
 import { createCareer, updateCareer } from "@/apis/career";
 import { Career, CareerPayload } from "@/types/career";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

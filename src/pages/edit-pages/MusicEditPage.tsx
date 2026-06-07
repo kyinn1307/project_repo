@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getTrackDetail } from "@/apis/music";
 import { GenreSelector } from "@/components/ui/profile-detail/GenreSelector";
 import { MusicTagSelector } from "@/components/ui/profile-detail/MusicTagSelector";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { TitleInput } from "@/components/ui/profile-detail/TitleInput";
 import { LyricsInput } from "@/components/ui/upload/LyricsInput";
 import { CommentInput } from "@/components/ui/upload/CommentInput";

@@ -1,6 +1,6 @@
 // HistoryContent.tsx
 import { useState } from "react";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 import { ActivityHistoryModal } from "./ActivityHistoryModal";
 import { HistoryList } from "./HistoryList";
 import { HistoryProfile } from "./HistoryProfile";

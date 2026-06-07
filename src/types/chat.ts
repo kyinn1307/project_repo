@@ -15,6 +15,7 @@ export interface ChatRoomPreview {
   roomId: number;
   lastMessage: string;
   lastMessageTime: string;
+  unreadCount: number | null;
   participantIds: number[];
   nickname: string;
   opponentUserNickname?: string;

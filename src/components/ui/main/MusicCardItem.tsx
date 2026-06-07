@@ -3,14 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
 import DefaultMusic from "@/assets/Images/logo_blue.png";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { playTrack } from "@/apis/music";
 
 export const MusicCardItem = ({ music }: { music: Music }) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hasReportedPlayRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
   const imageUrl = music.imageFiles?.[0]?.url;
   const audioUrl = music.audioFiles?.[0]?.url;
+
+  const { mutate: playMutate } = useMutation({
+    mutationFn: () => playTrack(music.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["track", music.id] });
+    },
+  });
 
   const handleTogglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -27,12 +38,23 @@ export const MusicCardItem = ({ music }: { music: Music }) => {
   };
 
   useEffect(() => {
+    hasReportedPlayRef.current = false;
+  }, [music.id]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const onEnded = () => setIsPlaying(false);
-    audio.addEventListener("ended", onEnded);
-    return () => audio.removeEventListener("ended", onEnded);
-  }, []);
+
+    const handleTimeUpdate = () => {
+      if (!hasReportedPlayRef.current && audio.currentTime >= 10) {
+        hasReportedPlayRef.current = true;
+        playMutate();
+      }
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    return () => audio.removeEventListener("timeupdate", handleTimeUpdate);
+  }, [playMutate]);
 
   return (
     <div

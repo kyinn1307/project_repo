@@ -1,8 +1,13 @@
 import { useParams } from "react-router-dom";
 
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getUserTracks, getUserFeeds, getUserProjects } from "@/apis/user";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/shadcn/tabs";
 import { MusicList } from "./MusicList";
 import { FeedList } from "./FeedLIst";
 import { ProjectList } from "./ProejctList";
@@ -20,26 +25,51 @@ export function UserProfileMenu() {
 
   const userId = Number(id);
 
-  const { data: tracksRes } = useQuery({
+  const { data: tracksQuery } = useInfiniteQuery({
     queryKey: ["userTracks", userId],
-    queryFn: () => getUserTracks({ userId }),
-    select: (res) => res.data.data.tracks,
     enabled: !!userId,
+    initialPageParam: undefined as number | undefined,
+
+    queryFn: ({ pageParam }) => getUserTracks(userId, pageParam, 10),
+
+    getNextPageParam: (lastPage) =>
+      typeof lastPage?.nextCursor === "number"
+        ? lastPage.nextCursor
+        : undefined,
   });
 
-  const { data: feedsRes } = useQuery({
+  const tracksRes = tracksQuery?.pages.flatMap((page) => page.tracks) ?? [];
+
+  const { data: feedsQuery } = useInfiniteQuery({
     queryKey: ["userFeeds", userId],
-    queryFn: () => getUserFeeds(userId),
-    select: (res) => res.data.data.feeds,
     enabled: !!userId,
+    initialPageParam: undefined as number | undefined,
+
+    queryFn: ({ pageParam }) => getUserFeeds(userId, pageParam, 4),
+
+    getNextPageParam: (lastPage) =>
+      typeof lastPage?.nextCursor === "number"
+        ? lastPage.nextCursor
+        : undefined,
   });
 
-  const { data: projectsRes } = useQuery({
+  const feedsRes = feedsQuery?.pages.flatMap((page) => page.feeds) ?? [];
+
+  const { data: projectsQuery } = useInfiniteQuery({
     queryKey: ["userProjects", userId],
-    queryFn: () => getUserProjects(userId),
-    select: (res) => res.data.data.projects,
     enabled: !!userId,
+    initialPageParam: undefined as number | undefined,
+
+    queryFn: ({ pageParam }) => getUserProjects(userId, pageParam, 4),
+
+    getNextPageParam: (lastPage) =>
+      typeof lastPage?.nextCursor === "number"
+        ? lastPage.nextCursor
+        : undefined,
   });
+
+  const projectsRes =
+    projectsQuery?.pages.flatMap((page) => page.projects) ?? [];
 
   const { data: businessRes } = useQuery({
     queryKey: ["userBusiness", userId],
@@ -57,7 +87,7 @@ export function UserProfileMenu() {
   ];
 
   return (
-    <Tabs defaultValue="music" className="flex-1">
+    <Tabs defaultValue="music" className="flex-1 min-w-135 max-w-180">
       <TabsList className="w-full justify-start rounded-none border-b border-gray-700 bg-transparent p-0 flex">
         {tabList.map((tab) => (
           <TabsTrigger

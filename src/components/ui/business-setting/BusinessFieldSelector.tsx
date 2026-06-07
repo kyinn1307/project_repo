@@ -22,19 +22,12 @@ export const BusinessFieldSelector = ({
   setValue,
   isRequired,
 }: BusinessFieldSelectorProps) => {
-  //   const handleClick = (label: string) => {
-  //     setValue((prev) =>
-  //       prev.includes(label)
-  //         ? prev.filter((item) => item !== label)
-  //         : [...prev, label]
-  //     );
-  //   };
   const handleClick = (label: string) => {
     if (value === label) {
-      if (!isRequired) setValue(""); // 선택 해제 허용
+      if (!isRequired) setValue("");
       return;
     }
-    setValue(label); // 항상 하나만 보관
+    setValue(label);
   };
 
   return (
@@ -47,20 +40,13 @@ export const BusinessFieldSelector = ({
       </div>
       <div className="flex flex-wrap gap-[7.5px]">
         {fieldList.map((label) => {
-          //   const isSelected = value.includes(label);
           const isSelected = value === label;
           return (
-            // <button
-            //   key={label}
-            //   onClick={() => handleClick(label)}
-            //   className={`px-[7.5px] py-[2.25px] text-[10.5px] rounded-full cursor-pointer
-            //       ${isSelected ? "bg-[#0050ef]" : "bg-[#333333]"}`}
-            // >
             <button
               key={label}
               type="button"
               onClick={() => handleClick(label)}
-              className={`px-[7.5px] py-[2.25px] text-[10.5px] rounded-full
+              className={`px-[7.5px] py-[2.25px] text-[10.5px] rounded-full cursor-pointer
               ${isSelected ? "bg-[#0050ef]" : "bg-[#333333]"}`}
             >
               {label}

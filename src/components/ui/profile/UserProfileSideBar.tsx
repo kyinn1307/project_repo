@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import sample from "@/assets/Images/sample-musician.png";
-import { Card, CardContent } from "@/components/ui/card";
-import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
+import { Card, CardContent } from "@/components/ui/shadcn/card";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
 import {
@@ -10,8 +9,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "../button";
+} from "@/components/ui/shadcn/dialog";
+import { Button } from "../shadcn/button";
 
 import { getUserProfile } from "@/apis/user";
 import { followUser, unfollowUser } from "@/apis/follower";
@@ -36,7 +35,7 @@ export function UserProfileSidebar() {
   const [followerList, setFollowerList] = useState<Follower[]>([]);
   const [followingList, setFollowingList] = useState<Follower[]>([]);
 
-  // 마이 프로필 정보 조회
+  // 사용자 프로필 정보 조회
   const { data: info } = useQuery({
     queryKey: ["userProfile", userId],
     queryFn: () => getUserProfile(userId),
@@ -173,7 +172,7 @@ export function UserProfileSidebar() {
 
   return (
     <>
-      <Card className="w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
+      <Card className="w-[300px] rounded-[15px] bg-[#111] text-white border-none max-h-150">
         <CardContent className="p-6 flex flex-col items-center">
           <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden mb-[30px] bg-[#222222]">
             {/* 서버 이미지 조건부 렌더 */}
@@ -313,9 +312,24 @@ export function UserProfileSidebar() {
           <div className="w-full mb-4 text-[10.5px]">
             <span className="text-[#555555]">링크</span>
             <div className="flex flex-col gap-[7.5px] mt-[15px]">
-              <div className="flex flex-row items-center gap-2 text-[#777777]">
-                <YoutubeIcon />
-                <span className="cursor-pointer">YouTube</span>
+              <div className="flex flex-row items-center gap-2 text-[#777777] w-full">
+                {info?.link ? (
+                  <a
+                    href={
+                      info.link.startsWith("http")
+                        ? info.link
+                        : `https://${info.link}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="truncate max-w-full cursor-pointer hover:underline"
+                    title={info.link}
+                  >
+                    {info.link}
+                  </a>
+                ) : (
+                  <span className="text-[#555555]">링크 없음</span>
+                )}
               </div>
             </div>
           </div>
@@ -328,7 +342,6 @@ export function UserProfileSidebar() {
                   ? info.introduction
                   : "아직 소개글이 없어요"}
               </p>
-              <div className="text-[#0050EF] mt-1 cursor-pointer">더보기</div>
             </div>
           </div>
         </CardContent>

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/shadcn/card";
 import { ProfileEditModal } from "./ProfileEditModal";
-import { YoutubeIcon } from "@/assets/Icons/profile-sidebar/YoutubeIcon";
 import { EmailIcon } from "@/assets/Icons/profile-sidebar/EmailIcon";
 import { MusicIcon } from "@/assets/Icons/MusicIcon";
 import {
@@ -10,7 +9,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui/shadcn/dialog";
 import { getMyProfile } from "@/apis/my-profile";
 import { useUserStore } from "@/stores/useUserStore";
 import {
@@ -109,7 +108,7 @@ export function ProfileSideBar() {
 
   return (
     <>
-      <Card className="w-[20%] min-w-[300px] rounded-[15px] bg-[#111] text-white border-none ">
+      <Card className="w-[20%] min-w-[300px] rounded-[15px] bg-[#111] text-white border-none max-h-150">
         <CardContent className="p-6 flex flex-col items-center">
           <div className="relative w-[75px] h-[75px] rounded-full overflow-hidden mb-[30px] bg-[#222222]">
             {info?.profileImageUrl && (
@@ -180,9 +179,24 @@ export function ProfileSideBar() {
           <div className="w-full mb-4 text-[10.5px]">
             <span className="text-[#555555]">링크</span>
             <div className="flex flex-col gap-[7.5px] mt-[15px]">
-              <div className="flex flex-row items-center gap-2 text-[#777777]">
-                <YoutubeIcon />
-                <span className="cursor-pointer">YouTube</span>
+              <div className="flex flex-row items-center gap-2 text-[#777777] w-full">
+                {info?.link ? (
+                  <a
+                    href={
+                      info.link.startsWith("http")
+                        ? info.link
+                        : `https://${info.link}`
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-pointer truncate max-w-full text-[#777777] hover:underline"
+                    title={info.link}
+                  >
+                    {info.link}
+                  </a>
+                ) : (
+                  <span className="text-[#555555]">링크 없음</span>
+                )}
               </div>
             </div>
           </div>
@@ -195,7 +209,6 @@ export function ProfileSideBar() {
                   ? info.introduction
                   : "아직 소개글이 없어요"}
               </p>
-              <div className="text-[#0050EF] mt-1 cursor-pointer">더보기</div>
             </div>
           </div>
         </CardContent>

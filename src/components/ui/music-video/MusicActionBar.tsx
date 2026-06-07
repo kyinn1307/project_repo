@@ -15,7 +15,6 @@ interface Props {
 export const MusicActionBar = ({ onTabChange, track, cursorId }: Props) => {
   const queryClient = useQueryClient();
 
-  // ✅ 항상 캐시 기준 최신 트랙 사용
   const cached = queryClient.getQueryData<TrackResponse>(["track", cursorId]);
   const liveTrack = cached?.tracks?.[0] ?? track;
 
@@ -24,10 +23,9 @@ export const MusicActionBar = ({ onTabChange, track, cursorId }: Props) => {
   const { mutate: likeMutate } = useMutation({
     mutationFn: () => toggleTrackLike(track.id),
 
-    // ✅ 1️⃣ 낙관적 업데이트
     onMutate: async () => {
       await queryClient.cancelQueries({
-        queryKey: ["track", cursorId], // ✅ 완전히 일치
+        queryKey: ["track", cursorId],
       });
 
       const previous = queryClient.getQueryData<TrackResponse>([
@@ -55,14 +53,12 @@ export const MusicActionBar = ({ onTabChange, track, cursorId }: Props) => {
       return { previous };
     },
 
-    // ✅ 2️⃣ 실패 시 롤백
     onError: (_err, _vars, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(["track", cursorId], ctx.previous);
       }
     },
 
-    // ✅ 3️⃣ 서버 데이터와 동기화
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ["track"],
@@ -72,7 +68,7 @@ export const MusicActionBar = ({ onTabChange, track, cursorId }: Props) => {
 
   return (
     <div className="flex flex-col items-center gap-[15px] py-2">
-      {/* ✅ 좋아요 */}
+      {/* 좋아요 */}
       <div className="flex flex-col items-center">
         <button
           className="w-[39px] h-[39px] bg-[#2D2D2D] rounded-full flex items-center justify-center cursor-pointer"
@@ -92,7 +88,7 @@ export const MusicActionBar = ({ onTabChange, track, cursorId }: Props) => {
       <div className="flex flex-col items-center">
         <button
           onClick={() => onTabChange("LYRICS")}
-          className="flex justify-center items-center w-[39px] h-[39px] rounded-full bg-[#2D2D2D]"
+          className="flex justify-center items-center w-[39px] h-[39px] rounded-full bg-[#2D2D2D] cursor-pointer"
         >
           <LyricsIcon />
         </button>
@@ -103,7 +99,7 @@ export const MusicActionBar = ({ onTabChange, track, cursorId }: Props) => {
       <div className="flex flex-col items-center">
         <button
           onClick={() => onTabChange("COMMENT")}
-          className="flex justify-center items-center w-[39px] h-[39px] rounded-full bg-[#2D2D2D]"
+          className="flex justify-center items-center w-[39px] h-[39px] rounded-full bg-[#2D2D2D] cursor-pointer"
         >
           <KeyComment />
         </button>
@@ -114,7 +110,7 @@ export const MusicActionBar = ({ onTabChange, track, cursorId }: Props) => {
       <div className="flex flex-col items-center">
         <button
           onClick={() => onTabChange("CREDIT")}
-          className="flex justify-center items-center w-[39px] h-[39px] rounded-full bg-[#2D2D2D]"
+          className="flex justify-center items-center w-[39px] h-[39px] rounded-full bg-[#2D2D2D] cursor-pointer"
         >
           <Users className="text-white w-[18px] h-[18px]" />
         </button>

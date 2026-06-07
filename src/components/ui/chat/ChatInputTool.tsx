@@ -1,5 +1,5 @@
 import { ChatInput } from "./ChatInput";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 import { useState } from "react";
 import { ChatOptionModal } from "./ChatOptionModal";
 

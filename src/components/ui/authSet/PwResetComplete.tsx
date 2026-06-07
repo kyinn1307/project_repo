@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 
 export const PwResetComplete = () => {
   const navigate = useNavigate();

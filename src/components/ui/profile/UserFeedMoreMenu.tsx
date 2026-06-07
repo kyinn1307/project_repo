@@ -2,7 +2,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/shadcn/popover";
 import { MoreHorizontal, Link, UserX } from "lucide-react";
 
 // interface UserFeedMoreMenuProps {

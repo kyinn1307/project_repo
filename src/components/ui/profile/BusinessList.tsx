@@ -1,5 +1,5 @@
 import { Business } from "@/types/business";
-import { StarterBusiness } from "./StarterBusinessItem";
+import { StarterBusiness } from "./StarterBusiness";
 import { GrowthBusiness } from "./GrowthBusiness";
 import { ProBusiness } from "./ProBusiness";
 import { useEffect, useState } from "react";
@@ -62,23 +62,22 @@ export const BusinessList = ({
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex flex-row gap-[15px]">
-        <StarterBusiness
-          isOtherUser={isOtherUser}
-          isEmpty={!starter}
-          business={starter}
-          onDelete={handleDelete}
-          profileImageUrl={info?.profileImageUrl ?? undefined}
-        />
-        <GrowthBusiness
-          isOtherUser={isOtherUser}
-          isEmpty={!growth}
-          business={growth}
-          onDelete={handleDelete}
-          profileImageUrl={info?.profileImageUrl ?? undefined}
-        />
-      </div>
+    <div className="grid grid-cols-2 gap-[15px]">
+      <StarterBusiness
+        isOtherUser={isOtherUser}
+        isEmpty={!starter}
+        business={starter}
+        onDelete={handleDelete}
+        profileImageUrl={info?.profileImageUrl ?? undefined}
+      />
+      <GrowthBusiness
+        isOtherUser={isOtherUser}
+        isEmpty={!growth}
+        business={growth}
+        onDelete={handleDelete}
+        profileImageUrl={info?.profileImageUrl ?? undefined}
+      />
+
       <ProBusiness
         isOtherUser={isOtherUser}
         isEmpty={!pro}

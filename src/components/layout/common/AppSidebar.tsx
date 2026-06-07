@@ -1,8 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // ✅ 추가
+import { useLocation, useNavigate } from "react-router-dom";
 import { checkLogin } from "@/utils/checkLogin";
 import { MoreMenu } from "./MoreMenu";
-import { useSidebar } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/shadcn/sidebar";
 import {
   CirclePlus,
   Home,
@@ -23,7 +23,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/shadcn/sidebar";
 import { MessageIcon } from "@/assets/Icons/MessageIcon";
 
 const items = [

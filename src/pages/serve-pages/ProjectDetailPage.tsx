@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { getProjectDetail } from "@/apis/project";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import {
   Clock,
   Download,
@@ -19,6 +19,9 @@ import sample from "@/assets/Images/sample-musician.png";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toggleProjectLike } from "@/apis/project";
 import type { Project } from "@/types/project";
+import { followUser, unfollowUser } from "@/apis/follower";
+import { getUserProfile } from "@/apis/user";
+import { Profile } from "@/types/my-profile";
 
 export const ProjectDetailPage = () => {
   const { id } = useParams();
@@ -45,6 +48,24 @@ export const ProjectDetailPage = () => {
         (key === "project" && query.queryKey[1] === id)
       );
     },
+  });
+
+  const creatorId = project?.creatorId;
+
+  // 사용자 프로필 정보 조회
+  const { data: info } = useQuery({
+    queryKey: ["userProfile", creatorId],
+    queryFn: () => getUserProfile(creatorId!),
+    select: (res) => res.data.data as Profile,
+    enabled: Number.isFinite(creatorId),
+  });
+
+  const { mutate: followMutate } = useMutation({
+    mutationFn: (targetId: number) => followUser(targetId),
+  });
+
+  const { mutate: unfollowMutate } = useMutation({
+    mutationFn: (targetId: number) => unfollowUser(targetId),
   });
 
   const { mutate: toggleLike } = useMutation({
@@ -80,7 +101,6 @@ export const ProjectDetailPage = () => {
     },
 
     onSettled: () => {
-      // 🔄 서버 동기화
       for (const q of projectQueries) {
         queryClient.invalidateQueries({ queryKey: q.queryKey });
       }
@@ -201,9 +221,44 @@ export const ProjectDetailPage = () => {
             {/* 팔로우 메시지 버튼 */}
             {userId !== project.creatorId && (
               <div className="flex flex-row gap-[7.5px]">
-                <Button className="w-15 h-[22.5px] text-xs font-medium bg-[#0050ef] cursor-pointer rounded-[3.75px]">
-                  팔로우
-                </Button>
+                {!info ? (
+                  <div className="w-15 h-[22.5px] rounded-[3.75px] bg-[#0050ef] animate-pulse" />
+                ) : (
+                  <>
+                    {info?.relationship == 1 && (
+                      <Button
+                        className="w-15 h-[22.5px] text-xs font-medium bg-[#0050ef] cursor-pointer rounded-[3.75px]"
+                        onClick={() => followMutate(project.creatorId)}
+                      >
+                        팔로우
+                      </Button>
+                    )}
+                    {info?.relationship == 2 && (
+                      <Button
+                        className="w-15 h-[22.5px] text-xs font-medium bg-[#0050ef] cursor-pointer rounded-[3.75px]"
+                        onClick={() => unfollowMutate(project.creatorId)}
+                      >
+                        언팔로우
+                      </Button>
+                    )}
+                    {info?.relationship == 3 && (
+                      <Button
+                        className="w-15 h-[22.5px] text-xs font-medium bg-[#0050ef] cursor-pointer rounded-[3.75px]"
+                        onClick={() => followMutate(project.creatorId)}
+                      >
+                        맞팔로우
+                      </Button>
+                    )}
+                    {info?.relationship == 4 && (
+                      <Button
+                        className="w-15 h-[22.5px] text-xs font-medium bg-[#0050ef] cursor-pointer rounded-[3.75px]"
+                        onClick={() => unfollowMutate(project.creatorId)}
+                      >
+                        언팔로우
+                      </Button>
+                    )}
+                  </>
+                )}
                 <Button
                   className="w-15 h-[22.5px] text-xs font-medium bg-[#555555] cursor-pointer rounded-[3.75px]"
                   onClick={() => {

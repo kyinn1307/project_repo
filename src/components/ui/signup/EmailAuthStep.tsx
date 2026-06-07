@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { validateAuthCode, resendEmailCode } from "@/apis/email";
 import VerificationCodeInput from "@/components/ui/signup/VerificationCodeInput";
 

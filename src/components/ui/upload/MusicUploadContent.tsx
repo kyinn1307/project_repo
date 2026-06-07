@@ -2,7 +2,7 @@ import { useState } from "react";
 import { uploadTrack } from "@/apis/music";
 import { GenreSelector } from "@/components/ui/profile-detail/GenreSelector";
 import { MusicTagSelector } from "@/components/ui/profile-detail/MusicTagSelector";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { TitleInput } from "../profile-detail/TitleInput";
 import { LyricsInput } from "./LyricsInput";
 import { CommentInput } from "./CommentInput";

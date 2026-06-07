@@ -1,7 +1,7 @@
 import { SearchBar } from "@/components/ui/main/SearchBar";
 import { AlarmIcon } from "@/assets/Icons/AlarmIcon";
 import { SetaLetterLogo } from "@/assets/SetaLetterLogo";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger } from "@/components/ui/shadcn/sidebar";
 import { useNavigate } from "react-router-dom";
 import { MypageIcon } from "@/assets/Icons/MypageIcon";
 import { useSidebarStore } from "@/stores/useSidebarStore";

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import type { Genre } from "@/types/music";
 import { useNavigate } from "react-router-dom";
 import { getBusinessDetail, updateBusiness } from "@/apis/business";

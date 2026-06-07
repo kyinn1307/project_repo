@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { GenreSelector } from "@/components/ui/profile-detail/GenreSelector";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { ProjectDetailInput } from "@/components/ui/upload/ProjectDetailInput";
 import { ProjectUploadSection } from "@/components/ui/upload/ProjectUploadSection";
 import { FieldSelector } from "@/components/ui/upload/FieldSelector";

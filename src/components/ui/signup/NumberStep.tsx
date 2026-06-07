@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/shadcn/input";
+import { Button } from "@/components/ui/shadcn/button";
 import { cn } from "@/lib/utils";
 import { postPhoneNumber } from "@/apis/signup";
 

@@ -1,6 +1,6 @@
-import { ProjectList } from "../profile/ProejctList";
 import { getAllProjects } from "@/apis/project";
 import { useQuery } from "@tanstack/react-query";
+import { ProjectContentItem } from "../serve-pages/ProjectContentItem";
 
 export const MainProjectList = () => {
   const { data } = useQuery({
@@ -9,8 +9,10 @@ export const MainProjectList = () => {
   });
 
   return (
-    <div className="w-full">
-      {data && <ProjectList list={data?.projects} />}
+    <div className="grid grid-cols-4 gap-[1%] gap-y-[30px] w-full">
+      {data?.projects.map((project) => (
+        <ProjectContentItem key={project.id} project={project} isUser={false} />
+      ))}
     </div>
   );
 };

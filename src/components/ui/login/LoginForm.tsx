@@ -1,6 +1,6 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/shadcn/input";
+import { Button } from "@/components/ui/shadcn/button";
+import { Label } from "@/components/ui/shadcn/label";
 import { cn } from "@/lib/utils";
 
 interface LoginFormProps {

@@ -4,7 +4,7 @@ import { MusicActionBar } from "./MusicActionBar";
 import { ArrowRight } from "lucide-react";
 import { MusicPlayIcon } from "@/assets/Icons/music-video/MusicPlayIcon";
 import { PauseVideoIcon } from "@/assets/Icons/music-video/PauseVideoIcon";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 import { MusicVideoDetailContainer } from "./MusicVideoDetailContainer";
 import { Music } from "@/types/music";
 import { useNavigate } from "react-router-dom";
@@ -153,7 +153,7 @@ export const MusicVideoContainer = ({
     };
   }, [audioUrl, playMutate]);
 
-  // 기존 progress bar 업데이트 effect는 그대로 유지 (아래 예시처럼)
+  // 기존 progress bar 업데이트는 그대로 유지
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !audioUrl) return;

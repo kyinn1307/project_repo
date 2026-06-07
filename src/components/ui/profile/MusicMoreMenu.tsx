@@ -2,7 +2,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/shadcn/popover";
 import { MoreHorizontal, Link, Edit, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { deleteTrack } from "@/apis/music";

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { FindIdForm } from "@/components/ui/authSet/FindIdForm";
 import { postFindId } from "@/apis/login";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import SetaLogo from "@/assets/SetaLogo";
 export default function FindIdPage() {
   const navigate = useNavigate();

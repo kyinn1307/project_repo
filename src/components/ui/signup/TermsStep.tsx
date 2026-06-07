@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/shadcn/input";
+import { Button } from "@/components/ui/shadcn/button";
 import { Separator } from "@radix-ui/react-separator";
 import { postTerms } from "@/apis/signup";
 import { useNavigate } from "react-router-dom";

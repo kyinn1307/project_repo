@@ -6,7 +6,7 @@ import { BusinessPayload } from "@/types/business";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/shadcn/button";
 import { BusinessGenreSelector } from "@/components/ui/business-setting/BusinessGenreSelector";
 import { BusinessFieldSelector } from "@/components/ui/business-setting/BusinessFieldSelector";
 

@@ -57,7 +57,7 @@ export const MusicPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex flex-col pt-[38px] px-[5.2%]">
+    <div className="flex flex-col pt-[38px] px-[5.2%] overflow-x-hidden">
       <div className="h-[30px] flex items-center text-2xl text-white font-bold">
         음원
       </div>

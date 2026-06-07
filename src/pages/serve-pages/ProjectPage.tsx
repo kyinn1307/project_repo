@@ -66,7 +66,7 @@ export const ProjectPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex flex-col pt-[38px] px-[5.2%] min-w-[1080px]">
+    <div className="flex flex-col pt-[38px] px-[5.2%] overflow-x-hidden">
       <section className="flex flex-col mb-[37.5px]">
         <div className="text-2xl text-white font-bold">프로젝트</div>
 

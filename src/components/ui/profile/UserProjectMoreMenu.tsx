@@ -2,14 +2,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/components/ui/shadcn/popover";
 import { MoreHorizontal, Link, UserX } from "lucide-react";
 
-// interface UserProjectMoreMenuProps {
-//   projectId: number;
-// }
-
-// export function UserProjectMoreMenu({ projectId }: UserProjectMoreMenuProps) {
 export function UserProjectMoreMenu() {
   return (
     <Popover>

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Button } from "../button";
+import { Button } from "../shadcn/button";
 import { FileItem } from "../profile-detail/FileItem";
 import { FileUploadIcon } from "@/assets/Icons/FileUploadIcon";
 import type { RemoteFile } from "@/types/feed";

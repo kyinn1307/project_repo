@@ -1,13 +1,18 @@
 import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import {
   getMyBusiness,
   getMyFeeds,
   getMyProjects,
   getMyTracks,
 } from "@/apis/my-profile";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/shadcn/tabs";
 import { MusicList } from "./MusicList";
 import { FeedList } from "./FeedLIst";
 import { ProjectList } from "./ProejctList";
@@ -16,6 +21,9 @@ import { SubscribeBusinessContent } from "./SubscribeBusinessContent";
 import { UnsubscribeBusinessContent } from "./UnsubscribeBusinessContent";
 import { useUserStore } from "@/stores/useUserStore";
 import { Business } from "@/types/business";
+import { Music, TrackResponse } from "@/types/music";
+import { Feed, FeedResponse } from "@/types/feed";
+import { Project, ProjectResponse } from "@/types/project";
 
 export function ProfileMenu() {
   const navigate = useNavigate();
@@ -67,22 +75,52 @@ export function ProfileMenu() {
     }
   };
 
-  const { data: tracksRes } = useQuery({
+  const { data: tracksRes } = useInfiniteQuery<
+    TrackResponse,
+    Error,
+    Music[],
+    [string],
+    number | undefined
+  >({
     queryKey: ["myTracks"],
-    queryFn: getMyTracks,
-    select: (res) => res.data.data.tracks,
+    queryFn: ({ pageParam }) => getMyTracks(pageParam, 10),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      return lastPage?.nextCursor ?? undefined;
+    },
+    select: (data) => data.pages.flatMap((p) => p.tracks),
   });
 
-  const { data: feedsRes } = useQuery({
+  const { data: feedsRes } = useInfiniteQuery<
+    FeedResponse,
+    Error,
+    Feed[],
+    [string],
+    number | undefined
+  >({
     queryKey: ["myFeeds"],
-    queryFn: getMyFeeds,
-    select: (res) => res.data.data.feeds,
+    queryFn: ({ pageParam }) => getMyFeeds(pageParam, 4),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      return lastPage?.nextCursor ?? undefined;
+    },
+    select: (data) => data.pages.flatMap((p) => p.feeds),
   });
 
-  const { data: projectsRes } = useQuery({
+  const { data: projectsRes } = useInfiniteQuery<
+    ProjectResponse,
+    Error,
+    Project[],
+    [string],
+    number | undefined
+  >({
     queryKey: ["myProjects"],
-    queryFn: getMyProjects,
-    select: (res) => res.data.data.projects,
+    queryFn: ({ pageParam }) => getMyProjects(pageParam, 6),
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      return lastPage?.nextCursor ?? undefined;
+    },
+    select: (data) => data.pages.flatMap((p) => p.projects),
   });
 
   const { data: businessRes } = useQuery({
@@ -100,7 +138,11 @@ export function ProfileMenu() {
   ];
 
   return (
-    <Tabs value={currentTab} onValueChange={handleChange} className="flex-1">
+    <Tabs
+      value={currentTab}
+      onValueChange={handleChange}
+      className="flex-1 min-w-135 max-w-180"
+    >
       <TabsList className="w-full justify-start rounded-none border-b border-gray-700 bg-transparent p-0 flex">
         {tabList.map((tab) => (
           <TabsTrigger

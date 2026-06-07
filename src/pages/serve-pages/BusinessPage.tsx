@@ -4,7 +4,7 @@ import { useInView } from "react-intersection-observer";
 import { useUserStore } from "@/stores/useUserStore";
 import { Business, BusinessResponse } from "@/types/business";
 import { getAllBusiness } from "@/apis/business";
-import { StarterBusiness } from "@/components/ui/profile/StarterBusinessItem";
+import { StarterBusiness } from "@/components/ui/profile/StarterBusiness";
 import { SearchBar } from "@/components/ui/main/SearchBar";
 import { GrowthBusiness } from "@/components/ui/profile/GrowthBusiness";
 import { ProBusiness } from "@/components/ui/profile/ProBusiness";
@@ -80,7 +80,7 @@ export const BusinessPage = () => {
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
-    <div className="flex flex-col pt-[38px] px-[5.2%]">
+    <div className="flex flex-col pt-[38px] px-[5.2%] overflow-x-hidden">
       <section className="flex flex-col mb-[37.5px] min-w-[1080px]">
         <div className="text-2xl text-white font-bold">비즈니스</div>
 
@@ -97,22 +97,23 @@ export const BusinessPage = () => {
 
         {isLoading && <div className="text-white">로딩 중...</div>}
         {isError && <div className="text-red-500">비즈니스 불러오기 실패</div>}
-
         {!!allBusiness.length && (
-          <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px]">
-            {allBusiness.map((b) => {
-              const GradeComp =
-                GRADE_COMPONENT[b.grade as "Starter" | "Growth" | "Pro"] ??
-                StarterBusiness;
+          <div className="flex flex-wrap gap-x-[22.5px] gap-y-[18.75px] min-w-[1080px] max-w-[1490px]">
+            <div className="grid grid-cols-4 gap-x-[22.5px] gap-y-[18.75px] w-full">
+              {allBusiness.map((b) => {
+                const GradeComp =
+                  GRADE_COMPONENT[b.grade as "Starter" | "Growth" | "Pro"] ??
+                  StarterBusiness;
 
-              return (
-                <GradeComp
-                  key={b.id}
-                  business={b}
-                  isOtherUser={userId !== b.userId}
-                />
-              );
-            })}
+                return (
+                  <GradeComp
+                    key={b.id}
+                    business={b}
+                    isOtherUser={userId !== b.userId}
+                  />
+                );
+              })}
+            </div>
           </div>
         )}
 

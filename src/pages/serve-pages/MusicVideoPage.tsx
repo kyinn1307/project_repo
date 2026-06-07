@@ -29,8 +29,6 @@ export const MusicVideoPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  console.log("getAllTracks response:", trackResponse);
-
   // 현재 트랙 변경 시 next 트랙 미리 로드를 진행
   useEffect(() => {
     const fetchNextTrack = async () => {
@@ -52,7 +50,7 @@ export const MusicVideoPage = () => {
     }
   }, [trackResponse]);
 
-  // ▼ 아래 버튼 → nextCursor 로 이동
+  // 아래 버튼 → nextCursor 로 이동
   const handlePrev = () => {
     const nextCursor = trackResponse?.nextCursor;
     if (!nextCursor) return;
@@ -60,7 +58,7 @@ export const MusicVideoPage = () => {
     navigate(`/music-video/${nextTrack?.id}`);
   };
 
-  // ▲ 위 버튼 → previousTrack API가 없으므로 "임의로 trackId+1" 사용
+  // 위 버튼 → previousTrack API가 없으므로 "임의로 trackId+1" 사용
   const handleNext = () => {
     if (!trackResponse?.previousTrack) return;
 
@@ -101,13 +99,11 @@ export const MusicVideoPage = () => {
         )}
       </div>
 
-      {/* sentinel: 아래 스크롤 감지 */}
-      {/* <div ref={sentinelRef} className="h-1" /> */}
-
       <VideoControlBtn
         currentIndex={trackId ?? 1}
         onPrev={handlePrev}
         onNext={handleNext}
+        previousTrack={trackResponse?.previousTrack || null}
       />
     </div>
   );

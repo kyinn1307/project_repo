@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Header } from "./common/Header";
-import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
+import { SidebarProvider, useSidebar } from "@/components/ui/shadcn/sidebar";
 import { AppSidebar } from "./common/AppSidebar";
 
 function LayoutBody() {

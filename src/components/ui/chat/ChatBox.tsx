@@ -1,12 +1,13 @@
-import { UserCircle } from "lucide-react";
 import clsx from "clsx";
 import { Profile } from "@/types/my-profile";
+import sample from "@/assets/Images/sample-musician.png";
 
 interface ChatBoxProps {
   content: string;
   isMe: boolean;
   isContinuous: boolean;
   isLast: boolean;
+  isLastOpponentMessage: boolean;
   profile: Profile;
 }
 
@@ -16,6 +17,7 @@ export const ChatBox = ({
   isContinuous,
   profile,
   isLast,
+  isLastOpponentMessage,
 }: ChatBoxProps) => {
   return (
     <div
@@ -25,7 +27,7 @@ export const ChatBox = ({
       )}
     >
       {/* 상대 프로필 */}
-      {!isMe && isContinuous && isLast && (
+      {!isMe && isLast && isLastOpponentMessage && (
         <div className="mr-[7.5px] mt-auto">
           {profile?.profileImageUrl ? (
             <img
@@ -34,7 +36,11 @@ export const ChatBox = ({
               className="w-[25.5px] h-[25.5px] rounded-full object-cover"
             />
           ) : (
-            <UserCircle size={25.5} className="text-white" />
+            <img
+              src={sample}
+              alt="상대 프로필"
+              className="w-[25.5px] h-[25.5px] rounded-full object-cover"
+            />
           )}
         </div>
       )}
@@ -46,8 +52,10 @@ export const ChatBox = ({
           "rounded-[7.5px]",
 
           // 위쪽 radius
+          !isMe && !isLastOpponentMessage && isLast && "ml-[34px]",
           isMe && isContinuous && "rounded-tr-[0px] rounded-br-[7.5px]",
           isMe && !isContinuous && "rounded-tr-[7.5px]",
+
           !isMe && isContinuous && "rounded-tl-[0px]",
           !isMe && !isContinuous && "rounded-tl-[7.5px]",
           !isMe && !isLast && "ml-[34px]",
